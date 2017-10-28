@@ -54,7 +54,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
 					log.Print(err)
 				}*/
-				/*imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
+				imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
 				template := linebot.NewButtonsTemplate(
 					imageURL, "My button sample"+message.Text, "Hello, my button",
 					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
@@ -67,7 +67,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					linebot.NewTemplateMessage("Buttons alt text", template),
 				).Do(); err != nil {
 					return
-				}*/
+				}
 				
 				responseText, _ := session.Talk(message.Text)
 				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
