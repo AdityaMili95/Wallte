@@ -23,10 +23,10 @@ import (
 )
 
 var bot *linebot.Client
-var session *simisimi.SimSimiSession
+var session *simsimi.SimSimiSession
 func main() {
 	var err error
-	session, _ = simisimi.CreateSimSimiSession("Wallte")
+	session, _ = simsimi.CreateSimSimiSession("Wallte")
 	bot, err = linebot.New(os.Getenv("CHANNEL_SECRET"), os.Getenv("CHANNEL_TOKEN"))
 	log.Println("Bot:", bot, " err:", err)
 	http.HandleFunc("/callback", callbackHandler)
