@@ -1,1 +1,2 @@
-web: go-getting-started
+web: LineBotTemplate
+
