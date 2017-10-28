@@ -52,7 +52,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
 					log.Print(err)
 				}*/
-				imageURL := app.appBaseURL + "README/qI5Ujdy9n1.png"
+				imageURL := "README/qI5Ujdy9n1.png"
 				template := linebot.NewButtonsTemplate(
 					imageURL, "My button sample", "Hello, my button",
 					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
