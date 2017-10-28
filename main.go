@@ -54,7 +54,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}*/
 				imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
 				template := linebot.NewButtonsTemplate(
-					imageURL, "My button sample", "Hello, my button",
+					imageURL, "My button sample"+message.Text, "Hello, my button",
 					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
 					linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
 					linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
