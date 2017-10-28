@@ -61,7 +61,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					linebot.NewMessageTemplateAction("Say message", "Rice=米"),
 				)
 				if _, err := app.bot.ReplyMessage(
-					replyToken,
+					event.replyToken,
 					linebot.NewTemplateMessage("Buttons alt text", template),
 				).Do(); err != nil {
 					return err
