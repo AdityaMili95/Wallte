@@ -21,8 +21,10 @@ func main() {
 	router.LoadHTMLGlob("templates/*.tmpl.html")
 	router.Static("/static", "static")
 
-	router.GET("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello"))
+	router.GET("/",func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
 	})
 
 	router.Run(":" + port)
