@@ -73,13 +73,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
 					log.Print(err)
 				}
-			case *linebot.EventTypePostback:
-				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
-					log.Print(err)
-				}
 
 				
 			}
+		}
+		else if event.Type == linebot.EventTypePostback{
+			if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
+					log.Print(err)
+				}
 		}
 	}
 }
