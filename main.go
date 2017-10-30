@@ -81,8 +81,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Print(err)
 				}*/
 			
-			//imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1"
-			/*template := linebot.NewCarouselTemplate(
+			imageURL := "http://www.mahamconsultants.com/wp-content/uploads/2014/04/bokeh-cover-bg.jpg"
+			template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
 					imageURL, "hoge", "fuga",
 					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
@@ -99,7 +99,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				linebot.NewTemplateMessage("Carousel alt text", template),
 			).Do(); err != nil {
 				log.Print(err)
-			}*/
+			}
 			/*template := linebot.NewImageCarouselTemplate(
 				linebot.NewImageCarouselColumn(
 					imageURL,
@@ -125,7 +125,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				log.Print(err)
 			}*/
 			
-			template := linebot.NewButtonsTemplate(
+			/*template := linebot.NewButtonsTemplate(
 				"", "", "Select date / time !",
 				linebot.NewDatetimePickerTemplateAction("date", "DATE", "date", "", "", ""),
 				linebot.NewDatetimePickerTemplateAction("time", "TIME", "time", "", "", ""),
@@ -136,7 +136,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				linebot.NewTemplateMessage("Datetime pickers alt text", template),
 			).Do(); err != nil {
 				log.Print(err)
-			}
+			}*/
 
 			
 		}
