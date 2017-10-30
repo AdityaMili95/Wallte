@@ -94,11 +94,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					linebot.NewMessageTemplateAction("Say message", "Rice=米"),
 				),
 			)
-			if _, err := bot.ReplyMessage(
+			if _, err = bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTemplateMessage("Carousel alt text", template),
 			).Do(); err != nil {
-				return err
+				log.Print(err)
 			}
 		}
 		
