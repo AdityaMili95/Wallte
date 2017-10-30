@@ -81,6 +81,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Print(err)
 				}
 			
+			imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1"
 			template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
 					imageURL, "hoge", "fuga",
@@ -94,7 +95,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				),
 			)
 			if _, err := app.bot.ReplyMessage(
-				replyToken,
+				event.ReplyToken,
 				linebot.NewTemplateMessage("Carousel alt text", template),
 			).Do(); err != nil {
 				return err
