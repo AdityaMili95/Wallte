@@ -100,7 +100,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			).Do(); err != nil {
 				log.Print(err)
 			}*/
-			template := linebot.NewImageCarouselTemplate(
+			/*template := linebot.NewImageCarouselTemplate(
 				linebot.NewImageCarouselColumn(
 					imageURL,
 					linebot.NewURITemplateAction("Go to LINE", "https://line.me"),
@@ -121,6 +121,19 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			if _, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTemplateMessage("Image carousel alt text", template),
+			).Do(); err != nil {
+				log.Print(err)
+			}*/
+			
+			template := linebot.NewButtonsTemplate(
+				"", "", "Select date / time !",
+				linebot.NewDatetimePickerTemplateAction("date", "DATE", "date", "", "", ""),
+				linebot.NewDatetimePickerTemplateAction("time", "TIME", "time", "", "", ""),
+				linebot.NewDatetimePickerTemplateAction("datetime", "DATETIME", "datetime", "", "", ""),
+			)
+			if _, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTemplateMessage("Datetime pickers alt text", template),
 			).Do(); err != nil {
 				log.Print(err)
 			}
