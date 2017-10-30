@@ -23,9 +23,10 @@ type TemplateType string
 
 // TemplateType constants
 const (
-	TemplateTypeButtons  TemplateType = "buttons"
-	TemplateTypeConfirm  TemplateType = "confirm"
-	TemplateTypeCarousel TemplateType = "carousel"
+	TemplateTypeButtons       TemplateType = "buttons"
+	TemplateTypeConfirm       TemplateType = "confirm"
+	TemplateTypeCarousel      TemplateType = "carousel"
+	TemplateTypeImageCarousel TemplateType = "image_carousel"
 )
 
 // TemplateActionType type
@@ -33,9 +34,10 @@ type TemplateActionType string
 
 // TemplateActionType constants
 const (
-	TemplateActionTypeURI      TemplateActionType = "uri"
-	TemplateActionTypeMessage  TemplateActionType = "message"
-	TemplateActionTypePostback TemplateActionType = "postback"
+	TemplateActionTypeURI            TemplateActionType = "uri"
+	TemplateActionTypeMessage        TemplateActionType = "message"
+	TemplateActionTypePostback       TemplateActionType = "postback"
+	TemplateActionTypeDatetimePicker TemplateActionType = "datetimepicker"
 )
 
 // Template interface
@@ -112,10 +114,33 @@ func (t *CarouselTemplate) MarshalJSON() ([]byte, error) {
 	})
 }
 
+// ImageCarouselTemplate type
+type ImageCarouselTemplate struct {
+	Columns []*ImageCarouselColumn
+}
+
+// ImageCarouselColumn type
+type ImageCarouselColumn struct {
+	ImageURL string         `json:"imageUrl"`
+	Action   TemplateAction `json:"action"`
+}
+
+// MarshalJSON method of ImageCarouselTemplate
+func (t *ImageCarouselTemplate) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Type    TemplateType           `json:"type"`
+		Columns []*ImageCarouselColumn `json:"columns"`
+	}{
+		Type:    TemplateTypeImageCarousel,
+		Columns: t.Columns,
+	})
+}
+
 // implements Template interface
-func (*ConfirmTemplate) template()  {}
-func (*ButtonsTemplate) template()  {}
-func (*CarouselTemplate) template() {}
+func (*ConfirmTemplate) template()       {}
+func (*ButtonsTemplate) template()       {}
+func (*CarouselTemplate) template()      {}
+func (*ImageCarouselTemplate) template() {}
 
 // NewConfirmTemplate function
 func NewConfirmTemplate(text string, left, right TemplateAction) *ConfirmTemplate {
@@ -151,6 +176,21 @@ func NewCarouselColumn(thumbnailImageURL, title, text string, actions ...Templat
 		Title:             title,
 		Text:              text,
 		Actions:           actions,
+	}
+}
+
+// NewImageCarouselTemplate function
+func NewImageCarouselTemplate(columns ...*ImageCarouselColumn) *ImageCarouselTemplate {
+	return &ImageCarouselTemplate{
+		Columns: columns,
+	}
+}
+
+// NewImageCarouselColumn function
+func NewImageCarouselColumn(imageURL string, action TemplateAction) *ImageCarouselColumn {
+	return &ImageCarouselColumn{
+		ImageURL: imageURL,
+		Action:   action,
 	}
 }
 
@@ -220,10 +260,42 @@ func (a *PostbackTemplateAction) MarshalJSON() ([]byte, error) {
 	})
 }
 
+// DatetimePickerTemplateAction type
+type DatetimePickerTemplateAction struct {
+	Label   string
+	Data    string
+	Mode    string
+	Initial string
+	Max     string
+	Min     string
+}
+
+// MarshalJSON method of DatetimePickerTemplateAction
+func (a *DatetimePickerTemplateAction) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Type    TemplateActionType `json:"type"`
+		Label   string             `json:"label"`
+		Data    string             `json:"data"`
+		Mode    string             `json:"mode"`
+		Initial string             `json:"initial,omitempty"`
+		Max     string             `json:"max,omitempty"`
+		Min     string             `json:"min,omitempty"`
+	}{
+		Type:    TemplateActionTypeDatetimePicker,
+		Label:   a.Label,
+		Data:    a.Data,
+		Mode:    a.Mode,
+		Initial: a.Initial,
+		Max:     a.Max,
+		Min:     a.Min,
+	})
+}
+
 // implements TemplateAction interface
-func (*URITemplateAction) templateAction()      {}
-func (*MessageTemplateAction) templateAction()  {}
-func (*PostbackTemplateAction) templateAction() {}
+func (*URITemplateAction) templateAction()            {}
+func (*MessageTemplateAction) templateAction()        {}
+func (*PostbackTemplateAction) templateAction()       {}
+func (*DatetimePickerTemplateAction) templateAction() {}
 
 // NewURITemplateAction function
 func NewURITemplateAction(label, uri string) *URITemplateAction {
@@ -247,5 +319,17 @@ func NewPostbackTemplateAction(label, data, text string) *PostbackTemplateAction
 		Label: label,
 		Data:  data,
 		Text:  text,
+	}
+}
+
+// NewDatetimePickerTemplateAction function
+func NewDatetimePickerTemplateAction(label, data, mode, initial, max, min string) *DatetimePickerTemplateAction {
+	return &DatetimePickerTemplateAction{
+		Label:   label,
+		Data:    data,
+		Mode:    mode,
+		Initial: initial,
+		Max:     max,
+		Min:     min,
 	}
 }

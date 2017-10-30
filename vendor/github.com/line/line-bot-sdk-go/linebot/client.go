@@ -29,12 +29,17 @@ import (
 const (
 	APIEndpointBase = "https://api.line.me"
 
-	APIEndpointPushMessage       = "/v2/bot/message/push"
-	APIEndpointReplyMessage      = "/v2/bot/message/reply"
-	APIEndpointGetMessageContent = "/v2/bot/message/%s/content"
-	APIEndpointLeaveGroup        = "/v2/bot/group/%s/leave"
-	APIEndpointLeaveRoom         = "/v2/bot/room/%s/leave"
-	APIEndpointGetProfile        = "/v2/bot/profile/%s"
+	APIEndpointPushMessage           = "/v2/bot/message/push"
+	APIEndpointReplyMessage          = "/v2/bot/message/reply"
+	APIEndpointMulticast             = "/v2/bot/message/multicast"
+	APIEndpointGetMessageContent     = "/v2/bot/message/%s/content"
+	APIEndpointLeaveGroup            = "/v2/bot/group/%s/leave"
+	APIEndpointLeaveRoom             = "/v2/bot/room/%s/leave"
+	APIEndpointGetProfile            = "/v2/bot/profile/%s"
+	APIEndpointGetGroupMemberProfile = "/v2/bot/group/%s/member/%s"
+	APIEndpointGetRoomMemberProfile  = "/v2/bot/room/%s/member/%s"
+	APIEndpointGetGroupMemberIDs     = "/v2/bot/group/%s/members/ids"
+	APIEndpointGetRoomMemberIDs      = "/v2/bot/room/%s/members/ids"
 )
 
 // Client type
@@ -113,10 +118,13 @@ func (client *Client) do(ctx context.Context, req *http.Request) (*http.Response
 
 }
 
-func (client *Client) get(ctx context.Context, endpoint string) (*http.Response, error) {
+func (client *Client) get(ctx context.Context, endpoint string, query url.Values) (*http.Response, error) {
 	req, err := http.NewRequest("GET", client.url(endpoint), nil)
 	if err != nil {
 		return nil, err
+	}
+	if query != nil {
+		req.URL.RawQuery = query.Encode()
 	}
 	return client.do(ctx, req)
 }
