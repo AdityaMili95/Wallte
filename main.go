@@ -122,7 +122,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				event.ReplyToken,
 				linebot.NewTemplateMessage("Image carousel alt text", template),
 			).Do(); err != nil {
-				return err
+				log.Print(err)
 			}
 
 			
