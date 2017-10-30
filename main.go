@@ -81,7 +81,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Print(err)
 				}*/
 			
-			imageURL := os.Getenv("APP_BASE_URL")+ "/README/qI5Ujdy9n1.png"
+			imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
 			template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
 					imageURL, "hoge", "fuga",
