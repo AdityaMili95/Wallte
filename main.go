@@ -82,7 +82,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}*/
 			
 			imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1"
-			template := linebot.NewCarouselTemplate(
+			/*template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
 					imageURL, "hoge", "fuga",
 					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
@@ -99,7 +99,33 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				linebot.NewTemplateMessage("Carousel alt text", template),
 			).Do(); err != nil {
 				log.Print(err)
+			}*/
+			template := linebot.NewImageCarouselTemplate(
+				linebot.NewImageCarouselColumn(
+					imageURL,
+					linebot.NewURITemplateAction("Go to LINE", "https://line.me"),
+				),
+				linebot.NewImageCarouselColumn(
+					imageURL,
+					linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+				),
+				linebot.NewImageCarouselColumn(
+					imageURL,
+					linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+				),
+				linebot.NewImageCarouselColumn(
+					imageURL,
+					linebot.NewDatetimePickerTemplateAction("datetime", "DATETIME", "datetime", "", "", ""),
+				),
+			)
+			if _, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTemplateMessage("Image carousel alt text", template),
+			).Do(); err != nil {
+				return err
 			}
+
+			
 		}
 		
 	}
