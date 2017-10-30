@@ -80,6 +80,25 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
 					log.Print(err)
 				}
+			
+			template := linebot.NewCarouselTemplate(
+				linebot.NewCarouselColumn(
+					imageURL, "hoge", "fuga",
+					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
+					linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+				),
+				linebot.NewCarouselColumn(
+					imageURL, "hoge", "fuga",
+					linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
+					linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+				),
+			)
+			if _, err := app.bot.ReplyMessage(
+				replyToken,
+				linebot.NewTemplateMessage("Carousel alt text", template),
+			).Do(); err != nil {
+				return err
+			}
 		}
 		
 	}
