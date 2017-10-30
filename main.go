@@ -81,7 +81,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					log.Print(err)
 				}*/
 			
-			imageURL := "http://www.mahamconsultants.com/wp-content/uploads/2014/04/bokeh-cover-bg.jpg"
+			imageURL := os.Getenv("APP_BASE_URL")+ "/README/qI5Ujdy9n1.png"
 			template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
 					imageURL, "hoge", "fuga",
