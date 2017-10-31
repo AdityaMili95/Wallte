@@ -18,6 +18,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 	//"database/sql"
 
@@ -33,9 +34,12 @@ var session *simsimi.SimSimiSession
 var Redis *goredis.Redis
 
 const (
-	ADD_EXPENSE = "/add-expense"
-	ADD_INCOME  = "/add-income"
-	PLAN        = "/plan"
+	ADD_EXPENSE = "add-expense"
+	ADD_INCOME  = "add-income"
+	PLAN        = "plan"
+	USER        = 1
+	ROOM        = 2
+	GROUP       = 3
 )
 
 type DataWallet struct {
@@ -107,6 +111,7 @@ func GetRedis(key string) string {
 	data, err := Redis.Get(key)
 
 	if err != nil {
+		log.Println(err)
 		return ""
 	}
 
@@ -196,6 +201,16 @@ func updateData(data DataWallet, isUpdate bool, userID string, roomID string, gr
 	executeInsert(res, userID, roomID, groupID)
 }
 
+func prepareUpdateData(data DataWallet, isUpdate bool, userID string, roomID string, groupID string, msgType int) {
+	if msgType == USER {
+		updateData(data, isUpdate, userID, "", "")
+	} else if msgType == ROOM {
+		updateData(data, isUpdate, "", roomID, "")
+	} else if msgType == GROUP {
+		updateData(data, isUpdate, "", "", groupID)
+	}
+}
+
 func getUserData(ID string) (*DataWallet, bool) {
 	var data *DataWallet
 	res := GetRedis(ID)
@@ -229,48 +244,97 @@ func getUserData(ID string) (*DataWallet, bool) {
 	return nil, false
 }
 
-func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet, bool) {
+func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet, bool, int) {
 	userID := ""
 	roomID := ""
 	groupID := ""
 
 	var data *DataWallet
 	var exist bool
+	var msgType int
 
 	source := event.Source
 	switch source.Type {
 	case linebot.EventSourceTypeUser:
 		userID = source.UserID
 		data, exist = getUserData(userID)
+		msgType = USER
 	case linebot.EventSourceTypeGroup:
 		roomID = source.RoomID
+		userID = source.UserID
 		data, exist = getUserData(roomID)
+		msgType = ROOM
 	case linebot.EventSourceTypeRoom:
 		groupID = source.GroupID
+		userID = source.UserID
 		data, exist = getUserData(groupID)
+		msgType = GROUP
 	}
 
-	return userID, roomID, groupID, data, exist
+	return userID, roomID, groupID, data, exist, msgType
+}
+
+func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	/*if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
+	).Do(); err != nil {
+		return
+	}*/
+
+	template := linebot.NewImageCarouselTemplate(
+		linebot.NewImageCarouselColumn(
+			imageURL,
+			linebot.NewPostbackTemplateAction("Food", "/add-expense/food", ""),
+		),
+		linebot.NewImageCarouselColumn(
+			imageURL,
+			linebot.NewPostbackTemplateAction("Transportation", "/add-expense/transport", ""),
+		),
+		linebot.NewImageCarouselColumn(
+			imageURL,
+			linebot.NewPostbackTemplateAction("Social", "/add-expense/social", ""),
+		),
+		linebot.NewImageCarouselColumn(
+			imageURL,
+			linebot.NewPostbackTemplateAction("Life", "/add-expense/life", ""),
+		),
+		linebot.NewImageCarouselColumn(
+			imageURL,
+			linebot.NewPostbackTemplateAction("Other", "/add-expense/other", ""),
+		),
+		linebot.NewImageCarouselColumn(
+			imageURL,
+			linebot.NewURITemplateAction("Shop Now", "https://tokopedia.com/elefashionshop"),
+		),
+	)
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage("Select Expense Category!!", template),
+	).Do(); err != nil {
+		log.Print(err)
+	}
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
-	userID, roomID, groupID, data, exist := FetchDataSource(event)
+	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
+	//fmt.Println(data, exist, userID, groupID, roomID)
 
-	fmt.Println(data, exist, userID, groupID, roomID)
+	mainType := strings.Split(message.Text, "/")
+	lenSplitted := len(mainType)
 
-	if message.Text == ADD_EXPENSE {
+	msgCategory := ""
+	if lenSplitted > 1 {
+		msgCategory = mainType[1]
+	}
 
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
-		).Do(); err != nil {
-			return
-		}
+	if msgCategory == ADD_EXPENSE {
+		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+	} else if msgCategory == ADD_INCOME {
 
-	} else if message.Text == ADD_INCOME {
-
-	} else if message.Text == PLAN {
+	} else if msgCategory == PLAN {
 
 	}
 	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
