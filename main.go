@@ -153,7 +153,7 @@ func executeInsert(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO wallte_data VALUES('$1','$2','$3','$4')", userID, roomID, groupID, json)
+	tx.MustExec("INSERT INTO wallte_data(user_id,room_id,group_id,JSON) VALUES('$1','$2','$3','$4')", userID, roomID, groupID, json)
 	tx.Commit()
 }
 
