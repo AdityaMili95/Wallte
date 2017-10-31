@@ -17,9 +17,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"database/sql"
 
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/NoahShen/go-simsimi"
+	 _ "github.com/go-sql-driver/mysql"
 )
 
 var bot *linebot.Client
@@ -33,6 +35,15 @@ func main() {
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
+}
+
+func connect() (*sql.DB, error) {
+	db, err := sql.Open("mysql", os.Getenv("DB_CONNECT"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, err
+	}
+	return db, nil
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
