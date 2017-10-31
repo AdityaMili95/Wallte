@@ -30,6 +30,8 @@ var session *simsimi.SimSimiSession
 var Redis *goredis.Redis
 const(
 	ADD_EXPENSE = "/add-expense"
+	ADD_INCOME = "/add-income"
+	PLAN = "/plan"
 )
 
 func main() {
@@ -80,6 +82,10 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage){
 		).Do(); err != nil {
 			return
 		}
+	}else if(message.Text==ADD_INCOME){
+
+	}else if(message.Text==PLAN){
+		
 	}
 	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
 						log.Print(err)
