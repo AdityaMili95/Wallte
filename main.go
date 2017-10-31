@@ -54,8 +54,11 @@ type Wallet struct {
 }
 
 type LastAction struct {
-	status  bool
-	keyword string
+	Status      bool
+	Keyword     string
+	Description string
+	Price       int
+	Category    string
 }
 
 type Info struct {
