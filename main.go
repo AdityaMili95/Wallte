@@ -17,6 +17,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 	"database/sql"
 
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -33,6 +34,37 @@ const(
 	ADD_INCOME = "/add-income"
 	PLAN = "/plan"
 )
+
+type DataWallet struct{
+	Data Wallet
+}
+
+type Wallet struct{
+	UserInfo Info
+	Money int
+	Income map[int]map[int][]TransactionInfo
+	Expense map[int]map[int][]TransactionInfo
+	Plan_Income map[int]map[int][]TransactionInfo
+	Plan_Expense map[int]map[int][]TransactionInfo
+	Last_Action LastAction 
+}
+
+type LastAction struct{
+	status bool
+	keyword string
+}
+
+type Info struct{
+	ID string
+}
+
+type TransactionInfo struct{
+	Created_by string
+	Price int
+	Created_date time.Time
+	Planned_date time.Time
+}
+
 
 func main() {
 	var err error
@@ -85,7 +117,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage){
 	}else if(message.Text==ADD_INCOME){
 
 	}else if(message.Text==PLAN){
-		
+
 	}
 	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
 						log.Print(err)
