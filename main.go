@@ -22,10 +22,16 @@ import (
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/NoahShen/go-simsimi"
 	 _ "github.com/go-sql-driver/mysql"
+	 "github.com/xuyu/goredis"
 )
 
 var bot *linebot.Client
 var session *simsimi.SimSimiSession
+var Redis *goredis.Redis
+const(
+	ADD_EXPENSE = "/add-expense"
+)
+
 func main() {
 	var err error
 	session, _ = simsimi.CreateSimSimiSession("Wallte")
@@ -37,6 +43,24 @@ func main() {
 	http.ListenAndServe(addr, nil)
 }
 
+func connectRedis(){
+	Redis, err := goredis.DialURL("tcp://redistogo:64bde566709b097ee1b3f512d6fab925@grouper.redistogo.com:11207/0?timeout=10s")
+
+	if(err!=nil){
+		fmt.Println(err.Error())
+		return
+	}
+
+	err = Redis.Set("testong", "haha",0,0,false,false)
+	if err != nil {
+		fmt.Printf("%#v\n", err)
+		return
+	}
+
+	data,_:=Redis.Get("testong")
+	fmt.Println(string(data))
+}
+
 func connect() (*sql.DB, error) {
 	db, err := sql.Open("mysql", os.Getenv("DB_CONNECT"))
 	if err != nil {
@@ -45,6 +69,49 @@ func connect() (*sql.DB, error) {
 	}
 	return db, nil
 }
+
+
+func handleTextMessage(event *linebot.Event, message *linebot.TextMessage){
+
+	if(message.Text==ADD_EXPENSE){
+		if _, err := bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
+		).Do(); err != nil {
+			return
+		}
+	}
+	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
+						log.Print(err)
+					}*/
+					/*imageURL := "https://drive.google.com/file/d/0Bx6cTEFypiiNaHVTcXV5VkFpbFE/view?usp=sharing"
+					template := linebot.NewButtonsTemplate(
+						imageURL, "My button sample"+message.Text, "Hello, my button",
+						linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
+						linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+						linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
+						linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+					)
+					if _, err := bot.ReplyMessage(
+						event.ReplyToken,
+						linebot.NewTemplateMessage("Buttons alt text", template),
+					).Do(); err != nil {
+						return
+					}
+					
+					responseText, _ := session.Talk(message.Text)
+					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
+						log.Print(err)
+					}*/
+}
+
+func handleMessage(event *linebot.Event){
+	switch message := event.Message.(type) {
+		case *linebot.TextMessage:
+			handleTextMessage(event, message)
+	}
+}
+
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
@@ -60,39 +127,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
-			switch message := event.Message.(type) {
-			case *linebot.TextMessage:
-				/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
-					log.Print(err)
-				}*/
-				imageURL := "https://drive.google.com/file/d/0Bx6cTEFypiiNaHVTcXV5VkFpbFE/view?usp=sharing"
-				template := linebot.NewButtonsTemplate(
-					imageURL, "My button sample"+message.Text, "Hello, my button",
-					linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
-					linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
-					linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
-					linebot.NewMessageTemplateAction("Say message", "Rice=米"),
-				)
-				if _, err := bot.ReplyMessage(
-					event.ReplyToken,
-					linebot.NewTemplateMessage("Buttons alt text", template),
-				).Do(); err != nil {
-					return
-				}
-				
-				responseText, _ := session.Talk(message.Text)
-				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
-					log.Print(err)
-				}
 
-				
-			}
+			handleMessage(event)
+
 		}else if event.Type == linebot.EventTypePostback{
 			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
 					log.Print(err)
 				}*/
 			
-			imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
+			//imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
 			/*template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
 					imageURL, "hoge", "fuga",
@@ -112,7 +155,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				log.Print(err)
 			}*/
 
-			profile, err := bot.GetProfile(event.Source.UserID).Do()
+			/*profile, err := bot.GetProfile(event.Source.UserID).Do()
 			if(err!=nil){
 				log.Print(err)
 				return;
@@ -140,7 +183,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				linebot.NewTemplateMessage("Image carousel alt text", template),
 			).Do(); err != nil {
 				log.Print(err)
-			}
+			}*/
 			
 			/*template := linebot.NewButtonsTemplate(
 				"", "", "Select date / time !",
