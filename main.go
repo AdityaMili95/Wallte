@@ -111,6 +111,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			).Do(); err != nil {
 				log.Print(err)
 			}*/
+
+			profile, err := bot.GetProfile(event.Source.UserID).Do()
+			if(err!=nil){
+				log.Print(err)
+				return;
+			}
 			template := linebot.NewImageCarouselTemplate(
 				linebot.NewImageCarouselColumn(
 					imageURL,
@@ -118,7 +124,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				),
 				linebot.NewImageCarouselColumn(
 					imageURL,
-					linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+					linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", "Hello"+profile.UserID),
 				),
 				linebot.NewImageCarouselColumn(
 					imageURL,
