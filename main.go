@@ -283,37 +283,45 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		return
 	}*/
 
-	template := linebot.NewImageCarouselTemplate(
-		linebot.NewImageCarouselColumn(
-			imageURL,
-			linebot.NewPostbackTemplateAction("Food", "/add-expense/food", ""),
-		),
-		linebot.NewImageCarouselColumn(
-			imageURL,
-			linebot.NewPostbackTemplateAction("Transportation", "/add-expense/transport", ""),
-		),
-		linebot.NewImageCarouselColumn(
-			imageURL,
-			linebot.NewPostbackTemplateAction("Social", "/add-expense/social", ""),
-		),
-		linebot.NewImageCarouselColumn(
-			imageURL,
-			linebot.NewPostbackTemplateAction("Life", "/add-expense/life", ""),
-		),
-		linebot.NewImageCarouselColumn(
-			imageURL,
-			linebot.NewPostbackTemplateAction("Other", "/add-expense/other", ""),
-		),
-		linebot.NewImageCarouselColumn(
-			imageURL,
-			linebot.NewURITemplateAction("Shop Now", "https://tokopedia.com/elefashionshop"),
-		),
-	)
-	if _, err := bot.ReplyMessage(
-		event.ReplyToken,
-		linebot.NewTemplateMessage("Select Expense Category!!", template),
-	).Do(); err != nil {
-		log.Print(err)
+	lenSplitted := len(splitted)
+
+	if lenSplitted == 2 {
+
+		template := linebot.NewImageCarouselTemplate(
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Food", "/add-expense/food", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Transportation", "/add-expense/transport", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Social", "/add-expense/social", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Life", "/add-expense/life", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Other", "/add-expense/other", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewURITemplateAction("Shop Now", "https://tokopedia.com/elefashionshop"),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("Select Expense Category!!", template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
+
+	} else {
+
 	}
 }
 
