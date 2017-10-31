@@ -91,7 +91,7 @@ func main() {
 
 func connectRedis() {
 	var err error
-	Redis, err = goredis.DialURL("tcp://redistogo:64bde566709b097ee1b3f512d6fab925@grouper.redistogo.com:11207/0?timeout=10s")
+	Redis, err = goredis.DialURL(os.Getenv("REDIS_CONNECT"))
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -152,7 +152,7 @@ func executeInsert(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO wallte_data VALUES($1,$2,$3,$4)", userID, roomID, groupID, json)
+	tx.MustExec("INSERT INTO wallte_data VALUES('$1','$2','$3','$4')", userID, roomID, groupID, json)
 	tx.Commit()
 }
 
@@ -164,7 +164,7 @@ func executeUpdate(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("update wallte_data set JSON=$1 where user_id=$2 and room_id=$3 and group_id=$4", json, userID, roomID, groupID)
+	tx.MustExec("update wallte_data set JSON='$1' where user_id='$2' and room_id='$3' and group_id='$4'", json, userID, roomID, groupID)
 	tx.Commit()
 }
 
