@@ -153,7 +153,6 @@ func executeInsert(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	log.Println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
 	tx.MustExec("INSERT INTO wallte_data(user_id,room_id,group_id,JSON) VALUES($1,$2,$3,$4)", userID, roomID, groupID, json)
 	tx.Commit()
 }
@@ -166,7 +165,7 @@ func executeUpdate(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("update wallte_data set JSON=$1 where user_id=$2 and room_id=$3 and group_id=$4", json, userID, roomID, groupID)
+	tx.MustExec("update wallte_data set JSON=$1 where user_id='$2' and room_id='$3' and group_id='$4'", json, userID, roomID, groupID)
 	tx.Commit()
 }
 
