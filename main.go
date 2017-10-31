@@ -296,7 +296,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("HAHA", "/add-expense/transport", ""),
+				linebot.NewPostbackTemplateAction("Transport", "/add-expense/transport", ""),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
