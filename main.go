@@ -221,12 +221,14 @@ func getUserData(ID string) (*DataWallet, bool) {
 		}
 	}
 
-	query := fmt.Sprintf("SELECT JSON FROM wallte_data WHERE user_id=%s OR group_id=%s OR room_id=%s LIMIT 1", ID, ID, ID)
+	query := fmt.Sprintf("SELECT JSON FROM wallte_data WHERE user_id='%s' OR group_id='%s' OR room_id='%s' LIMIT 1", ID, ID, ID)
 	rows := executeQuery(query)
-	defer rows.Close()
+
 	if rows == nil {
 		return nil, false
 	}
+
+	defer rows.Close()
 
 	if rows.Next() {
 		var jsonString string
