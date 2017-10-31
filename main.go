@@ -178,7 +178,7 @@ func Marshal(data interface{}) (string, error) {
 	return string(res), nil
 }
 
-func updateData(data *DataWallet, isUpdate bool, userID string, roomID string, groupID string) {
+func updateData(data *DataWallet, exist bool, userID string, roomID string, groupID string) {
 	res, err := Marshal(data)
 	if err != nil || res == "" {
 		return
@@ -194,7 +194,7 @@ func updateData(data *DataWallet, isUpdate bool, userID string, roomID string, g
 	}
 
 	SetRedis(redisKey, res)
-	if isUpdate {
+	if !exist {
 		executeUpdate(res, userID, roomID, groupID)
 		return
 	}
@@ -202,13 +202,13 @@ func updateData(data *DataWallet, isUpdate bool, userID string, roomID string, g
 	executeInsert(res, userID, roomID, groupID)
 }
 
-func prepareUpdateData(data *DataWallet, isUpdate bool, userID string, roomID string, groupID string, msgType int) {
+func prepareUpdateData(data *DataWallet, exist bool, userID string, roomID string, groupID string, msgType int) {
 	if msgType == USER {
-		updateData(data, isUpdate, userID, "", "")
+		updateData(data, exist, userID, "", "")
 	} else if msgType == ROOM {
-		updateData(data, isUpdate, "", roomID, "")
+		updateData(data, exist, "", roomID, "")
 	} else if msgType == GROUP {
-		updateData(data, isUpdate, "", "", groupID)
+		updateData(data, exist, "", "", groupID)
 	}
 }
 
@@ -316,7 +316,6 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	lenSplitted := len(splitted)
 
 	if !exist {
-		fmt.Println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
 		data = initDataWallet(userID, roomID, groupID, msgType)
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 
