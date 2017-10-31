@@ -48,6 +48,7 @@ type DataWallet struct {
 
 type Wallet struct {
 	UserInfo     Info
+	RoomInfo     Info
 	GroupInfo    Info
 	Money        int
 	Income       map[int]map[int][]TransactionInfo
@@ -177,7 +178,7 @@ func Marshal(data interface{}) (string, error) {
 	return string(res), nil
 }
 
-func updateData(data DataWallet, isUpdate bool, userID string, roomID string, groupID string) {
+func updateData(data *DataWallet, isUpdate bool, userID string, roomID string, groupID string) {
 	res, err := Marshal(data)
 	if err != nil || res == "" {
 		return
@@ -201,7 +202,7 @@ func updateData(data DataWallet, isUpdate bool, userID string, roomID string, gr
 	executeInsert(res, userID, roomID, groupID)
 }
 
-func prepareUpdateData(data DataWallet, isUpdate bool, userID string, roomID string, groupID string, msgType int) {
+func prepareUpdateData(data *DataWallet, isUpdate bool, userID string, roomID string, groupID string, msgType int) {
 	if msgType == USER {
 		updateData(data, isUpdate, userID, "", "")
 	} else if msgType == ROOM {
@@ -244,6 +245,33 @@ func getUserData(ID string) (*DataWallet, bool) {
 	}
 
 	return nil, false
+}
+
+func initDataWallet(userID string, roomID string, groupID string, msgType int) *DataWallet {
+
+	var userInfo, roomInfo, groupInfo Info
+
+	if msgType == USER {
+		userInfo = Info{
+			ID: userID,
+		}
+	} else if msgType == ROOM {
+		roomInfo = Info{
+			ID: userID,
+		}
+	} else if msgType == GROUP {
+		groupInfo = Info{
+			ID: userID,
+		}
+	}
+
+	return &DataWallet{
+		Data: Wallet{
+			UserInfo:  userInfo,
+			RoomInfo:  roomInfo,
+			GroupInfo: groupInfo,
+		},
+	}
 }
 
 func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet, bool, int) {
@@ -322,14 +350,14 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
-	} else {
+	} /* else {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
 			linebot.NewTextMessage(" OK!"),
 		).Do(); err != nil {
 			return
 		}
-	}
+	}*/
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
@@ -350,6 +378,12 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == ADD_INCOME {
 
 	} else if msgCategory == PLAN {
+
+	}
+
+	if !exist {
+		data = initDataWallet(userID, roomID, groupID, msgType)
+		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 
 	}
 	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
