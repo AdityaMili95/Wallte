@@ -37,6 +37,12 @@
 			"path": "github.com/xuyu/goredis",
 			"revision": "89fbe9474b3758ff3adf0b7b29c95aeed115fb7b",
 			"revisionTime": "2013-05-29T22:42:35Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "github.com/jmoiron/sqlx",
+			"revision": "3379e5993990b1f927fc8db926485e6f6becf2d2",
+			"revisionTime": "2013-05-29T22:42:35Z"
 		}
 	],
 	"rootPath": "github.com/kkdai/LineBotTemplate"

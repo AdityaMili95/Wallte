@@ -13,61 +13,66 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
-	"database/sql"
+	//"database/sql"
 
-	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/NoahShen/go-simsimi"
-	 _ "github.com/go-sql-driver/mysql"
-	 "github.com/xuyu/goredis"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
+	"github.com/line/line-bot-sdk-go/linebot"
+	"github.com/xuyu/goredis"
 )
 
 var bot *linebot.Client
 var session *simsimi.SimSimiSession
 var Redis *goredis.Redis
-const(
+
+const (
 	ADD_EXPENSE = "/add-expense"
-	ADD_INCOME = "/add-income"
-	PLAN = "/plan"
+	ADD_INCOME  = "/add-income"
+	PLAN        = "/plan"
 )
 
-type DataWallet struct{
+type DataWallet struct {
 	Data Wallet
 }
 
-type Wallet struct{
-	UserInfo Info
-	Money int
-	Income map[int]map[int][]TransactionInfo
-	Expense map[int]map[int][]TransactionInfo
-	Plan_Income map[int]map[int][]TransactionInfo
+type Wallet struct {
+	UserInfo     Info
+	GroupInfo    Info
+	Money        int
+	Income       map[int]map[int][]TransactionInfo
+	Expense      map[int]map[int][]TransactionInfo
+	Plan_Income  map[int]map[int][]TransactionInfo
 	Plan_Expense map[int]map[int][]TransactionInfo
-	Last_Action LastAction 
+	Last_Action  LastAction
 }
 
-type LastAction struct{
-	status bool
+type LastAction struct {
+	status  bool
 	keyword string
 }
 
-type Info struct{
+type Info struct {
 	ID string
 }
 
-type TransactionInfo struct{
-	Created_by string
-	Price int
+type TransactionInfo struct {
+	Created_by   string
+	Price        int
 	Created_date time.Time
 	Planned_date time.Time
 }
 
-
 func main() {
 	var err error
+
+	connectRedis()
 	session, _ = simsimi.CreateSimSimiSession("Wallte")
 	bot, err = linebot.New(os.Getenv("CHANNEL_SECRET"), os.Getenv("CHANNEL_TOKEN"))
 	log.Println("Bot:", bot, " err:", err)
@@ -77,79 +82,191 @@ func main() {
 	http.ListenAndServe(addr, nil)
 }
 
-func connectRedis(){
-	Redis, err := goredis.DialURL("tcp://redistogo:64bde566709b097ee1b3f512d6fab925@grouper.redistogo.com:11207/0?timeout=10s")
-
-	if(err!=nil){
-		fmt.Println(err.Error())
-		return
-	}
-
-	err = Redis.Set("testong", "haha",0,0,false,false)
+func connectRedis() {
+	var err error
+	Redis, err = goredis.DialURL("tcp://redistogo:64bde566709b097ee1b3f512d6fab925@grouper.redistogo.com:11207/0?timeout=10s")
 	if err != nil {
-		fmt.Printf("%#v\n", err)
+		log.Println(err.Error())
 		return
 	}
-
-	data,_:=Redis.Get("testong")
-	fmt.Println(string(data))
 }
 
-func connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", os.Getenv("DB_CONNECT"))
+func connectDB() (*sqlx.DB, error) {
+	db, err := sqlx.Open("mysql", os.Getenv("DB_CONNECT"))
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return nil, err
 	}
 	return db, nil
 }
 
+func GetRedis(key string) string {
+	data, err := Redis.Get(key)
 
-func handleTextMessage(event *linebot.Event, message *linebot.TextMessage){
+	if err != nil {
+		return ""
+	}
 
-	if(message.Text==ADD_EXPENSE){
+	return string(data)
+}
+
+func SetRedis(key string, value string) {
+
+	err := Redis.Set(key, value, 0, 0, false, false)
+	if err != nil {
+		log.Printf("%#v\n", err)
+		return
+	}
+
+}
+
+func executeQuery(query string) *sqlx.Rows {
+	db, err := connectDB()
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	defer db.Close()
+	rows, err := db.Queryx(query)
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	return rows
+}
+
+func executeInsert(json string, userID string, groupID string) {
+	db, err := connectDB()
+
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	defer db.Close()
+	tx := db.MustBegin()
+	tx.MustExec("INSERT INTO wallte_data VALUES($1,$2,$3)", userID, groupID, json)
+	tx.Commit()
+}
+
+func executeUpdate(json string, userID string, groupID string) {
+	db, err := connectDB()
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	defer db.Close()
+	tx := db.MustBegin()
+	tx.MustExec("update wallte_data set JSON=$1 where user_id=$2 and group_id=$3", json, userID, groupID)
+	tx.Commit()
+}
+
+func Marshal(data interface{}) (string, error) {
+
+	res, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+	return string(res), nil
+}
+
+func updateData(data DataWallet, isUpdate bool, userID string, groupID string) {
+	res, err := Marshal(data)
+	if err != nil || res == "" {
+		return
+	}
+
+	redisKey := userID
+	if groupID != "" {
+		redisKey = groupID
+	}
+
+	SetRedis(redisKey, res)
+	if isUpdate {
+		executeUpdate(res, userID, groupID)
+		return
+	}
+
+	executeInsert(res, userID, groupID)
+}
+
+func getUserData(ID string) (*DataWallet, bool) {
+	var data *DataWallet
+	res := GetRedis(ID)
+	if res != "" && res != "nil" {
+		err := json.Unmarshal([]byte(res), &data)
+		if err == nil {
+			return data, true
+		}
+	}
+
+	query := fmt.Sprintf("SELECT JSON FROM wallte_data WHERE user_id=%s OR group_id=%s LIMIT 1", ID, ID)
+	rows := executeQuery(query)
+	defer rows.Close()
+	if rows == nil {
+		return nil, false
+	}
+
+	if rows.Next() {
+		var jsonString string
+		err := rows.Scan(&jsonString)
+		if err != nil {
+			return nil, false
+		}
+
+		err = json.Unmarshal([]byte(jsonString), &data)
+		if err == nil {
+			return data, true
+		}
+	}
+
+	return nil, false
+
+}
+
+func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
+
+	if message.Text == ADD_EXPENSE {
 		if _, err := bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
+			event.ReplyToken,
+			linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
 		).Do(); err != nil {
 			return
 		}
-	}else if(message.Text==ADD_INCOME){
+	} else if message.Text == ADD_INCOME {
 
-	}else if(message.Text==PLAN){
+	} else if message.Text == PLAN {
 
 	}
 	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
-						log.Print(err)
-					}*/
-					/*imageURL := "https://drive.google.com/file/d/0Bx6cTEFypiiNaHVTcXV5VkFpbFE/view?usp=sharing"
-					template := linebot.NewButtonsTemplate(
-						imageURL, "My button sample"+message.Text, "Hello, my button",
-						linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
-						linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
-						linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
-						linebot.NewMessageTemplateAction("Say message", "Rice=米"),
-					)
-					if _, err := bot.ReplyMessage(
-						event.ReplyToken,
-						linebot.NewTemplateMessage("Buttons alt text", template),
-					).Do(); err != nil {
-						return
-					}
-					
-					responseText, _ := session.Talk(message.Text)
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
-						log.Print(err)
-					}*/
+		log.Print(err)
+	}*/
+	/*imageURL := "https://drive.google.com/file/d/0Bx6cTEFypiiNaHVTcXV5VkFpbFE/view?usp=sharing"
+	template := linebot.NewButtonsTemplate(
+		imageURL, "My button sample"+message.Text, "Hello, my button",
+		linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
+		linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+		linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
+		linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+	)
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage("Buttons alt text", template),
+	).Do(); err != nil {
+		return
+	}
+
+	responseText, _ := session.Talk(message.Text)
+	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
+		log.Print(err)
+	}*/
 }
 
-func handleMessage(event *linebot.Event){
+func handleMessage(event *linebot.Event) {
 	switch message := event.Message.(type) {
-		case *linebot.TextMessage:
-			handleTextMessage(event, message)
+	case *linebot.TextMessage:
+		handleTextMessage(event, message)
 	}
 }
-
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
@@ -168,11 +285,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 			handleMessage(event)
 
-		}else if event.Type == linebot.EventTypePostback{
+		} else if event.Type == linebot.EventTypePostback {
 			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
-					log.Print(err)
-				}*/
-			
+				log.Print(err)
+			}*/
+
 			//imageURL := "https://github.com/AdityaMili95/Wallte/blob/master/README/qI5Ujdy9n1.png"
 			/*template := linebot.NewCarouselTemplate(
 				linebot.NewCarouselColumn(
@@ -222,7 +339,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			).Do(); err != nil {
 				log.Print(err)
 			}*/
-			
+
 			/*template := linebot.NewButtonsTemplate(
 				"", "", "Select date / time !",
 				linebot.NewDatetimePickerTemplateAction("date", "DATE", "date", "", "", ""),
@@ -236,8 +353,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				log.Print(err)
 			}*/
 
-			
 		}
-		
+
 	}
 }
