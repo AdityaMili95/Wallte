@@ -321,7 +321,12 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		}
 
 	} else {
-
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTextMessage(" OK!"),
+		).Do(); err != nil {
+			return
+		}
 	}
 }
 
