@@ -135,7 +135,7 @@ func executeQuery(query string) *sqlx.Rows {
 	return rows
 }
 
-func executeInsert(json string, userID string, groupID string) {
+func executeInsert(json string, userID string, roomID string, groupID string) {
 	db, err := connectDB()
 
 	if err != nil {
@@ -144,11 +144,11 @@ func executeInsert(json string, userID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO wallte_data VALUES($1,$2,$3)", userID, groupID, json)
+	tx.MustExec("INSERT INTO wallte_data VALUES($1,$2,$3,$4)", userID, roomID, groupID, json)
 	tx.Commit()
 }
 
-func executeUpdate(json string, userID string, groupID string) {
+func executeUpdate(json string, userID string, roomID string, groupID string) {
 	db, err := connectDB()
 	if err != nil {
 		log.Println(err.Error())
@@ -156,7 +156,7 @@ func executeUpdate(json string, userID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("update wallte_data set JSON=$1 where user_id=$2 and group_id=$3", json, userID, groupID)
+	tx.MustExec("update wallte_data set JSON=$1 where user_id=$2 and room_id=$3 and group_id=$4", json, userID, roomID, groupID)
 	tx.Commit()
 }
 
@@ -169,24 +169,28 @@ func Marshal(data interface{}) (string, error) {
 	return string(res), nil
 }
 
-func updateData(data DataWallet, isUpdate bool, userID string, groupID string) {
+func updateData(data DataWallet, isUpdate bool, userID string, roomID string, groupID string) {
 	res, err := Marshal(data)
 	if err != nil || res == "" {
 		return
 	}
 
 	redisKey := userID
+	if roomID != "" {
+		redisKey = roomID
+	}
+
 	if groupID != "" {
 		redisKey = groupID
 	}
 
 	SetRedis(redisKey, res)
 	if isUpdate {
-		executeUpdate(res, userID, groupID)
+		executeUpdate(res, userID, roomID, groupID)
 		return
 	}
 
-	executeInsert(res, userID, groupID)
+	executeInsert(res, userID, roomID, groupID)
 }
 
 func getUserData(ID string) (*DataWallet, bool) {
@@ -199,7 +203,7 @@ func getUserData(ID string) (*DataWallet, bool) {
 		}
 	}
 
-	query := fmt.Sprintf("SELECT JSON FROM wallte_data WHERE user_id=%s OR group_id=%s LIMIT 1", ID, ID)
+	query := fmt.Sprintf("SELECT JSON FROM wallte_data WHERE user_id=%s OR group_id=%s OR room_id=%s LIMIT 1", ID, ID, ID)
 	rows := executeQuery(query)
 	defer rows.Close()
 	if rows == nil {
@@ -220,18 +224,47 @@ func getUserData(ID string) (*DataWallet, bool) {
 	}
 
 	return nil, false
+}
 
+func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet, bool) {
+	userID := ""
+	roomID := ""
+	groupID := ""
+
+	var data *DataWallet
+	var exist bool
+
+	source := event.Source
+	switch source.Type {
+	case linebot.EventSourceTypeUser:
+		userID = source.UserID
+		data, exist = getUserData(userID)
+	case linebot.EventSourceTypeGroup:
+		roomID = source.RoomID
+		data, exist = getUserData(roomID)
+	case linebot.EventSourceTypeRoom:
+		groupID = source.GroupID
+		data, exist = getUserData(groupID)
+	}
+
+	return userID, roomID, groupID, data, exist
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
+	userID, roomID, groupID, data, exist := FetchDataSource(event)
+
+	fmt.Println(data, exist, userID, groupID, roomID)
+
 	if message.Text == ADD_EXPENSE {
+
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
 			linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
 		).Do(); err != nil {
 			return
 		}
+
 	} else if message.Text == ADD_INCOME {
 
 	} else if message.Text == PLAN {
@@ -261,10 +294,21 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}*/
 }
 
+func handleSticker(event *linebot.Event, message *linebot.StickerMessage) {
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewStickerMessage(message.PackageID, message.StickerID),
+	).Do(); err != nil {
+		log.Println(err)
+	}
+}
+
 func handleMessage(event *linebot.Event) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		handleTextMessage(event, message)
+	case *linebot.StickerMessage:
+		handleSticker(event, message)
 	}
 }
 
