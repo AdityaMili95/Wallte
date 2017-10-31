@@ -316,12 +316,6 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 	lenSplitted := len(splitted)
 
-	if !exist {
-		data = initDataWallet(userID, roomID, groupID, msgType)
-		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
-
-	}
-
 	if lenSplitted == 2 {
 
 		template := linebot.NewImageCarouselTemplate(
