@@ -382,6 +382,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if !exist {
+		fmt.Println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
 		data = initDataWallet(userID, roomID, groupID, msgType)
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 
