@@ -325,13 +325,6 @@ func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet,
 
 func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
-	/*if _, err := bot.ReplyMessage(
-		event.ReplyToken,
-		linebot.NewTextMessage(message.ID+":"+message.Text+" OK!"),
-	).Do(); err != nil {
-		return
-	}*/
-
 	lenSplitted := len(splitted)
 
 	if lenSplitted == 2 {
@@ -369,10 +362,38 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
-	} else {
+	} else if splitted[2] == "food" {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTextMessage(" OK!"),
+			linebot.NewTextMessage("FOOD OK!"),
+		).Do(); err != nil {
+			return
+		}
+	} else if splitted[2] == "transport" {
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTextMessage("TRANSPORT OK!"),
+		).Do(); err != nil {
+			return
+		}
+	} else if splitted[2] == "social" {
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTextMessage("SOCIAL OK!"),
+		).Do(); err != nil {
+			return
+		}
+	} else if splitted[2] == "life" {
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTextMessage("LIFE OK!"),
+		).Do(); err != nil {
+			return
+		}
+	} else if splitted[2] == "other" {
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTextMessage("OTHER OK!"),
 		).Do(); err != nil {
 			return
 		}
