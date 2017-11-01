@@ -377,7 +377,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			linebot.NewCarouselColumn(
 				imageURL, "Side Food", "Maybe you eat this food just for fun!",
 				linebot.NewPostbackTemplateAction("Snack", "/add-expense/food/snack", ""),
-				linebot.NewPostbackTemplateAction("Candy", "/add-expense/food/candy", ""),
+				linebot.NewPostbackTemplateAction("Grocery", "/add-expense/food/grocery", ""),
 				linebot.NewPostbackTemplateAction("Beverages", "/add-expense/food/beverages", ""),
 			),
 		)
@@ -416,28 +416,78 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "What type of transportation did you ride?"
 		valid = true
 	} else if splitted[2] == "social" {
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTextMessage("SOCIAL OK!"),
-		).Do(); err != nil {
-			return
-		}
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Fun", "I am happy if you having fun with others!",
+				linebot.NewPostbackTemplateAction("Movie", "/add-expense/fun/movie", ""),
+				linebot.NewPostbackTemplateAction("Music", "/add-expense/fun/music", ""),
+				linebot.NewPostbackTemplateAction("Gift", "/add-expense/fun/gift", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Shopping", "Don't buy uneeded item too much!",
+				linebot.NewPostbackTemplateAction("Clothes", "/add-expense/fun/clothes", ""),
+				linebot.NewPostbackTemplateAction("Accessories", "/add-expense/fun/accessories", ""),
+				linebot.NewPostbackTemplateAction("Cosmetic", "/add-expense/fun/cosmetic", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Gaming", "Do you like game?",
+				linebot.NewPostbackTemplateAction("Voucher", "/add-expense/fun/voucher", ""),
+				linebot.NewPostbackTemplateAction("Bet", "/add-expense/fun/bet", ""),
+				linebot.NewPostbackTemplateAction("Rental", "/add-expense/fun/rental", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Anything Else", "Tell me what you are doing!!",
+				linebot.NewPostbackTemplateAction("Club", "/add-expense/fun/club", ""),
+				linebot.NewPostbackTemplateAction("Bar", "/add-expense/fun/bar", ""),
+				linebot.NewPostbackTemplateAction("Park", "/add-expense/fun/park", ""),
+			),
+		)
+		altText = "Wow you just socialize! What did you do?"
+		valid = true
 	} else if splitted[2] == "life" {
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTextMessage("LIFE OK!"),
-		).Do(); err != nil {
-			return
-		}
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Health", "Your health is the most important!",
+				linebot.NewPostbackTemplateAction("Check Up", "/add-expense/health/checkup", ""),
+				linebot.NewPostbackTemplateAction("InPatient", "/add-expense/health/inpatient", ""),
+				linebot.NewPostbackTemplateAction("OutPatient", "/add-expense/health/outpatient", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Treatment", "Treat yourself, keep healthy!",
+				linebot.NewPostbackTemplateAction("Vitamin", "/add-expense/health/vitamin", ""),
+				linebot.NewPostbackTemplateAction("Medicine", "/add-expense/health/medicine", ""),
+				linebot.NewPostbackTemplateAction("Ointment", "/add-expense/health/ointment", ""),
+			),
+		)
+
+		altText = "Please take care of yourself :)"
 
 		valid = true
 	} else if splitted[2] == "other" {
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTextMessage("OTHER OK!"),
-		).Do(); err != nil {
-			return
-		}
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Payment", "Do you pay for something?",
+				linebot.NewPostbackTemplateAction("Tax", "/add-expense/other/tax", ""),
+				linebot.NewPostbackTemplateAction("Bill", "/add-expense/other/bill", ""),
+				linebot.NewPostbackTemplateAction("Rent", "/add-expense/other/rent", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Other Needs", "You don't know what you need until you need it",
+				linebot.NewPostbackTemplateAction("Toiletries", "/add-expense/other/toiletries", ""),
+				linebot.NewPostbackTemplateAction("Electronic", "/add-expense/other/electronic", ""),
+				linebot.NewPostbackTemplateAction("Tools", "/add-expense/other/tools", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Undescribable", "Describe for me please!",
+				linebot.NewPostbackTemplateAction("Tell Me", "/add-expense/other/undescribable", ""),
+				linebot.NewPostbackTemplateAction("", "", ""),
+				linebot.NewURITemplateAction("Go to Our Shop", "https://tokopedia.com/elefashionshop"),
+			),
+		)
+
+		altText = "Tell me!! What do you cost for?  -.-"
 
 		valid = true
 	}
