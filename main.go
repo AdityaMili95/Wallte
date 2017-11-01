@@ -328,6 +328,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	lenSplitted := len(splitted)
 	var template linebot.Template
 	altText := ""
+	valid := false
 
 	if lenSplitted == 2 {
 
@@ -368,18 +369,19 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
-				imageURL, "hoge", "fuga",
-				linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
-				linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+				imageURL, "Daily Food", "Food you must be spent everyday to make sure you are alive!",
+				linebot.NewPostbackTemplateAction("Breakfast", "/add-expense/food/breakfast", ""),
+				linebot.NewPostbackTemplateAction("Lunch", "/add-expense/food/lunch", ""),
+				linebot.NewPostbackTemplateAction("Dinner", "/add-expense/food/dinner", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "hoge", "fuga",
-				linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
-				linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+				imageURL, "Side Food", "Maybe you eat this food just for fun",
+				linebot.NewPostbackTemplateAction("Snack", "/add-expense/food/snack", ""),
+				linebot.NewPostbackTemplateAction("Beverages", "/add-expense/food/beverages", ""),
 			),
 		)
-
-		altText = "What type of food do you buy?"
+		altText = "What type of food did you buy?"
+		valid = true
 	} else if splitted[2] == "transport" {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
@@ -387,6 +389,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		).Do(); err != nil {
 			return
 		}
+
+		valid = true
 	} else if splitted[2] == "social" {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
@@ -401,6 +405,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		).Do(); err != nil {
 			return
 		}
+
+		valid = true
 	} else if splitted[2] == "other" {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
@@ -408,13 +414,17 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		).Do(); err != nil {
 			return
 		}
+
+		valid = true
 	}
 
-	if _, err := bot.ReplyMessage(
-		event.ReplyToken,
-		linebot.NewTemplateMessage(altText, template),
-	).Do(); err != nil {
-		log.Print(err)
+	if valid {
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage(altText, template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
 	}
 }
 
