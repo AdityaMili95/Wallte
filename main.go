@@ -394,13 +394,13 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				linebot.NewPostbackTemplateAction("Taxi", "/add-expense/transport/taxi", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Public Transportation #2", "There's a lot of public transportation out there! a list is not enough",
+				imageURL, "Public Transportation #2", "There's a lot of public transportation out there!",
 				linebot.NewPostbackTemplateAction("Plane ", "/add-expense/transport/plane", ""),
 				linebot.NewPostbackTemplateAction("Online Ride", "/add-expense/transport/online", ""),
 				linebot.NewPostbackTemplateAction("Ship ", "/add-expense/transport/ship", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "More Personal Ride", "More comfortable and give you extra space for your own personal area",
+				imageURL, "More Personal Ride", "More comfortable and give you extra space",
 				linebot.NewPostbackTemplateAction("Car", "/add-expense/transport/car", ""),
 				linebot.NewPostbackTemplateAction("MotorCycle", "/add-expense/transport/motorcycle", ""),
 				linebot.NewPostbackTemplateAction("Bicycle", "/add-expense/transport/bicycle", ""),
