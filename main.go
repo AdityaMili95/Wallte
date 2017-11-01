@@ -386,6 +386,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	mainType := strings.Split(message.Text, "/")
 	lenSplitted := len(mainType)
+	valid := false
 
 	msgCategory := ""
 	if lenSplitted > 1 {
@@ -393,40 +394,21 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
+		valid = true
 		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
-
+		valid = true
 	} else if msgCategory == PLAN {
-
+		valid = true
 	}
 
 	if !exist {
 		data = initDataWallet(userID, roomID, groupID, msgType)
-		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
-
-	}
-	/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
-		log.Print(err)
-	}*/
-	/*imageURL := "https://drive.google.com/file/d/0Bx6cTEFypiiNaHVTcXV5VkFpbFE/view?usp=sharing"
-	template := linebot.NewButtonsTemplate(
-		imageURL, "My button sample"+message.Text, "Hello, my button",
-		linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
-		linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
-		linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
-		linebot.NewMessageTemplateAction("Say message", "Rice=米"),
-	)
-	if _, err := bot.ReplyMessage(
-		event.ReplyToken,
-		linebot.NewTemplateMessage("Buttons alt text", template),
-	).Do(); err != nil {
-		return
+	} else if valid {
+		data.Data.Last_Action = LastAction{}
 	}
 
-	responseText, _ := session.Talk(message.Text)
-	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
-		log.Print(err)
-	}*/
+	prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 }
 
 func handleSticker(event *linebot.Event, message *linebot.StickerMessage) {
@@ -472,14 +454,6 @@ func handlePostback(event *linebot.Event) {
 	}
 
 	prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
-
-	/*if _, err := bot.ReplyMessage(
-		event.ReplyToken,
-		linebot.NewTextMessage(data+" OK!"),
-	).Do(); err != nil {
-		log.Println(err)
-	}*/
-
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -563,6 +537,30 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				event.ReplyToken,
 				linebot.NewTemplateMessage("Datetime pickers alt text", template),
 			).Do(); err != nil {
+				log.Print(err)
+			}*/
+
+			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" OK!")).Do(); err != nil {
+				log.Print(err)
+			}*/
+
+			/*imageURL := "https://drive.google.com/file/d/0Bx6cTEFypiiNaHVTcXV5VkFpbFE/view?usp=sharing"
+			template := linebot.NewButtonsTemplate(
+				imageURL, "My button sample"+message.Text, "Hello, my button",
+				linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
+				linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+				linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
+				linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+			)
+			if _, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTemplateMessage("Buttons alt text", template),
+			).Do(); err != nil {
+				return
+			}
+
+			responseText, _ := session.Talk(message.Text)
+			if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do(); err != nil {
 				log.Print(err)
 			}*/
 
