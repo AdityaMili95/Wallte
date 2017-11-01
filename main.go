@@ -375,21 +375,32 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				linebot.NewPostbackTemplateAction("Dinner", "/add-expense/food/dinner", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Side Food", "Maybe you eat this food just for fun",
+				imageURL, "Side Food", "Maybe you eat this food just for fun!",
 				linebot.NewPostbackTemplateAction("Snack", "/add-expense/food/snack", ""),
+				linebot.NewPostbackTemplateAction("Candy", "/add-expense/food/candy", ""),
 				linebot.NewPostbackTemplateAction("Beverages", "/add-expense/food/beverages", ""),
 			),
 		)
 		altText = "What type of food did you buy?"
 		valid = true
-	} else if splitted[2] == "transport" {
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTextMessage("TRANSPORT OK!"),
-		).Do(); err != nil {
-			return
-		}
 
+	} else if splitted[2] == "transport" {
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Public Transportation", "Its cheap but you need to put extra effort!",
+				linebot.NewPostbackTemplateAction("Bus", "/add-expense/food/breakfast", ""),
+				linebot.NewPostbackTemplateAction("Train", "/add-expense/food/lunch", ""),
+				linebot.NewPostbackTemplateAction("Plane ", "/add-expense/food/dinner", ""),
+				linebot.NewPostbackTemplateAction("Ship ", "/add-expense/food/dinner", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "My Vehicle", "More comfortable and give you extra space for your own personal area",
+				linebot.NewPostbackTemplateAction("Car", "/add-expense/food/snack", ""),
+				linebot.NewPostbackTemplateAction("Beverages", "/add-expense/food/beverages", ""),
+			),
+		)
+		altText = "What type of transportation did you ride?"
 		valid = true
 	} else if splitted[2] == "social" {
 		if _, err := bot.ReplyMessage(
