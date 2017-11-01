@@ -401,7 +401,6 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if !exist {
-		fmt.Println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
 		data = initDataWallet(userID, roomID, groupID, msgType)
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 
@@ -445,6 +444,17 @@ func handleMessage(event *linebot.Event) {
 		handleTextMessage(event, message)
 	case *linebot.StickerMessage:
 		handleSticker(event, message)
+	}
+}
+
+func handlePostback(event *linebot.Event) {
+	data := event.Postback.Data
+
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTextMessage(data+" OK!"),
+	).Do(); err != nil {
+		log.Println(err)
 	}
 }
 
