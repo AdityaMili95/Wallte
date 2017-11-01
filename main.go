@@ -437,7 +437,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				linebot.NewPostbackTemplateAction("Rental", "/add-expense/fun/rental", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Anything Else", "Tell me what you are doing!!",
+				imageURL, "Anything Else", "Tell me what are you doing!!",
 				linebot.NewPostbackTemplateAction("Club", "/add-expense/fun/club", ""),
 				linebot.NewPostbackTemplateAction("Bar", "/add-expense/fun/bar", ""),
 				linebot.NewPostbackTemplateAction("Park", "/add-expense/fun/park", ""),
@@ -482,7 +482,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			linebot.NewCarouselColumn(
 				imageURL, "Undescribable", "Describe for me please!",
 				linebot.NewPostbackTemplateAction("Tell Me", "/add-expense/other/undescribable", ""),
-				linebot.NewPostbackTemplateAction("", "", ""),
+				linebot.NewURITemplateAction("Visit Author", "http://adityamili.com"),
 				linebot.NewURITemplateAction("Go to Our Shop", "https://tokopedia.com/elefashionshop"),
 			),
 		)
