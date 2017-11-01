@@ -389,15 +389,24 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Public Transportation", "Its cheap but you need to put extra effort!",
-				linebot.NewPostbackTemplateAction("Bus", "/add-expense/food/breakfast", ""),
-				linebot.NewPostbackTemplateAction("Train", "/add-expense/food/lunch", ""),
-				linebot.NewPostbackTemplateAction("Plane ", "/add-expense/food/dinner", ""),
-				linebot.NewPostbackTemplateAction("Ship ", "/add-expense/food/dinner", ""),
+				linebot.NewPostbackTemplateAction("Bus", "/add-expense/transport/bus", ""),
+				linebot.NewPostbackTemplateAction("Train", "/add-expense/transport/train", ""),
+				linebot.NewPostbackTemplateAction("Plane ", "/add-expense/transport/plane", ""),
+				linebot.NewPostbackTemplateAction("Ship ", "/add-expense/transport/ship", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "My Vehicle", "More comfortable and give you extra space for your own personal area",
-				linebot.NewPostbackTemplateAction("Car", "/add-expense/food/snack", ""),
-				linebot.NewPostbackTemplateAction("Beverages", "/add-expense/food/beverages", ""),
+				imageURL, " More Personal Ride", "More comfortable and give you extra space for your own personal area",
+				linebot.NewPostbackTemplateAction("Car", "/add-expense/transport/car", ""),
+				linebot.NewPostbackTemplateAction("MotorCycle", "/add-expense/transport/motorcycle", ""),
+				linebot.NewPostbackTemplateAction("BiCycle", "/add-expense/transport/bicycle", ""),
+				linebot.NewPostbackTemplateAction("Online Ride", "/add-expense/transport/online", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Others", "Hmmm tell me about ride!",
+				linebot.NewPostbackTemplateAction("Traffic", "/add-expense/transport/traffic", ""),
+				linebot.NewPostbackTemplateAction("Parking", "/add-expense/transport/parking", ""),
+				linebot.NewPostbackTemplateAction("Ticket", "/add-expense/transport/ticket", ""),
+				linebot.NewPostbackTemplateAction("Reparation", "/add-expense/transport/reparation", ""),
 			),
 		)
 		altText = "What type of transportation did you ride?"
