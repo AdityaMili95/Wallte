@@ -153,8 +153,18 @@ func executeInsert(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO wallte_data(user_id,room_id,group_id,JSON) VALUES('$1','$2','$3','$4')", userID, roomID, groupID, json)
+	stmt, err := tx.Prepare("INSERT INTO wallte_data(user_id,room_id,group_id,JSON) VALUES (?,?,?,?)")
+	if err != nil {
+		log.Println(err)
+	}
+
+	_, err = stmt.Exec(userID, roomID, groupID, json)
+	if err != nil {
+		log.Println(err)
+	}
+
 	tx.Commit()
+	stmt.Close()
 }
 
 func executeUpdate(json string, userID string, roomID string, groupID string) {
@@ -165,8 +175,17 @@ func executeUpdate(json string, userID string, roomID string, groupID string) {
 	}
 	defer db.Close()
 	tx := db.MustBegin()
-	tx.MustExec("update wallte_data set JSON='$1' where user_id='$2' and room_id='$3' and group_id='$4'", json, userID, roomID, groupID)
+	stmt, err := tx.Prepare("update wallte_data set JSON=? where user_id=? and room_id=? and group_id=?")
+	if err != nil {
+		log.Println(err)
+	}
+
+	_, err = stmt.Exec(json, userID, roomID, groupID)
+	if err != nil {
+		log.Println(err)
+	}
 	tx.Commit()
+	stmt.Close()
 }
 
 func Marshal(data interface{}) (string, error) {
