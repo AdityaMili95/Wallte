@@ -476,6 +476,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			handleMessage(event)
 
 		} else if event.Type == linebot.EventTypePostback {
+
+			handlePostback(event)
 			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
 				log.Print(err)
 			}*/
