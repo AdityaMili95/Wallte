@@ -369,14 +369,14 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
-	} /* else {
+	} else {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
 			linebot.NewTextMessage(" OK!"),
 		).Do(); err != nil {
 			return
 		}
-	}*/
+	}
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
@@ -448,14 +448,38 @@ func handleMessage(event *linebot.Event) {
 }
 
 func handlePostback(event *linebot.Event) {
-	data := event.Postback.Data
+	msg := event.Postback.Data
+	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 
-	if _, err := bot.ReplyMessage(
+	if !exist {
+		return
+	}
+
+	mainType := strings.Split(msg, "/")
+	lenSplitted := len(mainType)
+
+	msgCategory := ""
+	if lenSplitted > 1 {
+		msgCategory = mainType[1]
+	}
+
+	if msgCategory == ADD_EXPENSE {
+		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+	} else if msgCategory == ADD_INCOME {
+
+	} else if msgCategory == PLAN {
+
+	}
+
+	prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
+
+	/*if _, err := bot.ReplyMessage(
 		event.ReplyToken,
 		linebot.NewTextMessage(data+" OK!"),
 	).Do(); err != nil {
 		log.Println(err)
-	}
+	}*/
+
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -472,11 +496,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
-
 			handleMessage(event)
-
 		} else if event.Type == linebot.EventTypePostback {
-
 			handlePostback(event)
 			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
 				log.Print(err)
