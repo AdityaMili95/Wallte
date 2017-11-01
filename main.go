@@ -326,10 +326,12 @@ func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet,
 func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
+	var template linebot.Template
+	altText := ""
 
 	if lenSplitted == 2 {
 
-		template := linebot.NewImageCarouselTemplate(
+		template = linebot.NewImageCarouselTemplate(
 			linebot.NewImageCarouselColumn(
 				imageURL,
 				linebot.NewPostbackTemplateAction("Food", "/add-expense/food", ""),
@@ -363,12 +365,21 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		}
 
 	} else if splitted[2] == "food" {
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTextMessage("FOOD OK!"),
-		).Do(); err != nil {
-			return
-		}
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "hoge", "fuga",
+				linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
+				linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "hoge", "fuga",
+				linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
+				linebot.NewMessageTemplateAction("Say message", "Rice=米"),
+			),
+		)
+
+		altText = "What type of food do you buy?"
 	} else if splitted[2] == "transport" {
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
@@ -397,6 +408,13 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		).Do(); err != nil {
 			return
 		}
+	}
+
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage(altText, template),
+	).Do(); err != nil {
+		log.Print(err)
 	}
 }
 
