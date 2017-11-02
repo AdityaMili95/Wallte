@@ -583,6 +583,11 @@ func replyTextMessage(event *linebot.Event, text string) {
 	}
 }
 
+func CancelAction(data *DataWallet) *DataWallet {
+	data.Data.Last_Action = &LastAction{}
+	return data
+}
+
 func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 
 	if data.Data.Last_Action.Price == 0 {
@@ -591,11 +596,14 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		if err == nil && val > 0 {
 
 		} else if err != nil {
-			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!! #-.-#")
+			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\nCancelled #-.-#")
+			data = CancelAction(data)
 		} else if val < 1 {
-			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost -.-")
+			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\nCancelled -.-")
+			data = CancelAction(data)
 		}
 
+		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 		return
 	}
 
