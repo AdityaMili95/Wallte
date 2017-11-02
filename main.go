@@ -556,7 +556,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		valid = true
 	} else if lenSplitted == 4 && okay {
-		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("Input Data Dong!")).Do(); err != nil {
+		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("How much you cost (!)?\n Input number please (oops)")).Do(); err != nil {
 			log.Print(err)
 		}
 
