@@ -119,7 +119,6 @@ type LastAction struct {
 	Keyword     string
 	Description string
 	Price       int
-	Category    string
 }
 
 type Info struct {
@@ -389,6 +388,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	altText := ""
 	valid := false
 	okay := false
+	keyword := "/" + strings.Join(splitted, "/")
 	var info TransactionInfo
 
 	if lenSplitted == 4 {
@@ -556,13 +556,14 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		valid = true
 	} else if lenSplitted == 4 && okay {
-		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("How much you cost (!)?\n Input number please (oops)")).Do(); err != nil {
+		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("How much did you cost ?\nInput number please:")).Do(); err != nil {
 			log.Print(err)
 		}
 
-		fmt.Println(info)
+		data.Data.Last_Action = LastAction{Keyword: keyword, Status: true}
+		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 	} else {
-
+		log.Println(info)
 	}
 
 	if valid {
@@ -582,7 +583,6 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	mainType := strings.Split(message.Text, "/")
 	lenSplitted := len(mainType)
-	valid := false
 
 	msgCategory := ""
 	if lenSplitted > 1 {
@@ -590,21 +590,18 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		valid = true
 		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
-		valid = true
 	} else if msgCategory == PLAN {
-		valid = true
 	}
 
 	if !exist {
 		data = initDataWallet(userID, roomID, groupID, msgType)
-	} else if valid {
+		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
+	} /* else if valid {
 		data.Data.Last_Action = LastAction{}
-	}
+	}*/
 
-	prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 }
 
 func handleSticker(event *linebot.Event, message *linebot.StickerMessage) {
