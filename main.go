@@ -597,18 +597,32 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			),
 		)
 
-		altText = "Tell me!! What do you cost for?  -.-"
+		altText = "Tell me!! What do you cost for?  0x10009A"
 
 		valid = true
-	} else if lenSplitted == 4 && okay {
+	} else if exist && lenSplitted == 4 && okay {
 		replyTextMessage(event, "How much did you cost ?\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 		return false
-	} else if lenSplitted == 5 && splitted[2] == "confirm" {
+	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
-			replyTextMessage(event, "Oops your confirmation is outdated :(")
+
+			template := linebot.NewImageCarouselTemplate(
+				linebot.NewImageCarouselColumn(
+					imageURL,
+					linebot.NewDatetimePickerTemplateAction("datetime", "DATETIME", "datetime", "", "", ""),
+				),
+			)
+			if _, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTemplateMessage("Image carousel alt text", template),
+			).Do(); err != nil {
+
+			}
+
+			replyTextMessage(event, "Oops your confirmation is outdated 0x100088")
 			return false
 		} else if splitted[3] == "yes" {
 			year, month, day, hour, minute, _ := GetTime()
@@ -649,9 +663,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				SpentType:    data.Data.Last_Action.SpentType,
 			})
 
-			replyTextMessage(event, "Expense Added! $_$")
+			replyTextMessage(event, "Expense Added! 0x100097")
 		} else {
-			replyTextMessage(event, "Cancelled! @_@")
+			replyTextMessage(event, "Cancelled! 0x10007E")
 		}
 
 	}
@@ -702,10 +716,10 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 			data.Data.Last_Action.Price = val
 			replyTextMessage(event, "Give the description below!")
 		} else if err != nil {
-			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled\n#-.-#")
+			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled 0x100085")
 			data = CancelAction(data)
 		} else if val < 1 {
-			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\n\nCancelled\n-.-")
+			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\n\nCancelled 0x10009E")
 			data = CancelAction(data)
 		}
 
