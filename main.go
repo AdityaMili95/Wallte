@@ -716,10 +716,10 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 			data.Data.Last_Action.Price = val
 			replyTextMessage(event, "Give the description below!")
 		} else if err != nil {
-			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled 0x100085")
+			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled \u100085")
 			data = CancelAction(data)
 		} else if val < 1 {
-			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\n\nCancelled 0x10009E")
+			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\n\nCancelled \u10009E")
 			data = CancelAction(data)
 		}
 
