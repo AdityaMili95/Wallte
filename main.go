@@ -42,6 +42,62 @@ const (
 	GROUP       = 3
 )
 
+var keyToInfo = map[string]map[string]TransactionInfo{
+	"food": map[string]TransactionInfo{
+		"breakfast": TransactionInfo{SpentType: "Breakfast", Category: "Food", SubCategory: "Daily Food"},
+		"lunch":     TransactionInfo{SpentType: "Lunch", Category: "Food", SubCategory: "Daily Food"},
+		"dinner":    TransactionInfo{SpentType: "Dinner", Category: "Food", SubCategory: "Daily Food"},
+		"snack":     TransactionInfo{SpentType: "Snack", Category: "Food", SubCategory: "Side Food"},
+		"grocery":   TransactionInfo{SpentType: "Grocery", Category: "Food", SubCategory: "Side Food"},
+		"beverages": TransactionInfo{SpentType: "Beverages", Category: "Food", SubCategory: "Side Food"},
+	},
+	"transport": map[string]TransactionInfo{
+		"bus":        TransactionInfo{SpentType: "Bus", Category: "Transport", SubCategory: "Public Transportation #1"},
+		"train":      TransactionInfo{SpentType: "Train", Category: "Transport", SubCategory: "Public Transportation #1"},
+		"taxi":       TransactionInfo{SpentType: "Taxi", Category: "Transport", SubCategory: "Public Transportation #1"},
+		"plane":      TransactionInfo{SpentType: "Plane", Category: "Transport", SubCategory: "Public Transportation #2"},
+		"online":     TransactionInfo{SpentType: "Online Ride", Category: "Transport", SubCategory: "Public Transportation #2"},
+		"ship":       TransactionInfo{SpentType: "Ship", Category: "Transport", SubCategory: "Public Transportation #2"},
+		"car":        TransactionInfo{SpentType: "Car", Category: "Transport", SubCategory: "More Personal Ride"},
+		"motorcycle": TransactionInfo{SpentType: "Motorcycle", Category: "Transport", SubCategory: "More Personal Ride"},
+		"bicycle":    TransactionInfo{SpentType: "Bicycle", Category: "Transport", SubCategory: "More Personal Ride"},
+		"traffic":    TransactionInfo{SpentType: "Traffic", Category: "Transport", SubCategory: "Others"},
+		"parking":    TransactionInfo{SpentType: "Parking", Category: "Transport", SubCategory: "Others"},
+		"ticket":     TransactionInfo{SpentType: "Ticket", Category: "Transport", SubCategory: "Others"},
+	},
+	"social": map[string]TransactionInfo{
+		"movie":       TransactionInfo{SpentType: "Movie", Category: "Social", SubCategory: "Fun"},
+		"music":       TransactionInfo{SpentType: "Music", Category: "Social", SubCategory: "Fun"},
+		"gift":        TransactionInfo{SpentType: "Gift", Category: "Social", SubCategory: "Fun"},
+		"clothes":     TransactionInfo{SpentType: "Clothes", Category: "Social", SubCategory: "Shopping"},
+		"accessories": TransactionInfo{SpentType: "Accessories", Category: "Social", SubCategory: "Shopping"},
+		"cosmetic":    TransactionInfo{SpentType: "Cosmetic", Category: "Social", SubCategory: "Shopping"},
+		"voucher":     TransactionInfo{SpentType: "Voucher", Category: "Social", SubCategory: "Gaming"},
+		"bet":         TransactionInfo{SpentType: "Bet", Category: "Social", SubCategory: "Gaming"},
+		"rental":      TransactionInfo{SpentType: "Rental", Category: "Social", SubCategory: "Gaming"},
+		"club":        TransactionInfo{SpentType: "Club", Category: "Social", SubCategory: "Anything Else"},
+		"bar":         TransactionInfo{SpentType: "Bar", Category: "Social", SubCategory: "Anything Else"},
+		"park":        TransactionInfo{SpentType: "Park", Category: "Social", SubCategory: "Anything Else"},
+	},
+	"life": map[string]TransactionInfo{
+		"checkup":    TransactionInfo{SpentType: "Checkup", Category: "Life", SubCategory: "Health"},
+		"inpatient":  TransactionInfo{SpentType: "Inpatient", Category: "Life", SubCategory: "Health"},
+		"outpatient": TransactionInfo{SpentType: "Outpatient", Category: "Life", SubCategory: "Health"},
+		"vitamin":    TransactionInfo{SpentType: "Vitamin", Category: "Life", SubCategory: "Treatment"},
+		"medicine":   TransactionInfo{SpentType: "Medicine", Category: "Life", SubCategory: "Treatment"},
+		"ointment":   TransactionInfo{SpentType: "Ointment", Category: "Life", SubCategory: "Treatment"},
+	},
+	"other": map[string]TransactionInfo{
+		"tax":            TransactionInfo{SpentType: "Tax", Category: "Other", SubCategory: "Payment"},
+		"bill":           TransactionInfo{SpentType: "Bill", Category: "Other", SubCategory: "Payment"},
+		"rent":           TransactionInfo{SpentType: "Rent", Category: "Other", SubCategory: "Payment"},
+		"toiletries":     TransactionInfo{SpentType: "Toiletries", Category: "Other", SubCategory: "Other Needs"},
+		"electronic":     TransactionInfo{SpentType: "Electronic", Category: "Other", SubCategory: "Other Needs"},
+		"tools":          TransactionInfo{SpentType: "Tools", Category: "Other", SubCategory: "Other Needs"},
+		"undescribeable": TransactionInfo{SpentType: "Undescribeable", Category: "Other", SubCategory: "Undescribeable"},
+	},
+}
+
 type DataWallet struct {
 	Data Wallet
 }
@@ -75,6 +131,9 @@ type TransactionInfo struct {
 	Price        int
 	Created_date time.Time
 	Planned_date time.Time
+	Category     string
+	SubCategory  string
+	SpentType    string
 }
 
 func main() {
@@ -329,6 +388,12 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	var template linebot.Template
 	altText := ""
 	valid := false
+	okay := false
+	var info TransactionInfo
+
+	if lenSplitted == 4 {
+		info, okay = keyToInfo[splitted[2]][splitted[3]]
+	}
 
 	if lenSplitted == 2 {
 
@@ -365,7 +430,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
-	} else if splitted[2] == "food" {
+	} else if lenSplitted == 3 && splitted[2] == "food" {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -384,7 +449,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "What type of food did you buy?"
 		valid = true
 
-	} else if splitted[2] == "transport" {
+	} else if lenSplitted == 3 && splitted[2] == "transport" {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -415,7 +480,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 		altText = "What type of transportation did you ride?"
 		valid = true
-	} else if splitted[2] == "social" {
+	} else if lenSplitted == 3 && splitted[2] == "social" {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -445,7 +510,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 		altText = "Wow you just socialize! What did you do?"
 		valid = true
-	} else if splitted[2] == "life" {
+	} else if lenSplitted == 3 && splitted[2] == "life" {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Health", "Your health is the most important!",
@@ -464,7 +529,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Please take care of yourself :)"
 
 		valid = true
-	} else if splitted[2] == "other" {
+	} else if lenSplitted == 3 && splitted[2] == "other" {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -480,8 +545,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				linebot.NewPostbackTemplateAction("Tools", "/add-expense/other/tools", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Undescribable", "Describe for me please!",
-				linebot.NewPostbackTemplateAction("Tell Me", "/add-expense/other/undescribable", ""),
+				imageURL, "Undescribeable", "Describe for me please!",
+				linebot.NewPostbackTemplateAction("Tell Me", "/add-expense/other/undescribeable", ""),
 				linebot.NewURITemplateAction("Visit Author", "http://adityamili.com"),
 				linebot.NewURITemplateAction("Go to Our Shop", "https://tokopedia.com/elefashionshop"),
 			),
@@ -490,6 +555,14 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Tell me!! What do you cost for?  -.-"
 
 		valid = true
+	} else if lenSplitted == 4 && okay {
+		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("Input Data Dong!")).Do(); err != nil {
+			log.Print(err)
+		}
+
+		fmt.Println(info)
+	} else {
+
 	}
 
 	if valid {
