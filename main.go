@@ -616,6 +616,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			profile, err := bot.GetProfile(event.Source.UserID).Do()
 			if err != nil {
 				name = profile.DisplayName
+			} else {
+				log.Println(err)
 			}
 
 			created_date := fmt.Sprintf("%d-%d-%d %d:%d", year, month, day, hour, minute)
@@ -802,6 +804,7 @@ func handlePostback(event *linebot.Event) {
 
 	mainType := strings.Split(msg, "/")
 	lenSplitted := len(mainType)
+	remove_last_action := false
 
 	msgCategory := ""
 	if lenSplitted > 3 {
@@ -809,13 +812,16 @@ func handlePostback(event *linebot.Event) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 
 	} else if msgCategory == PLAN {
 
 	}
 
+	if remove_last_action {
+		data.Data.Last_Action = &LastAction{}
+	}
 	prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 }
 
