@@ -621,7 +621,19 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			created_date := fmt.Sprintf("%d-%d-%d %d:%d", year, month, day, hour, minute)
 
 			if data.Data.Expense == nil {
-				data.Data.Expense = make(map[int]map[int]map[int][]TransactionInfo)
+				data.Data.Expense = map[int]map[int]map[int][]TransactionInfo{}
+			}
+
+			if data.Data.Expense[year] == nil {
+				data.Data.Expense[year] = map[int]map[int][]TransactionInfo{}
+			}
+
+			if data.Data.Expense[year][month] == nil {
+				data.Data.Expense[year][month] = map[int][]TransactionInfo{}
+			}
+
+			if data.Data.Expense[year][month][day] == nil {
+				data.Data.Expense[year][month][day] = []TransactionInfo{}
 			}
 
 			data.Data.Expense[year][month][day] = append(data.Data.Expense[year][month][day], TransactionInfo{
