@@ -111,7 +111,7 @@ type Wallet struct {
 	Expense      map[int]map[int][]TransactionInfo
 	Plan_Income  map[int]map[int][]TransactionInfo
 	Plan_Expense map[int]map[int][]TransactionInfo
-	Last_Action  LastAction
+	Last_Action  *LastAction
 }
 
 type LastAction struct {
@@ -560,7 +560,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
-		data.Data.Last_Action = LastAction{Keyword: keyword, Status: true}
+		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true}
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 	} else {
 		log.Println(info)
@@ -612,7 +612,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		data = initDataWallet(userID, roomID, groupID, msgType)
 		must_update = true
 	} else if remove_last_action {
-		data.Data.Last_Action = LastAction{}
+		data.Data.Last_Action = &LastAction{}
 		must_update = true
 	}
 
