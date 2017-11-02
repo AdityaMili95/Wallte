@@ -44,6 +44,21 @@ const (
 	GROUP       = 3
 )
 
+var monthToInt = map[string]int{
+	"January":   1,
+	"February":  2,
+	"March":     3,
+	"April":     4,
+	"May":       5,
+	"June":      6,
+	"July":      7,
+	"August":    8,
+	"September": 9,
+	"October":   10,
+	"November":  11,
+	"December":  12,
+}
+
 var keyToInfo = map[string]map[string]TransactionInfo{
 	"food": map[string]TransactionInfo{
 		"breakfast": TransactionInfo{SpentType: "Breakfast", Category: "Food", SubCategory: "Daily Food"},
@@ -122,6 +137,9 @@ type LastAction struct {
 	Description string
 	Price       int
 	Key         string
+	Category    string
+	SubCategory string
+	SpentType   string
 }
 
 type Info struct {
@@ -131,11 +149,12 @@ type Info struct {
 type TransactionInfo struct {
 	Created_by   string
 	Price        int
-	Created_date time.Time
-	Planned_date time.Time
+	Created_date string
+	Planned_date string
 	Category     string
 	SubCategory  string
 	SpentType    string
+	Description  string
 }
 
 type Option struct {
@@ -195,6 +214,14 @@ func GetRedis(key string) string {
 	return string(data)
 }
 
+func GetTime() (int, int, int, int, int, string) {
+	t := time.Now()
+	year, month, day := t.Date()
+	hour := t.Hour()
+	minute := t.Minute()
+	monthString := month.String()
+	return year, monthToInt[monthString], day, hour, minute, monthString
+}
 func SetRedis(key string, value string) {
 
 	err := Redis.Set(key, value, 0, 0, false, false)
@@ -407,9 +434,10 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	valid := false
 	okay := false
 	keyword := strings.Join(splitted, "/")
+	var info TransactionInfo
 
 	if lenSplitted == 4 {
-		_, okay = keyToInfo[splitted[2]][splitted[3]]
+		info, okay = keyToInfo[splitted[2]][splitted[3]]
 	}
 
 	if lenSplitted == 2 {
@@ -575,7 +603,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	} else if lenSplitted == 4 && okay {
 		replyTextMessage(event, "How much did you cost ?\n\nChat me the number please:")
 
-		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100)}
+		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 	} else if lenSplitted == 5 && splitted[2] == "confirm" {
 
@@ -583,9 +611,28 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			replyTextMessage(event, "Oops your confirmation is outdated :(")
 			return false
 		} else if splitted[3] == "yes" {
-			replyTextMessage(event, "YOU SAY YES")
+			year, month, day, hour, minute, _ := GetTime()
+			name := "-"
+			profile, err := bot.GetProfile(event.Source.UserID).Do()
+			if err != nil {
+				name = profile.DisplayName
+			}
+
+			created_date := fmt.Sprintf("%d-%d-%d %d:%d", year, month, day, hour, minute)
+
+			data.Data.Expense[year][month][day] = append(data.Data.Expense[year][month][day], TransactionInfo{
+				Created_by:   name,
+				Price:        data.Data.Last_Action.Price,
+				Description:  data.Data.Last_Action.Description,
+				Created_date: created_date,
+				Planned_date: "-",
+				Category:     data.Data.Last_Action.Category,
+				SubCategory:  data.Data.Last_Action.SubCategory,
+				SpentType:    data.Data.Last_Action.SpentType,
+			})
+
 		} else {
-			replyTextMessage(event, "YOU SAY NO")
+			replyTextMessage(event, "Cancelled! @_@")
 		}
 
 	}
@@ -648,10 +695,6 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 	}
 
 	if data.Data.Last_Action.Description == "" {
-		if text == "" {
-			text = "-"
-		}
-
 		data.Data.Last_Action.Description = text
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
