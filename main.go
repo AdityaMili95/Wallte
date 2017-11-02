@@ -578,17 +578,17 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 }
 
 func replyTextMessage(event *linebot.Event, text string) {
-	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do(); err != nil {
+	if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do(); err != nil {
 		log.Print(err)
 	}
 }
 
-func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet) {
+func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 
 	if data.Data.Last_Action.Price == 0 {
 		text := message.Text
 		val, err := strconv.Atoi(text)
-		if err == "nil" && val > 0 {
+		if err == nil && val > 0 {
 
 		} else if err != nil {
 			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!! #-.-#")
@@ -623,7 +623,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == PLAN {
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-		handleAskDetail(event, meesage, exist, userID, roomID, groupID, data, msgType)
+		handleAskDetail(event, message, userID, roomID, groupID, data, msgType)
 	} else {
 		// ga ada last action
 	}
