@@ -620,6 +620,10 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 			created_date := fmt.Sprintf("%d-%d-%d %d:%d", year, month, day, hour, minute)
 
+			if data.Data.Expense == nil {
+				data.Data.Expense = make(map[int]map[int]map[int][]TransactionInfo)
+			}
+
 			data.Data.Expense[year][month][day] = append(data.Data.Expense[year][month][day], TransactionInfo{
 				Created_by:   name,
 				Price:        data.Data.Last_Action.Price,
@@ -631,6 +635,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				SpentType:    data.Data.Last_Action.SpentType,
 			})
 
+			replyTextMessage(event, "Expense Added! $_$")
 		} else {
 			replyTextMessage(event, "Cancelled! @_@")
 		}
@@ -732,10 +737,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		rm := handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
-		if rm {
-			remove_last_action = true
-		}
+		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 
 	} else if msgCategory == PLAN {
