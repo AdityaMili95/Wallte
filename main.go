@@ -583,8 +583,10 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	mainType := strings.Split(message.Text, "/")
 	lenSplitted := len(mainType)
-
 	msgCategory := ""
+	remove_last_action := false
+	must_update := false
+
 	if lenSplitted > 1 {
 		msgCategory = mainType[1]
 	}
@@ -592,15 +594,31 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	if msgCategory == ADD_EXPENSE {
 		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
+
 	} else if msgCategory == PLAN {
+
+	} else if exist && data.LastAction != nil {
+		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("Ga kosong")).Do(); err != nil {
+			log.Print(err)
+		}
+	} else {
+		remove_last_action = true
+		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("kosong")).Do(); err != nil {
+			log.Print(err)
+		}
 	}
 
 	if !exist {
 		data = initDataWallet(userID, roomID, groupID, msgType)
-		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
-	} /* else if valid {
+		must_update = true
+	} else if remove_last_action {
 		data.Data.Last_Action = LastAction{}
-	}*/
+		must_update = true
+	}
+
+	if must_update {
+		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
+	}
 
 }
 
