@@ -136,6 +136,11 @@ type TransactionInfo struct {
 	SpentType    string
 }
 
+type Option struct {
+	Label  string
+	Action string
+}
+
 func main() {
 	var err error
 
@@ -557,9 +562,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		valid = true
 	} else if lenSplitted == 4 && okay {
-		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("How much did you cost ?\nInput number please:")).Do(); err != nil {
-			log.Print(err)
-		}
+		replyTextMessage(event, "How much did you cost ?\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true}
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
@@ -588,13 +591,28 @@ func CancelAction(data *DataWallet) *DataWallet {
 	return data
 }
 
+func confirmationMessage(event *linebot.Event, title string, one Option, two Option, tmplMessage string) {
+	template := linebot.NewConfirmTemplate(
+		title,
+		linebot.NewMessageTemplateAction(one.Label, one.Action),
+		linebot.NewMessageTemplateAction(two.Label, two.Action),
+	)
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage(tmplMessage, template),
+	).Do(); err != nil {
+		log.Println(err)
+	}
+}
+
 func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 
+	text := message.Text
 	if data.Data.Last_Action.Price == 0 {
-		text := message.Text
 		val, err := strconv.Atoi(text)
 		if err == nil && val > 0 {
-
+			data.Data.Last_Action.Price = val
+			replyTextMessage(event, "Give the description below!")
 		} else if err != nil {
 			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled\n#-.-#")
 			data = CancelAction(data)
@@ -605,6 +623,29 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 		return
+	}
+
+	if data.Data.Last_Action.Description == "" {
+		if text == "" {
+			text = "-"
+		}
+
+		data.Data.Last_Action.Description = text
+		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
+		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
+		trans := keyToInfo[mainType[1]][mainType[2]]
+		one := Option{
+			Label:  "YES",
+			Action: "/add-expense/confirm/yes",
+		}
+
+		two := Option{
+			Label:  "NO",
+			Action: "/add-expense/confirm/no",
+		}
+
+		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d", trans.Category, trans.SpentType, data.Data.Last_Action.Price)
+		confirmationMessage(event, title, one, two, "Confirm Your Expense!! ~.~")
 	}
 
 }
@@ -625,6 +666,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
+		remove_last_action = true
 		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 
