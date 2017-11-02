@@ -597,7 +597,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	} else if msgCategory == PLAN {
 
-	} else if exist && data.Data.Last_Action != nil {
+	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("Ga kosong")).Do(); err != nil {
 			log.Print(err)
 		}
