@@ -18,6 +18,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 	//"database/sql"
@@ -576,6 +577,30 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	}
 }
 
+func replyTextMessage(event *linebot.Event, text string) {
+	if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do(); err != nil {
+		log.Print(err)
+	}
+}
+
+func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet) {
+
+	if data.Data.Last_Action.Price == 0 {
+		text := message.Text
+		val, err := strconv.Atoi(text)
+		if err == "nil" && val > 0 {
+
+		} else if err != nil {
+			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!! #-.-#")
+		} else if val < 1 {
+			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost -.-")
+		}
+
+		return
+	}
+
+}
+
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
@@ -598,14 +623,9 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == PLAN {
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("Ga kosong")).Do(); err != nil {
-			log.Print(err)
-		}
+		handleAskDetail(event, meesage, exist, userID, roomID, groupID, data, msgType)
 	} else {
-		remove_last_action = true
-		if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("kosong")).Do(); err != nil {
-			log.Print(err)
-		}
+		// ga ada last action
 	}
 
 	if !exist {
