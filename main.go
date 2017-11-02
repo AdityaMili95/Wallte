@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -120,6 +121,7 @@ type LastAction struct {
 	Keyword     string
 	Description string
 	Price       int
+	Key         string
 }
 
 type Info struct {
@@ -152,6 +154,16 @@ func main() {
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
+}
+
+func GenerateKey(strlen int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	result := make([]byte, strlen)
+	for i := range result {
+		result[i] = chars[r.Intn(len(chars))]
+	}
+	return string(result)
 }
 
 func connectRedis() {
@@ -564,7 +576,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	} else if lenSplitted == 4 && okay {
 		replyTextMessage(event, "How much did you cost ?\n\nChat me the number please:")
 
-		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true}
+		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100)}
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 	} else {
 		log.Println(info)
@@ -634,14 +646,15 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo[mainType[2]][mainType[3]]
+		key := data.Data.Last_Action.Key
 		one := Option{
 			Label:  "YES",
-			Action: "/add-expense/confirm/yes",
+			Action: "/add-expense/confirm/yes/" + key,
 		}
 
 		two := Option{
 			Label:  "NO",
-			Action: "/add-expense/confirm/no",
+			Action: "/add-expense/confirm/no/" + key,
 		}
 
 		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
