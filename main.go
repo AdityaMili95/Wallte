@@ -406,7 +406,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	altText := ""
 	valid := false
 	okay := false
-	keyword := "/" + strings.Join(splitted, "/")
+	keyword := strings.Join(splitted, "/")
 
 	if lenSplitted == 4 {
 		_, okay = keyToInfo[splitted[2]][splitted[3]]
@@ -616,8 +616,8 @@ func CancelAction(data *DataWallet) *DataWallet {
 func confirmationMessage(event *linebot.Event, title string, one Option, two Option, tmplMessage string) {
 	template := linebot.NewConfirmTemplate(
 		title,
-		linebot.NewMessageTemplateAction(one.Label, one.Action),
-		linebot.NewMessageTemplateAction(two.Label, two.Action),
+		linebot.NewPostbackTemplateAction(one.Label, one.Action, ""),
+		linebot.NewPostbackTemplateAction(two.Label, two.Action, ""),
 	)
 	if _, err := bot.ReplyMessage(
 		event.ReplyToken,
