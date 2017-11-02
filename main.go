@@ -109,10 +109,10 @@ type Wallet struct {
 	RoomInfo     Info
 	GroupInfo    Info
 	Money        int
-	Income       map[int]map[int][]TransactionInfo
-	Expense      map[int]map[int][]TransactionInfo
-	Plan_Income  map[int]map[int][]TransactionInfo
-	Plan_Expense map[int]map[int][]TransactionInfo
+	Income       map[int]map[int]map[int][]TransactionInfo
+	Expense      map[int]map[int]map[int][]TransactionInfo
+	Plan_Income  map[int]map[int]map[int][]TransactionInfo
+	Plan_Expense map[int]map[int]map[int][]TransactionInfo
 	Last_Action  *LastAction
 }
 
@@ -399,7 +399,7 @@ func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet,
 	return userID, roomID, groupID, data, exist, msgType
 }
 
-func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
+func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) bool {
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
 	var template linebot.Template
@@ -407,10 +407,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	valid := false
 	okay := false
 	keyword := "/" + strings.Join(splitted, "/")
-	var info TransactionInfo
 
 	if lenSplitted == 4 {
-		info, okay = keyToInfo[splitted[2]][splitted[3]]
+		_, okay = keyToInfo[splitted[2]][splitted[3]]
 	}
 
 	if lenSplitted == 2 {
@@ -578,8 +577,17 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100)}
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
-	} else {
-		log.Println(info)
+	} else if lenSplitted == 5 && splitted[2] == "confirm" {
+
+		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
+			replyTextMessage(event, "Oops your confirmation is outdated :(")
+			return false
+		} else if splitted[3] == "yes" {
+			replyTextMessage(event, "YOU SAY YES")
+		} else {
+			replyTextMessage(event, "YOU SAY NO")
+		}
+
 	}
 
 	if valid {
@@ -590,6 +598,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 	}
+
+	return true
 }
 
 func replyTextMessage(event *linebot.Event, text string) {
@@ -679,8 +689,10 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action = true
-		handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		rm := handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		if rm {
+			remove_last_action = true
+		}
 	} else if msgCategory == ADD_INCOME {
 
 	} else if msgCategory == PLAN {
