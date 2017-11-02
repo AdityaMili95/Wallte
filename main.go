@@ -604,7 +604,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		replyTextMessage(event, "How much did you cost ?\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
-		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
+		return false
 	} else if lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
