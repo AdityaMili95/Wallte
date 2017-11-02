@@ -400,23 +400,23 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		template = linebot.NewImageCarouselTemplate(
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("Food", "/add-expense/food", ""),
+				linebot.NewPostbackTemplateAction("Food", "/add-expense/food", "/add-expense/food"),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("Transport", "/add-expense/transport", ""),
+				linebot.NewPostbackTemplateAction("Transport", "/add-expense/transport", "/add-expense/transport"),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("Social", "/add-expense/social", ""),
+				linebot.NewPostbackTemplateAction("Social", "/add-expense/social", "/add-expense/social"),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("Life", "/add-expense/life", ""),
+				linebot.NewPostbackTemplateAction("Life", "/add-expense/life", "/add-expense/life"),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("Other", "/add-expense/other", ""),
+				linebot.NewPostbackTemplateAction("Other", "/add-expense/other", "/add-expense/other"),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
