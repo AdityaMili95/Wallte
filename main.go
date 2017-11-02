@@ -633,7 +633,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		data.Data.Last_Action.Description = text
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
-		trans := keyToInfo[mainType[1]][mainType[2]]
+		trans := keyToInfo[mainType[2]][mainType[3]]
 		one := Option{
 			Label:  "YES",
 			Action: "/add-expense/confirm/yes",
@@ -644,7 +644,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 			Action: "/add-expense/confirm/no",
 		}
 
-		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d", trans.Category, trans.SpentType, data.Data.Last_Action.Price)
+		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
 		confirmationMessage(event, title, one, two, "Confirm Your Expense!! ~.~")
 	}
 
