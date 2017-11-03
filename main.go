@@ -725,6 +725,8 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		lastWeek := time.Now().AddDate(0, 0, -7)
 		now := time.Now()
 
+		log.Println(now.Format("2006-01-02T15:04"))
+
 		template := linebot.NewImageCarouselTemplate(
 
 			linebot.NewImageCarouselColumn(
