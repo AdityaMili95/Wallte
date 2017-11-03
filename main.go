@@ -135,6 +135,7 @@ type Wallet struct {
 	UserInfo     Info
 	RoomInfo     Info
 	GroupInfo    Info
+	Currency     string
 	Money        int
 	Income       map[int]map[int]map[int][]TransactionInfo
 	Expense      map[int]map[int]map[int][]TransactionInfo
@@ -416,6 +417,7 @@ func initDataWallet(userID string, roomID string, groupID string, msgType int) *
 			UserInfo:  userInfo,
 			RoomInfo:  roomInfo,
 			GroupInfo: groupInfo,
+			Currency:  "Rp",
 		},
 	}
 }
@@ -650,7 +652,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			Action: "/add-expense/confirm/no/" + key,
 		}
 
-		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, convertedDate)
+		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %s %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Currency, data.Data.Last_Action.Price, data.Data.Last_Action.Description, convertedDate)
 		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 
 		data.Data.Last_Action.Created_date = date
@@ -788,7 +790,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			Action: "/add-income/confirm/no/" + key,
 		}
 
-		title := fmt.Sprintf("Add This Income?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, convertedDate)
+		title := fmt.Sprintf("Add This Income?\U00100087\nCategory : %s\nType : %s\nCost : %s %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Currency, data.Data.Last_Action.Price, data.Data.Last_Action.Description, convertedDate)
 		confirmationMessage(event, title, one, two, "Confirm Your Income!! \U00100097")
 
 		data.Data.Last_Action.Created_date = date
