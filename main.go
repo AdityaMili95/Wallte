@@ -597,7 +597,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			),
 		)
 
-		altText = "Tell me!! What do you cost for?  0x10009A"
+		altText = "Tell me!! What do you cost for? \U0010009A"
 
 		valid = true
 	} else if exist && lenSplitted == 4 && okay {
@@ -622,7 +622,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 			}
 
-			replyTextMessage(event, "Oops your confirmation is outdated 0x100088")
+			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
 			return false
 		} else if splitted[3] == "yes" {
 			year, month, day, hour, minute, _ := GetTime()
@@ -663,9 +663,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				SpentType:    data.Data.Last_Action.SpentType,
 			})
 
-			replyTextMessage(event, "Expense Added! 0x100097")
+			replyTextMessage(event, "Expense Added! \U00100097")
 		} else {
-			replyTextMessage(event, "Cancelled! 0x10007E")
+			replyTextMessage(event, "Cancelled! \U0010007E")
 		}
 
 	}
@@ -714,7 +714,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		val, err := strconv.Atoi(text)
 		if err == nil && val > 0 {
 			data.Data.Last_Action.Price = val
-			replyTextMessage(event, "Give the description below!")
+			replyTextMessage(event, "Give the description below! \U0010009D")
 		} else if err != nil {
 			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled \U00100085")
 			data = CancelAction(data)
@@ -744,15 +744,12 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		}
 
 		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
-		confirmationMessage(event, title, one, two, "Confirm Your Expense!! ~.~")
+		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 	}
 
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
-
-	//text := fmt.Sprintf("\\%u\\%u \\%u\\%u %U%U %u%u %u%u %U %c %U \U00100078", 0x100078, 0x100078, "DBC0", "DC78", "DBC0", "DC78", 0xDBC0, 0xDC78, "DBC0", "DC78", '\U00100078', '\U00100078')
-	//replyTextMessage(event, text)
 
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 	//fmt.Println(data, exist, userID, groupID, roomID)
