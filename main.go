@@ -113,6 +113,12 @@ var keyToInfo = map[string]map[string]TransactionInfo{
 		"tools":          TransactionInfo{SpentType: "Tools", Category: "Other", SubCategory: "Other Needs"},
 		"undescribeable": TransactionInfo{SpentType: "Undescribeable", Category: "Other", SubCategory: "Undescribeable"},
 	},
+	"income": map[string]TransactionInfo{
+		"business":   TransactionInfo{SpentType: "Business", Category: "Income", SubCategory: "Business"},
+		"investment": TransactionInfo{SpentType: "Investment", Category: "Income", SubCategory: "Investment"},
+		"transfer":   TransactionInfo{SpentType: "Transfer", Category: "Income", SubCategory: "Transfer"},
+		"other":      TransactionInfo{SpentType: "Other", Category: "Income", SubCategory: "Other"},
+	},
 }
 
 type DataWallet struct {
@@ -482,7 +488,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTemplateMessage("Select Expense Category!!", template),
+			linebot.NewTemplateMessage("Select Expense Category \U00100058", template),
 		).Do(); err != nil {
 			log.Print(err)
 		}
@@ -503,7 +509,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				linebot.NewPostbackTemplateAction("Beverages", "/add-expense/food/beverages", ""),
 			),
 		)
-		altText = "What type of food did you buy?"
+		altText = "What type of food did you buy  \U00100055"
 		valid = true
 
 	} else if lenSplitted == 3 && splitted[2] == "transport" {
@@ -535,7 +541,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				//linebot.NewPostbackTemplateAction("Reparation", "/add-expense/transport/reparation", ""),
 			),
 		)
-		altText = "What type of transportation did you ride?"
+		altText = "What type of transportation did you ride?  \U00100049"
 		valid = true
 	} else if lenSplitted == 3 && splitted[2] == "social" {
 
@@ -565,7 +571,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				linebot.NewPostbackTemplateAction("Park", "/add-expense/fun/park", ""),
 			),
 		)
-		altText = "Wow you just socialize! What did you do?"
+		altText = "Wow you just socialize! What did you do  \U0010006A"
 		valid = true
 	} else if lenSplitted == 3 && splitted[2] == "life" {
 		template = linebot.NewCarouselTemplate(
@@ -583,7 +589,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			),
 		)
 
-		altText = "Please take care of yourself :)"
+		altText = "Please take care of yourself  \U001000B2"
 
 		valid = true
 	} else if lenSplitted == 3 && splitted[2] == "other" {
@@ -712,6 +718,13 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
 	var template linebot.Template
+	keyword := strings.Join(splitted, "/")
+	okay := false
+	var info TransactionInfo
+
+	if lenSplitted == 3 {
+		info, okay = keyToInfo["income"][splitted[2]]
+	}
 
 	if lenSplitted == 2 {
 		template = linebot.NewImageCarouselTemplate(
@@ -733,15 +746,21 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewURITemplateAction("Shop Now", "https://tokopedia.com/elefashionshop"),
+				linebot.NewURITemplateAction("Our Shop", "https://tokopedia.com/elefashionshop"),
 			),
 		)
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTemplateMessage("Select Income Type", template),
+			linebot.NewTemplateMessage("Select Income Type \U00100050", template),
 		).Do(); err != nil {
 			log.Print(err)
 		}
+
+	} else if lenSplitted == 3 && okay {
+		replyTextMessage(event, "Woww How much?!!\n\nChat me the number please \U0010007A : ")
+
+		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
+		return false
 	}
 	return true
 }
