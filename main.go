@@ -132,14 +132,15 @@ type Wallet struct {
 }
 
 type LastAction struct {
-	Status      bool
-	Keyword     string
-	Description string
-	Price       int
-	Key         string
-	Category    string
-	SubCategory string
-	SpentType   string
+	Status       bool
+	Keyword      string
+	Description  string
+	Price        int
+	Key          string
+	Category     string
+	SubCategory  string
+	SpentType    string
+	Created_date string
 }
 
 type Info struct {
@@ -214,14 +215,25 @@ func GetRedis(key string) string {
 	return string(data)
 }
 
-func GetTime() (int, int, int, int, int, string) {
-	t := time.Now()
+func GetTimeInfo(t time.Time) (int, int, int, int, int, string) {
 	year, month, day := t.Date()
 	hour := t.Hour()
 	minute := t.Minute()
 	monthString := month.String()
+
 	return year, monthToInt[monthString], day, hour, minute, monthString
 }
+
+func GetCurrentTime() (int, int, int, int, int, string) {
+	t := time.Now()
+	return GetTimeInfo(t)
+}
+
+func ParseTime(date string) (int, int, int, int, int, string) {
+	t, _ := time.Parse("2006-01-02T15:04", date)
+	return GetTimeInfo(t)
+}
+
 func SetRedis(key string, value string) {
 
 	err := Redis.Set(key, value, 0, 0, false, false)
@@ -612,10 +624,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			return false
 		}
 
-		log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", event.Postback.Params.Datetime)
+		//log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", event.Postback.Params.Datetime)
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo[mainType[2]][mainType[3]]
 		key := data.Data.Last_Action.Key
+		date := event.Postback.Params.Datetime
 		one := Option{
 			Label:  "YES",
 			Action: "/add-expense/confirm/yes/" + key,
@@ -626,16 +639,21 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			Action: "/add-expense/confirm/no/" + key,
 		}
 
-		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
+		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s Date:%s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
 		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 
+		data.Data.Last_Action.Created_date = date
+		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
+		return false
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
 			return false
 		} else if splitted[3] == "yes" {
-			year, month, day, hour, minute, _ := GetTime()
+
+			created_date := data.Data.Last_Action.Created_date
+			year, month, day, _, _, _ := ParseTime(created_date)
 			name := "-"
 			profile, err := bot.GetProfile(event.Source.UserID).Do()
 			if err != nil {
@@ -643,8 +661,6 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			} else {
 				log.Println(err)
 			}
-
-			created_date := fmt.Sprintf("%d-%d-%d %d:%d", year, month, day, hour, minute)
 
 			if data.Data.Expense == nil {
 				data.Data.Expense = map[int]map[int]map[int][]TransactionInfo{}
