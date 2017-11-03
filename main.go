@@ -605,9 +605,27 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 		return false
-	} else if exist && lenSplitted == 5 && splitted[4] == "datepick" && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+	} else if exist && lenSplitted == 6 && splitted[4] == "datepick" {
 
-		replyTextMessage(event, "UHUI")
+		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[5] {
+			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
+			return false
+		}
+		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
+		trans := keyToInfo[mainType[2]][mainType[3]]
+		key := data.Data.Last_Action.Key
+		one := Option{
+			Label:  "YES",
+			Action: "/add-expense/confirm/yes/" + key,
+		}
+
+		two := Option{
+			Label:  "NO",
+			Action: "/add-expense/confirm/no/" + key,
+		}
+
+		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
+		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
@@ -725,19 +743,11 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		lastWeek := time.Now().AddDate(0, 0, -7)
 		now := time.Now()
 
-		nowString := strings.Split(time.Now().Format("2006-01-02T15:04"), " ")
-		startTime := nowString[0]
-		if len(nowString) > 1 {
-			startTime = nowString[1]
-		}
-
-		log.Println(startTime)
-
 		template := linebot.NewImageCarouselTemplate(
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick", "datetime", now.Format("2006-01-02T15:04"), now.Format("2006-01-02T15:04"), lastWeek.Format("2006-01-02T00:00")),
+				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", now.Format("2006-01-02T15:04"), now.Format("2006-01-02T15:04"), lastWeek.Format("2006-01-02T00:00")),
 			),
 		)
 		if _, err := bot.ReplyMessage(
@@ -746,22 +756,6 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		).Do(); err != nil {
 			log.Println(err)
 		}
-
-		/*mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
-		trans := keyToInfo[mainType[2]][mainType[3]]
-		key := data.Data.Last_Action.Key
-		one := Option{
-			Label:  "YES",
-			Action: "/add-expense/confirm/yes/" + key,
-		}
-
-		two := Option{
-			Label:  "NO",
-			Action: "/add-expense/confirm/no/" + key,
-		}
-
-		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
-		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")*/
 	}
 
 }
