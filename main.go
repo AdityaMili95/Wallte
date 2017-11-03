@@ -758,12 +758,26 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 		lastWeek := time.Now().AddDate(0, 0, -7)
 		now := time.Now()
+		curr := time.Now().AddDate(0, 0, -7)
+		curr.Format("2006-01-02T15:04")
+
+		month := fmt.Sprintf("%d", curr.Month())
+		if curr.Month() < 10 {
+			month = "0" + month
+		}
+
+		day := fmt.Sprintf("%d", curr.Day())
+		if curr.Day() < 10 {
+			day = "0" + day
+		}
+
+		max := fmt.Sprintf("%d-%s-%sT00:00", curr.Year(), month, day)
 
 		template := linebot.NewImageCarouselTemplate(
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", now.Format("2006-01-02T15:04"), now.Format("2006-01-02T24:00"), lastWeek.Format("2006-01-02T00:00")),
+				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", now.Format("2006-01-02T15:04"), max, lastWeek.Format("2006-01-02T00:00")),
 			),
 		)
 		if _, err := bot.ReplyMessage(
