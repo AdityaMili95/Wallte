@@ -716,10 +716,10 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 			data.Data.Last_Action.Price = val
 			replyTextMessage(event, "Give the description below!")
 		} else if err != nil {
-			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled \x100085")
+			replyTextMessage(event, "Ouchh! Cost is about how much which means it must be a number!!\n\nCancelled \U00100085")
 			data = CancelAction(data)
 		} else if val < 1 {
-			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\n\nCancelled (0x10009E)")
+			replyTextMessage(event, "Awww! if the cost is less than 1 that mean there is no cost!!\n\nCancelled \U0010009E")
 			data = CancelAction(data)
 		}
 
@@ -751,8 +751,9 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
-	text := fmt.Sprintf("\\%u\\%u \\%u\\%u %U%U %u%u %u%u %U %c %U \U00100078", 0x100078, 0x100078, "DBC0", "DC78", "DBC0", "DC78", 0xDBC0, 0xDC78, "DBC0", "DC78", '\U00100078', '\U00100078')
-	replyTextMessage(event, text)
+	//text := fmt.Sprintf("\\%u\\%u \\%u\\%u %U%U %u%u %u%u %U %c %U \U00100078", 0x100078, 0x100078, "DBC0", "DC78", "DBC0", "DC78", 0xDBC0, 0xDC78, "DBC0", "DC78", '\U00100078', '\U00100078')
+	//replyTextMessage(event, text)
+
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 	//fmt.Println(data, exist, userID, groupID, roomID)
 
