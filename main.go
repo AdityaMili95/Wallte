@@ -44,6 +44,12 @@ const (
 	GROUP       = 3
 )
 
+type DetailMessage struct {
+	Desc_text       string
+	Cost_Not_Number string
+	Cost_Zero       string
+}
+
 var monthToInt = map[string]int{
 	"January":   1,
 	"February":  2,
@@ -57,12 +63,6 @@ var monthToInt = map[string]int{
 	"October":   10,
 	"November":  11,
 	"December":  12,
-}
-
-type DetailMessage struct {
-	Desc_text       string
-	Cost_Not_Number string
-	Cost_Zero       string
 }
 
 var keyToInfo = map[string]map[string]TransactionInfo{
@@ -882,15 +882,15 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		if detailType[1] == ADD_EXPENSE {
 			d = DetailMessage{
 				Desc_text:       "Give the description below! \U0010009D",
-				Cost_Not_Number: "Ouchh! \U00100085 Cost is about how much which means it must be a number!!\n\nCancelled",
+				Cost_Not_Number: "Ouchh! \U0010007C You have no income, do you?\n\nCancelled",
 				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled",
 			}
 			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
 		} else if detailType[1] == ADD_INCOME {
 			d = DetailMessage{
-				Desc_text:       "Tell me your income description! \U0010009D",
+				Desc_text:       "Give the description please \U0010007A",
 				Cost_Not_Number: "Ouchh! \U00100085 Cost is about how much which means it must be a number!!\n\nCancelled",
-				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled",
+				Cost_Zero:       "Awww! \U00100083 if the number is less than 1 that mean there is no income!!\n\nCancelled",
 			}
 			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
 		}
