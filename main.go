@@ -763,7 +763,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", "", now.Format("2006-01-02T15:04"), lastWeek.Format("2006-01-02T00:00")),
+				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", "", now.Format("2006-01-02T15:04"), ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
