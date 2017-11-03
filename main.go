@@ -726,7 +726,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Expense Date", data.Data.Last_Action.Keyword+"/datepick", "datetime", "", "", ""),
+				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick", "datetime", "", "", ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
