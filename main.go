@@ -726,6 +726,8 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		info, okay = keyToInfo["income"][splitted[2]]
 	}
 
+	log.Println("||||||||||||||||| ", okay, keyword, splitted)
+
 	if lenSplitted == 2 {
 		template = linebot.NewImageCarouselTemplate(
 			linebot.NewImageCarouselColumn(
