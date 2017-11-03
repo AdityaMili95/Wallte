@@ -751,6 +751,8 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
+	text := fmt.Sprintf("%q%q", 0x100078, 0x100078)
+	replyTextMessage(event, text)
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 	//fmt.Println(data, exist, userID, groupID, roomID)
 
