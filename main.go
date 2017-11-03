@@ -725,7 +725,13 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		lastWeek := time.Now().AddDate(0, 0, -7)
 		now := time.Now()
 
-		log.Println(time.Now().Format("2006-01-02T15:04"))
+		nowString := strings.Split(time.Now().Format("2006-01-02T15:04"), " ")
+		startTime := nowString[0]
+		if len(nowString) > 1 {
+			startTime = nowString[1]
+		}
+
+		log.Println(startTime)
 
 		template := linebot.NewImageCarouselTemplate(
 
