@@ -207,7 +207,7 @@ func connectDB() (*sqlx.DB, error) {
 }
 
 func GetFirebase(key string) string {
-	fb := firego.New("https://wallte-2df83.firebaseio.com/user/"+key, nil)
+	fb := firego.New(os.Getenv("FIREBASE_CONNECT")+key, nil)
 
 	var v interface{}
 	if err := fb.Value(&v); err != nil {
@@ -262,7 +262,7 @@ func SetRedis(key string, value string) {
 }
 
 func SetFirebase(key string, value string) {
-	fb := firego.New("https://wallte-2df83.firebaseio.com/user/"+key, nil)
+	fb := firego.New(os.Getenv("FIREBASE_CONNECT")+key, nil)
 
 	val := map[string]string{
 		"json": value,
