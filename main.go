@@ -605,23 +605,13 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 		return false
+	} else if exist && lenSplitted == 5 && splitted[4] == "datepick" && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+
+		replyTextMessage(event, "UHUI")
+
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
-
-			template := linebot.NewImageCarouselTemplate(
-				linebot.NewImageCarouselColumn(
-					imageURL,
-					linebot.NewDatetimePickerTemplateAction("datetime", "DATETIME", "datetime", "", "", ""),
-				),
-			)
-			if _, err := bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewTemplateMessage("Image carousel alt text", template),
-			).Do(); err != nil {
-
-			}
-
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
 			return false
 		} else if splitted[3] == "yes" {
@@ -730,7 +720,21 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 	if data.Data.Last_Action.Description == "" {
 		data.Data.Last_Action.Description = text
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
-		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
+
+		template := linebot.NewImageCarouselTemplate(
+			linebot.NewImageCarouselColumn(
+				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
+				linebot.NewDatetimePickerTemplateAction("Select Expense Date", "/"+data.Data.Last_Action.Keyword+"/datepick", "datetime", "", "", ""),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("Image carousel alt text", template),
+		).Do(); err != nil {
+
+		}
+
+		/*mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo[mainType[2]][mainType[3]]
 		key := data.Data.Last_Action.Key
 		one := Option{
@@ -744,7 +748,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		}
 
 		title := fmt.Sprintf("Add This Expense?\nCategory : %s\nType : %s\nCost : %d\nDescription : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description)
-		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
+		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")*/
 	}
 
 }
