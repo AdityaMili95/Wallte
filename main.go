@@ -726,8 +726,6 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		info, okay = keyToInfo["income"][splitted[2]]
 	}
 
-	log.Println("||||||||||||||||| ", okay, keyword, splitted)
-
 	if lenSplitted == 2 {
 		template = linebot.NewImageCarouselTemplate(
 			linebot.NewImageCarouselColumn(
@@ -923,8 +921,13 @@ func handlePostback(event *linebot.Event) {
 	remove_last_action := false
 
 	msgCategory := ""
-	if lenSplitted > 3 {
-		msgCategory = mainType[1]
+	if lenSplitted >= 3 {
+		if mainType[1] == ADD_EXPENSE && lenSplitted > 3 {
+			msgCategory = mainType[1]
+		} else if mainType[1] == ADD_INCOME && lenSplitted >= 3 {
+			msgCategory = mainType[1]
+		}
+
 	}
 
 	if msgCategory == ADD_EXPENSE {
