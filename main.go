@@ -767,7 +767,35 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 		return false
+	} else if exist && lenSplitted == 5 && splitted[3] == "datepick" {
+
+		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
+			replyTextMessage(event, "Oops this data is outdated \U0010009B")
+			return false
+		}
+		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
+		trans := keyToInfo["income"][mainType[2]]
+		key := data.Data.Last_Action.Key
+		date := event.Postback.Params.Datetime
+		date = strings.Replace(date, "T", " ", -1)
+		one := Option{
+			Label:  "YES",
+			Action: "/add-expense/confirm/yes/" + key,
+		}
+
+		two := Option{
+			Label:  "NO",
+			Action: "/add-expense/confirm/no/" + key,
+		}
+
+		title := fmt.Sprintf("Add This Income?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
+		confirmationMessage(event, title, one, two, "Confirm Your Income!! \U00100097")
+
+		data.Data.Last_Action.Created_date = date
+		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
+		return false
 	}
+
 	return true
 }
 
