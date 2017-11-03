@@ -722,11 +722,14 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		data.Data.Last_Action.Description = text
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 
+		lastWeek := time.Now().AddDate(0, 0, -7)
+		now := time.Now()
+
 		template := linebot.NewImageCarouselTemplate(
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick", "datetime", "", "", ""),
+				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick", "datetime", now.Format("2006-01-02T15:04"), now.Format("2006-01-02T15:04"), lastWeek.Format("2006-01-02T00:00")),
 			),
 		)
 		if _, err := bot.ReplyMessage(
