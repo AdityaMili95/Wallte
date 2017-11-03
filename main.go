@@ -59,6 +59,12 @@ var monthToInt = map[string]int{
 	"December":  12,
 }
 
+type DetailMessage struct {
+	Desc_text       string
+	Cost_Not_Number string
+	Cost_Zero       string
+}
+
 var keyToInfo = map[string]map[string]TransactionInfo{
 	"food": map[string]TransactionInfo{
 		"breakfast": TransactionInfo{SpentType: "Breakfast", Category: "Food", SubCategory: "Daily Food"},
@@ -790,19 +796,19 @@ func confirmationMessage(event *linebot.Event, title string, one Option, two Opt
 	}
 }
 
-func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
+func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID string, roomID string, groupID string, data *DataWallet, msgType int, d DetailMessage) {
 
 	text := message.Text
 	if data.Data.Last_Action.Price == 0 {
 		val, err := strconv.Atoi(text)
 		if err == nil && val > 0 {
 			data.Data.Last_Action.Price = val
-			replyTextMessage(event, "Give the description below! \U0010009D")
+			replyTextMessage(event, d.Desc_text)
 		} else if err != nil {
-			replyTextMessage(event, "Ouchh! \U00100085 Cost is about how much which means it must be a number!!\n\nCancelled")
+			replyTextMessage(event, d.Cost_Not_Number)
 			data = CancelAction(data)
 		} else if val < 1 {
-			replyTextMessage(event, "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled")
+			replyTextMessage(event, d.Cost_Zero)
 			data = CancelAction(data)
 		}
 
@@ -871,7 +877,24 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == PLAN {
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-		handleAskDetail(event, message, userID, roomID, groupID, data, msgType)
+		detailType := strings.Split(data.Data.Last_Action.Keyword, "/")
+		var d DetailMessage
+		if detailType[1] == ADD_EXPENSE {
+			d = DetailMessage{
+				Desc_text:       "Give the description below! \U0010009D",
+				Cost_Not_Number: "Ouchh! \U00100085 Cost is about how much which means it must be a number!!\n\nCancelled",
+				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled",
+			}
+			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
+		} else if detailType[1] == ADD_INCOME {
+			d = DetailMessage{
+				Desc_text:       "Tell me your income description! \U0010009D",
+				Cost_Not_Number: "Ouchh! \U00100085 Cost is about how much which means it must be a number!!\n\nCancelled",
+				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled",
+			}
+			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
+		}
+
 	} else {
 		// ga ada last action
 	}
