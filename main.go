@@ -718,18 +718,20 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 	}
 
 	if data.Data.Last_Action.Description == "" {
+
 		data.Data.Last_Action.Description = text
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 
 		template := linebot.NewImageCarouselTemplate(
+
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Expense Date", "/"+data.Data.Last_Action.Keyword+"/datepick", "datetime", "", "", ""),
+				linebot.NewDatetimePickerTemplateAction("Select Expense Date", "HOLAAA", "datetime", "", "", ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTemplateMessage("Image carousel alt text", template),
+			linebot.NewTemplateMessage("Select Expense Date!", template),
 		).Do(); err != nil {
 
 		}
