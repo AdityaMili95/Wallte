@@ -627,6 +627,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		trans := keyToInfo[mainType[2]][mainType[3]]
 		key := data.Data.Last_Action.Key
 		date := event.Postback.Params.Datetime
+		date = strings.Replace(date, "T", " ", -1)
 		one := Option{
 			Label:  "YES",
 			Action: "/add-expense/confirm/yes/" + key,
@@ -637,7 +638,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			Action: "/add-expense/confirm/no/" + key,
 		}
 
-		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate:%s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
+		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
 		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 
 		data.Data.Last_Action.Created_date = date
