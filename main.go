@@ -707,6 +707,45 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	return true
 }
 
+func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) bool {
+
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	lenSplitted := len(splitted)
+	var template linebot.Template
+
+	if lenSplitted == 2 {
+		template = linebot.NewImageCarouselTemplate(
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Business", "/add-income/business", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Investment", "/add-income/investment", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Transfer", "/add-income/transfer", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Other", "/add-income/other", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewURITemplateAction("Shop Now", "https://tokopedia.com/elefashionshop"),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("Select Income Type", template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
+	}
+	return true
+}
+
 func replyTextMessage(event *linebot.Event, text string) {
 	if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do(); err != nil {
 		log.Print(err)
@@ -809,7 +848,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	if msgCategory == ADD_EXPENSE {
 		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
-
+		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == PLAN {
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
