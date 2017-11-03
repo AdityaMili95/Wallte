@@ -611,6 +611,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
 			return false
 		}
+
+		log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", event.Postback.Params.Datetime)
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo[mainType[2]][mainType[3]]
 		key := data.Data.Last_Action.Key
