@@ -726,14 +726,14 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Expense Date", "HOLAAA", "datetime", "", "", ""),
+				linebot.NewDatetimePickerTemplateAction("Select Expense Date", data.Data.Last_Action.Keyword+"/datepick", "datetime", "", "", ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTemplateMessage("Select Expense Date!", template),
+			linebot.NewTemplateMessage("Select Expense Date! \U00100084", template),
 		).Do(); err != nil {
-
+			log.Println(err)
 		}
 
 		/*mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
