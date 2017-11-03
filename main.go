@@ -620,11 +620,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	} else if exist && lenSplitted == 6 && splitted[4] == "datepick" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[5] {
-			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
+			replyTextMessage(event, "Oops this data is outdated \U00100088")
 			return false
 		}
-
-		//log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", event.Postback.Params.Datetime)
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo[mainType[2]][mainType[3]]
 		key := data.Data.Last_Action.Key
@@ -639,7 +637,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			Action: "/add-expense/confirm/no/" + key,
 		}
 
-		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s Date:%s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
+		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate:%s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
 		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 
 		data.Data.Last_Action.Created_date = date
@@ -765,7 +763,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", now.Format("2006-01-02T15:04"), now.Format("2006-01-02T15:04"), lastWeek.Format("2006-01-02T00:00")),
+				linebot.NewDatetimePickerTemplateAction("Select Date", data.Data.Last_Action.Keyword+"/datepick/"+data.Data.Last_Action.Key, "datetime", "", now.Format("2006-01-02T15:04"), lastWeek.Format("2006-01-02T00:00")),
 			),
 		)
 		if _, err := bot.ReplyMessage(
