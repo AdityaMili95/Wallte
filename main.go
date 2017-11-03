@@ -751,7 +751,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		)
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTemplateMessage("Select Income Type \U00100050", template),
+			linebot.NewTemplateMessage("Select Income Type \U00100095", template),
 		).Do(); err != nil {
 			log.Print(err)
 		}
@@ -928,7 +928,7 @@ func handlePostback(event *linebot.Event) {
 	if msgCategory == ADD_EXPENSE {
 		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
-
+		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == PLAN {
 
 	}
