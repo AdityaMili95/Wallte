@@ -17,6 +17,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/xuyu/goredis"
+	"github.com/zabawaba99/firego"
 )
 
 var bot *linebot.Client
@@ -205,10 +206,25 @@ func connectDB() (*sqlx.DB, error) {
 	return db, nil
 }
 
+func GetFirebase(key string) string {
+	fb := firego.New("https://wallte-2df83.firebaseio.com/user/"+key, nil)
+
+	var v interface{}
+	if err := fb.Value(&v); err != nil {
+		log.Fatal(err)
+	}
+
+	if v == nil {
+		return ""
+	}
+
+	return v.(map[string]interface{})["json"].(string)
+}
+
 func GetRedis(key string) string {
 	data, err := Redis.Get(key)
 
-	if err != nil {
+	if err != nil || data == nil {
 		log.Println(err)
 		return ""
 	}
@@ -243,6 +259,18 @@ func SetRedis(key string, value string) {
 		return
 	}
 
+}
+
+func SetFirebase(key string, value string) {
+	fb := firego.New("https://wallte-2df83.firebaseio.com/user/"+key, nil)
+
+	val := map[string]string{
+		"json": value,
+	}
+	err := fb.Set(val)
+	if err != nil {
+		log.Printf("%#v\n", err)
+	}
 }
 
 func executeQuery(query string) *sqlx.Rows {
@@ -329,6 +357,7 @@ func updateData(data *DataWallet, exist bool, userID string, roomID string, grou
 	}
 
 	SetRedis(redisKey, res)
+	SetFirebase(redisKey, res)
 	if exist {
 		executeUpdate(res, userID, roomID, groupID)
 		return
@@ -350,6 +379,14 @@ func prepareUpdateData(data *DataWallet, exist bool, userID string, roomID strin
 func getUserData(ID string) (*DataWallet, bool) {
 	var data *DataWallet
 	res := GetRedis(ID)
+	if res != "" && res != "nil" {
+		err := json.Unmarshal([]byte(res), &data)
+		if err == nil {
+			return data, true
+		}
+	}
+
+	res = GetFirebase(ID)
 	if res != "" && res != "nil" {
 		err := json.Unmarshal([]byte(res), &data)
 		if err == nil {
@@ -615,7 +652,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		valid = true
 	} else if exist && lenSplitted == 4 && okay {
-		replyTextMessage(event, "How much did you cost ?\n\nChat me the number please:")
+		replyTextMessage(event, "How much did you cost ? \U0010008C\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 		return false

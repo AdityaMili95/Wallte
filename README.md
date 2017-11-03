@@ -1,6 +1,6 @@
 # Wallte
 
-A Line Bot application to help you manage your fianncial.
+A Line Bot application to help you manage your wallet.
 
 Add Wallte using QR Code Now!!
 
