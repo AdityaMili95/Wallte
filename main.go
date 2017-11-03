@@ -771,7 +771,7 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 			day = "0" + day
 		}
 
-		max := fmt.Sprintf("%d-%s-%sT24:00", curr.Year(), month, day)
+		max := fmt.Sprintf("%d-%s-%sT23:59", curr.Year(), month, day)
 
 		template := linebot.NewImageCarouselTemplate(
 
