@@ -700,7 +700,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				SpentType:    data.Data.Last_Action.SpentType,
 			})
 
-			replyTextMessage(event, "Expense Added! \U00100097")
+			replyTextMessage(event, "Expense Recorded! \U00100097")
 		} else {
 			replyTextMessage(event, "Cancelled! \U0010007E")
 		}
@@ -780,12 +780,12 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		date = strings.Replace(date, "T", " ", -1)
 		one := Option{
 			Label:  "YES",
-			Action: "/add-expense/confirm/yes/" + key,
+			Action: "/add-income/confirm/yes/" + key,
 		}
 
 		two := Option{
 			Label:  "NO",
-			Action: "/add-expense/confirm/no/" + key,
+			Action: "/add-income/confirm/no/" + key,
 		}
 
 		title := fmt.Sprintf("Add This Income?\U00100087\nCategory : %s\nType : %s\nCost : %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Last_Action.Price, data.Data.Last_Action.Description, date)
@@ -794,6 +794,55 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		data.Data.Last_Action.Created_date = date
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 		return false
+	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
+
+		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
+			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
+			return false
+		} else if splitted[3] == "yes" {
+
+			created_date := data.Data.Last_Action.Created_date
+			year, month, day, _, _, _ := ParseTime(created_date)
+			name := "-"
+			profile, err := bot.GetProfile(event.Source.UserID).Do()
+			if err != nil {
+				name = profile.DisplayName
+			} else {
+				log.Println(err)
+			}
+
+			if data.Data.Income == nil {
+				data.Data.Income = map[int]map[int]map[int][]TransactionInfo{}
+			}
+
+			if data.Data.Income[year] == nil {
+				data.Data.Income[year] = map[int]map[int][]TransactionInfo{}
+			}
+
+			if data.Data.Income[year][month] == nil {
+				data.Data.Income[year][month] = map[int][]TransactionInfo{}
+			}
+
+			if data.Data.Income[year][month][day] == nil {
+				data.Data.Income[year][month][day] = []TransactionInfo{}
+			}
+
+			data.Data.Income[year][month][day] = append(data.Data.Income[year][month][day], TransactionInfo{
+				Created_by:   name,
+				Price:        data.Data.Last_Action.Price,
+				Description:  data.Data.Last_Action.Description,
+				Created_date: created_date,
+				Planned_date: "-",
+				Category:     data.Data.Last_Action.Category,
+				SubCategory:  data.Data.Last_Action.SubCategory,
+				SpentType:    data.Data.Last_Action.SpentType,
+			})
+
+			replyTextMessage(event, "Income Recorded! \U00100097")
+		} else {
+			replyTextMessage(event, "Cancelled! \U0010007E")
+		}
+
 	}
 
 	return true
