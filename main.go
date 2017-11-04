@@ -998,9 +998,6 @@ func getChartData(event *linebot.Event, w http.ResponseWriter) {
 	tempt.Execute(w, map[string]interface{}{
 		"token": event.ReplyToken,
 	})
-
-	ch := make(chan int, 1)
-	<-ch
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage, w http.ResponseWriter) {
