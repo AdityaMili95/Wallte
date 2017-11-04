@@ -974,6 +974,8 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 	previewImg := r.PostFormValue("previewURL")
 	token := r.PostFormValue("token")
 
+	log.Println("||||||||||||||||||||||||||||||||||||| ", token, mainImg, previewImg)
+
 	if _, err := bot.ReplyMessage(
 		token,
 		linebot.NewImageMessage(mainImg, previewImg),
@@ -991,8 +993,6 @@ func getChartData(event *linebot.Event, w http.ResponseWriter) {
 		fmt.Println(err.Error())
 		return
 	}
-
-	log.Println("||||||||||||||||||||||||||||||||||||| " + event.ReplyToken)
 
 	tempt.Execute(w, map[string]interface{}{
 		"token": event.ReplyToken,
