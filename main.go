@@ -28,7 +28,7 @@ var Redis *goredis.Redis
 const (
 	ADD_EXPENSE = "add-expense"
 	ADD_INCOME  = "add-income"
-	PLAN        = "plan"
+	CHART       = "chart"
 	USER        = 1
 	ROOM        = 2
 	GROUP       = 3
@@ -1018,7 +1018,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage, w htt
 		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
-	} else if msgCategory == PLAN {
+	} else if msgCategory == CHART {
 
 		getChartData(event, w)
 		remove_last_action = false
@@ -1104,7 +1104,7 @@ func handlePostback(event *linebot.Event, w http.ResponseWriter) {
 		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
-	} else if msgCategory == PLAN {
+	} else if msgCategory == CHART {
 
 	}
 
