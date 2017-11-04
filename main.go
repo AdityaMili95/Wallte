@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -16,6 +17,7 @@ import (
 	"github.com/NoahShen/go-simsimi"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	cdp "github.com/knq/chromedp"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/xuyu/goredis"
 	"github.com/zabawaba99/firego"
@@ -1003,7 +1005,7 @@ func testong(w http.ResponseWriter, r *http.Request) {
 
 func getChartData(event *linebot.Event, w http.ResponseWriter) {
 
-	tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
+	/*tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -1011,7 +1013,43 @@ func getChartData(event *linebot.Event, w http.ResponseWriter) {
 
 	tempt.Execute(w, map[string]interface{}{
 		"token": event.ReplyToken,
-	})
+	})*/
+
+	var err error
+
+	ctxt, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	c, err := cdp.New(ctxt, cdp.WithLog(log.Printf))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.Run(ctxt, convertAndPost())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.Shutdown(ctxt)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.Wait()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func convertAndPost() cdp.Tasks {
+	return cdp.Tasks{
+		cdp.Navigate(`https://wallte.herokuapp.com/testong`),
+		cdp.WaitReady(`#mainscript`, cdp.ByQuery),
+		//cdp.SendKeys(`#lst-ib`, q+"\n", cdp.ByID),
+		cdp.WaitVisible(`#form-data`, cdp.ByID),
+		cdp.Click(`#submit`),
+		cdp.WaitVisible(`#success-mark`, cdp.ByID),
+	}
 }
 
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage, w http.ResponseWriter) {

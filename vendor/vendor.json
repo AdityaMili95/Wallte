@@ -49,6 +49,12 @@
 			"path": "github.com/zabawaba99/firego",
 			"revision": "4d07741c1dde0b0d76218e8365baea10c33cf968",
 			"revisionTime": "2013-05-29T22:42:35Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "github.com/knq/chromedp",
+			"revision": "289f0eeb04e434b3e7f200acf34ea7b7a1d2dd79",
+			"revisionTime": "2013-05-29T22:42:35Z"
 		}
 	],
 	"rootPath": "github.com/kkdai/LineBotTemplate"
