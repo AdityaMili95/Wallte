@@ -20,16 +20,16 @@
 <p id="token">{{.token}}</p>
 
 
-<form onsubmit="return false;" class="form-data">
-	<input type="text" name="token">
-	<input type="userID" name="userID">
-	<input type="submit" name="submit">
+<form onsubmit="return false;" class="form-data" id="form-data">
+	<input type="text" name="token" id="token">
+	<input type="userID" name="userID" id="userID">
+	<input type="submit" name="submit" id="submit">
 </form>
 
 </body>
 
 
-<script type="text/javascript">
+<script id="mainscript" type="text/javascript">
 	var Canvas2Image = function () {
 
 	var $support = function () {
