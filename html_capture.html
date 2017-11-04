@@ -245,6 +245,11 @@
 	    );
 	}
 
+
+  firebase.database().ref("/user/haha").set({
+		json:$("#json").text(),
+	});
+  
 	function getPreviewImage(canvas,largeUrl){
 		var preview=Canvas2Image.scaleCanvas(canvas,240,240)
 		
