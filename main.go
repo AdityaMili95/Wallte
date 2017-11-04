@@ -175,6 +175,7 @@ func main() {
 	log.Println("Bot:", bot, " err:", err)
 	http.HandleFunc("/callback", callbackHandler)
 	http.HandleFunc("/replyImage", replyImage)
+	http.HandleFunc("/testong", testong)
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
@@ -984,6 +985,20 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 	}
 	return
 
+}
+
+func testong(w http.ResponseWriter, r *http.Request) {
+
+	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	tempt.Execute(w, map[string]interface{}{
+		"token": "hahahah",
+	})
 }
 
 func getChartData(event *linebot.Event, w http.ResponseWriter) {
