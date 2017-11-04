@@ -55,6 +55,24 @@
 			"path": "github.com/knq/chromedp",
 			"revision": "289f0eeb04e434b3e7f200acf34ea7b7a1d2dd79",
 			"revisionTime": "2013-05-29T22:42:35Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "github.com/disintegration/imaging",
+			"revision": "dd50a3ee9985ccd313a2f03c398fcaedc96dc707",
+			"revisionTime": "2013-05-29T22:42:35Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "3da6ca0cb65383f2b607a677b6b55e8358cacee6",
+			"revisionTime": "2013-05-29T22:42:35Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "github.com/mailru/easyjson",
+			"revision": "4d347d79dea0067c945f374f990601decb08abb5",
+			"revisionTime": "2013-05-29T22:42:35Z"
 		}
 	],
 	"rootPath": "github.com/kkdai/LineBotTemplate"
