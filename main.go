@@ -988,6 +988,7 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 func getChartData(event *linebot.Event, w http.ResponseWriter) {
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
 	if err != nil {
 		fmt.Println(err.Error())
