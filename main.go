@@ -1003,6 +1003,20 @@ func testong(w http.ResponseWriter, r *http.Request) {
 
 func getChartData(event *linebot.Event, w http.ResponseWriter) {
 
+	client := &http.Client{
+		Timeout: time.Second * 5,
+	}
+
+	request, err := http.NewRequest("GET", "https://wallte.herokuapp.com/testong", nil)
+	if err != nil {
+		log.Println(err)
+	}
+
+	_, err = client.Do(request)
+
+	if err != nil {
+		log.Println(err)
+	}
 	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
 	if err != nil {
