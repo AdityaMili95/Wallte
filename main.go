@@ -991,6 +991,9 @@ func getChartData(event *linebot.Event, w http.ResponseWriter) {
 		fmt.Println(err.Error())
 		return
 	}
+
+	log.Println("||||||||||||||||||||||||||||||||||||| " + event.ReplyToken)
+
 	tempt.Execute(w, map[string]interface{}{
 		"token": event.ReplyToken,
 	})
