@@ -77,7 +77,7 @@
 		{
 			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
 			"path": "golang.org/x/image",
-			//"revision": "4d347d79dea0067c945f374f990601decb08abb5",
+			"revision": "f7e31b4ea2e3413ab91b4e7d2dc83e5f8d19a44c",
 			"revisionTime": "2013-05-29T22:42:35Z"
 		}
 	],
