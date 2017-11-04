@@ -19,6 +19,13 @@
 <div id="image"></div>
 <p id="token">{{.token}}</p>
 
+
+<form onsubmit="return false;" class="form-data">
+	<input type="text" name="token">
+	<input type="userID" name="userID">
+	<input type="submit" name="submit">
+</form>
+
 </body>
 
 
@@ -245,11 +252,6 @@
 	    );
 	}
 
-
-  firebase.database().ref("/user/haha").set({
-		json:$("#json").text(),
-	});
-  
 	function getPreviewImage(canvas,largeUrl){
 		var preview=Canvas2Image.scaleCanvas(canvas,240,240)
 		
@@ -279,24 +281,33 @@
 		
 	}
 
-    html2canvas($("#image"), {
-        onrendered: function(canvas) {
-            theCanvas = canvas;
-            var image=Canvas2Image.convertToJPEG(canvas); 
-            document.body.appendChild(image);
-            var storageRef = firebase.storage().ref().child("1/img");
-            imgText=$("img").attr('src')
-            
-            urltoFile(imgText, 'hello.jpeg', 'image/jpeg')
-				.then(function(file){
-	    			storageRef.put(file).then(function(snapshot) {
-	    					$("img").remove()
-						  getPreviewImage(theCanvas,snapshot.downloadURL);
-					});
-				})
-                
-        }
-    });
+
+	$(".form-data").submit(function(){
+
+		  firebase.database().ref("/user/haha").set({
+				json:$("#json").text(),
+			});
+
+
+		html2canvas($("#image"), {
+	        onrendered: function(canvas) {
+	            theCanvas = canvas;
+	            var image=Canvas2Image.convertToJPEG(canvas); 
+	            document.body.appendChild(image);
+	            var storageRef = firebase.storage().ref().child("1/img");
+	            imgText=$("img").attr('src')
+	            
+	            urltoFile(imgText, 'hello.jpeg', 'image/jpeg')
+					.then(function(file){
+		    			storageRef.put(file).then(function(snapshot) {
+		    					$("img").remove()
+							  getPreviewImage(theCanvas,snapshot.downloadURL);
+						});
+					})
+	                
+	        }
+    	});
+	});
     
 
 </script>
