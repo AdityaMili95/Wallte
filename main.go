@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
@@ -173,6 +174,7 @@ func main() {
 	bot, err = linebot.New(os.Getenv("CHANNEL_SECRET"), os.Getenv("CHANNEL_TOKEN"))
 	log.Println("Bot:", bot, " err:", err)
 	http.HandleFunc("/callback", callbackHandler)
+	http.HandleFunc("/replyImage", replyImage)
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
@@ -959,7 +961,42 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 }
 
-func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
+func replyImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+
+	err := r.ParseForm()
+	if err != nil {
+		return
+	}
+
+	mainImg := r.PostFormValue("imageURL")
+	previewImg := r.PostFormValue("previewURL")
+	token := r.PostFormValue("token")
+
+	if _, err := bot.ReplyMessage(
+		token,
+		linebot.NewImageMessage(mainImg, previewImg),
+	).Do(); err != nil {
+		return
+	}
+	return
+
+}
+
+func getChartData(event *linebot.Event, w http.ResponseWriter) {
+
+	tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	tempt.Execute(w, map[string]interface{}{
+		"token": event.ReplyToken,
+	})
+}
+
+func handleTextMessage(event *linebot.Event, message *linebot.TextMessage, w http.ResponseWriter) {
 
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 	//fmt.Println(data, exist, userID, groupID, roomID)
@@ -979,6 +1016,9 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == PLAN {
+
+		getChartData(event, w)
+		remove_last_action = false
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 		detailType := strings.Split(data.Data.Last_Action.Keyword, "/")
@@ -1026,16 +1066,16 @@ func handleSticker(event *linebot.Event, message *linebot.StickerMessage) {
 	}
 }
 
-func handleMessage(event *linebot.Event) {
+func handleMessage(event *linebot.Event, w http.ResponseWriter) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		handleTextMessage(event, message)
+		handleTextMessage(event, message, w)
 	case *linebot.StickerMessage:
 		handleSticker(event, message)
 	}
 }
 
-func handlePostback(event *linebot.Event) {
+func handlePostback(event *linebot.Event, w http.ResponseWriter) {
 	msg := event.Postback.Data
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 
@@ -1085,9 +1125,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
-			handleMessage(event)
+			handleMessage(event, w)
 		} else if event.Type == linebot.EventTypePostback {
-			handlePostback(event)
+			handlePostback(event, w)
 			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
 				log.Print(err)
 			}*/
