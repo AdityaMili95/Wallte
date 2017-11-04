@@ -73,6 +73,12 @@
 			"path": "github.com/mailru/easyjson",
 			"revision": "4d347d79dea0067c945f374f990601decb08abb5",
 			"revisionTime": "2013-05-29T22:42:35Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "golang.org/x/image",
+			//"revision": "4d347d79dea0067c945f374f990601decb08abb5",
+			"revisionTime": "2013-05-29T22:42:35Z"
 		}
 	],
 	"rootPath": "github.com/kkdai/LineBotTemplate"
