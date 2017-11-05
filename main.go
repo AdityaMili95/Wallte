@@ -1028,15 +1028,15 @@ func getChartData(event *linebot.Event) {
 	template := linebot.NewCarouselTemplate(
 		linebot.NewCarouselColumn(
 			imageURL, "Payment", "Do you pay for something?",
-			linebot.NewURITemplateAction("Our Shop", "adityamiliapp.herokuapp.com/render_chart"),
+			linebot.NewURITemplateAction("Our Shop", "https://adityamiliapp.herokuapp.com/render_chart"),
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Other Needs", "You don't know what you need until you need it",
-			linebot.NewURITemplateAction("Our Shop", "adityamiliapp.herokuapp.com/render_chart"),
+			linebot.NewURITemplateAction("Our Shop", "https://adityamiliapp.herokuapp.com/render_chart"),
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Undescribeable", "Describe for me please!",
-			linebot.NewURITemplateAction("Our Shop", "adityamiliapp.herokuapp.com/render_chart"),
+			linebot.NewURITemplateAction("Our Shop", "https://adityamiliapp.herokuapp.com/render_chart"),
 		),
 	)
 
