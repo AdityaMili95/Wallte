@@ -31,6 +31,7 @@ const (
 	ADD_EXPENSE = "add-expense"
 	ADD_INCOME  = "add-income"
 	CHART       = "chart"
+	GET_CHART   = "get-chart"
 	USER        = 1
 	ROOM        = 2
 	GROUP       = 3
@@ -963,6 +964,19 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 }
 
+func sendChartImage(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
+
+	mainImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg?alt=media&token=99f30f70-da12-4096-8dc7-887a4b9aa81a"
+	previewImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg-preview?alt=media&token=e4e468c9-1f30-48ef-b6c8-f71d2c2a378a"
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewImageMessage(mainImg, previewImg),
+	).Do(); err != nil {
+		return
+	}
+	return
+}
+
 func replyImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
@@ -975,8 +989,11 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 	mainImg := r.PostFormValue("imageURL")
 	previewImg := r.PostFormValue("previewURL")
 	token := r.PostFormValue("token")
+	userId := r.PostFormValue("user")
+	groupId := r.PostFormValue("group")
+	roomId := r.PostFormValue("room")
 
-	log.Println("||||||||||||||||||||||||||||||||||||| ", token, mainImg, previewImg)
+	log.Println("||||||||||||||||||||||||||||||||||||| ", token, mainImg, previewImg, userId, groupId, roomId)
 
 	if _, err := bot.ReplyMessage(
 		token,
@@ -989,41 +1006,6 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func getChartData(event *linebot.Event, userID string, roomID string, groupID string, msgType int) {
-
-	/*tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	tempt.Execute(w, map[string]interface{}{
-		"token": event.ReplyToken,
-	})*/
-
-	/*var err error
-
-	ctxt, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	c, err := cdp.New(ctxt, cdp.WithLog(log.Printf))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = c.Run(ctxt, convertAndPost())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = c.Shutdown(ctxt)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = c.Wait()
-	if err != nil {
-		log.Fatal(err)
-	}*/
 
 	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
 
@@ -1043,11 +1025,11 @@ func getChartData(event *linebot.Event, userID string, roomID string, groupID st
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Other Needs", "You don't know what you need until you need it",
-			linebot.NewURITemplateAction("Our Shop", "https://adityamiliapp.herokuapp.com/render_chart"),
+			linebot.NewURITemplateAction("Our Shop", linkChart),
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Undescribeable", "Describe for me please!",
-			linebot.NewURITemplateAction("Our Shop", "https://adityamiliapp.herokuapp.com/render_chart"),
+			linebot.NewURITemplateAction("Our Shop", linkChart),
 		),
 	)
 
@@ -1093,7 +1075,11 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == CHART {
 
 		getChartData(event, userID, roomID, groupID, msgType)
-		remove_last_action = false
+		remove_last_action = true
+
+	} else if msgCategory == GET_CHART {
+		sendChartImage(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action = true
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 		detailType := strings.Split(data.Data.Last_Action.Keyword, "/")
