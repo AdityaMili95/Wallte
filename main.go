@@ -17,7 +17,7 @@ import (
 	"github.com/NoahShen/go-simsimi"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	cdp "github.com/knq/chromedp"
+	//cdp "github.com/knq/chromedp"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/xuyu/goredis"
 	"github.com/zabawaba99/firego"
