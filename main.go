@@ -1042,17 +1042,6 @@ func getChartData(event *linebot.Event, userID string, roomID string, groupID st
 
 }
 
-func convertAndPost() cdp.Tasks {
-	return cdp.Tasks{
-		cdp.Navigate(`https://wallte.herokuapp.com/testong`),
-		cdp.WaitReady(`#mainscript`, cdp.ByQuery),
-		//cdp.SendKeys(`#lst-ib`, q+"\n", cdp.ByID),
-		cdp.WaitVisible(`#form-data`, cdp.ByID),
-		cdp.Click(`#submit`),
-		cdp.WaitVisible(`#success-mark`, cdp.ByID),
-	}
-}
-
 func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
