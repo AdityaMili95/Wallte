@@ -988,7 +988,7 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getChartData(event *linebot.Event) {
+func getChartData(event *linebot.Event, userID string, roomID string, groupID string, msgType int) {
 
 	/*tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
 	if err != nil {
@@ -1024,11 +1024,22 @@ func getChartData(event *linebot.Event) {
 	if err != nil {
 		log.Fatal(err)
 	}*/
+
+	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
+
+	if msgType == USER {
+		linkChart += "&userId=" + userID
+	} else if msgType == ROOM {
+		linkChart += "&roomId=" + userID
+	} else if msgType == GROUP {
+		linkChart += "&groupId=" + userID
+	}
+
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	template := linebot.NewCarouselTemplate(
 		linebot.NewCarouselColumn(
 			imageURL, "Payment", "Do you pay for something?",
-			linebot.NewURITemplateAction("Our Shop", "https://adityamiliapp.herokuapp.com/render_chart"),
+			linebot.NewURITemplateAction("Our Shop", linkChart),
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Other Needs", "You don't know what you need until you need it",
@@ -1081,7 +1092,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == CHART {
 
-		getChartData(event)
+		getChartData(event, userID, roomID, groupID, msgType)
 		remove_last_action = false
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
