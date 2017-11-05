@@ -4,7 +4,7 @@ import (
 	//"context"
 	"encoding/json"
 	"fmt"
-	"html/template"
+	//"html/template"
 	"log"
 	"math/rand"
 	"net/http"
@@ -177,7 +177,6 @@ func main() {
 	log.Println("Bot:", bot, " err:", err)
 	http.HandleFunc("/callback", callbackHandler)
 	http.HandleFunc("/replyImage", replyImage)
-	http.HandleFunc("/testong", testong)
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
@@ -989,20 +988,6 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func testong(w http.ResponseWriter, r *http.Request) {
-
-	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	tempt.Execute(w, map[string]interface{}{
-		"token": "hahahah",
-	})
-}
-
 func getChartData(event *linebot.Event) {
 
 	/*tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
@@ -1043,15 +1028,15 @@ func getChartData(event *linebot.Event) {
 	template := linebot.NewCarouselTemplate(
 		linebot.NewCarouselColumn(
 			imageURL, "Payment", "Do you pay for something?",
-			linebot.NewURITemplateAction("Our Shop", "https://wallte.herokuapp.com/testong"),
+			linebot.NewURITemplateAction("Our Shop", "adityamiliapp.herokuapp.com/render_chart"),
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Other Needs", "You don't know what you need until you need it",
-			linebot.NewURITemplateAction("Our Shop", "https://wallte.herokuapp.com/testong"),
+			linebot.NewURITemplateAction("Our Shop", "adityamiliapp.herokuapp.com/render_chart"),
 		),
 		linebot.NewCarouselColumn(
 			imageURL, "Undescribeable", "Describe for me please!",
-			linebot.NewURITemplateAction("Our Shop", "https://wallte.herokuapp.com/testong"),
+			linebot.NewURITemplateAction("Our Shop", "adityamiliapp.herokuapp.com/render_chart"),
 		),
 	)
 
