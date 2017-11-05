@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	//"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -1003,7 +1003,7 @@ func testong(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func getChartData(event *linebot.Event, w http.ResponseWriter) {
+func getChartData(event *linebot.Event) {
 
 	/*tempt, err := template.New("html_capture.html").ParseFiles("html_capture.html")
 	if err != nil {
@@ -1015,7 +1015,7 @@ func getChartData(event *linebot.Event, w http.ResponseWriter) {
 		"token": event.ReplyToken,
 	})*/
 
-	var err error
+	/*var err error
 
 	ctxt, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -1038,7 +1038,30 @@ func getChartData(event *linebot.Event, w http.ResponseWriter) {
 	err = c.Wait()
 	if err != nil {
 		log.Fatal(err)
+	}*/
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	template := linebot.NewCarouselTemplate(
+		linebot.NewCarouselColumn(
+			imageURL, "Payment", "Do you pay for something?",
+			linebot.NewURITemplateAction("Our Shop", "https://wallte.herokuapp.com/testong"),
+		),
+		linebot.NewCarouselColumn(
+			imageURL, "Other Needs", "You don't know what you need until you need it",
+			linebot.NewURITemplateAction("Our Shop", "https://wallte.herokuapp.com/testong"),
+		),
+		linebot.NewCarouselColumn(
+			imageURL, "Undescribeable", "Describe for me please!",
+			linebot.NewURITemplateAction("Our Shop", "https://wallte.herokuapp.com/testong"),
+		),
+	)
+
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage("What chart do you like? I like pie one", template),
+	).Do(); err != nil {
+		log.Print(err)
 	}
+
 }
 
 func convertAndPost() cdp.Tasks {
@@ -1052,7 +1075,7 @@ func convertAndPost() cdp.Tasks {
 	}
 }
 
-func handleTextMessage(event *linebot.Event, message *linebot.TextMessage, w http.ResponseWriter) {
+func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 	//fmt.Println(data, exist, userID, groupID, roomID)
@@ -1073,7 +1096,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage, w htt
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == CHART {
 
-		getChartData(event, w)
+		getChartData(event)
 		remove_last_action = false
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
@@ -1122,16 +1145,16 @@ func handleSticker(event *linebot.Event, message *linebot.StickerMessage) {
 	}
 }
 
-func handleMessage(event *linebot.Event, w http.ResponseWriter) {
+func handleMessage(event *linebot.Event) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		handleTextMessage(event, message, w)
+		handleTextMessage(event, message)
 	case *linebot.StickerMessage:
 		handleSticker(event, message)
 	}
 }
 
-func handlePostback(event *linebot.Event, w http.ResponseWriter) {
+func handlePostback(event *linebot.Event) {
 	msg := event.Postback.Data
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 
@@ -1181,9 +1204,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
-			handleMessage(event, w)
+			handleMessage(event)
 		} else if event.Type == linebot.EventTypePostback {
-			handlePostback(event, w)
+			handlePostback(event)
 			/*if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("iniPostback")).Do(); err != nil {
 				log.Print(err)
 			}*/
