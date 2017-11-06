@@ -1014,6 +1014,8 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 		PreviewImage: previewImg,
 	}
 
+	log.Println("||||||||||||||||||||||||||||||||", msgType, ID)
+
 	if msgType == "User" {
 		prepareUpdateData(data, exist, ID, "", "", USER)
 	} else if msgType == "Room" {
