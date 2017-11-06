@@ -135,6 +135,12 @@ type Wallet struct {
 	Plan_Income  map[int]map[int]map[int][]TransactionInfo
 	Plan_Expense map[int]map[int]map[int][]TransactionInfo
 	Last_Action  *LastAction
+	Chart        *MyChart
+}
+
+type MyChart struct {
+	MainImage    string
+	PreviewImage string
 }
 
 type LastAction struct {
@@ -966,15 +972,20 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 
 func sendChartImage(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 
-	mainImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg?alt=media&token=99f30f70-da12-4096-8dc7-887a4b9aa81a"
-	previewImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg-preview?alt=media&token=e4e468c9-1f30-48ef-b6c8-f71d2c2a378a"
+	//mainImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg?alt=media&token=99f30f70-da12-4096-8dc7-887a4b9aa81a"
+	//previewImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg-preview?alt=media&token=e4e468c9-1f30-48ef-b6c8-f71d2c2a378a"
+
+	if !exist || data.Chart == nil {
+		replyTextMessage(event, "You haven't rendered any chat! \U00100085\nPlease select a chart from chart menu")
+		return
+	}
+
 	if _, err := bot.ReplyMessage(
 		event.ReplyToken,
-		linebot.NewImageMessage(mainImg, previewImg),
+		linebot.NewImageMessage(data.Chart.MainImage, data.Chart.PreviewImage),
 	).Do(); err != nil {
 		return
 	}
-	return
 }
 
 func replyImage(w http.ResponseWriter, r *http.Request) {
@@ -988,17 +999,36 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 	mainImg := r.PostFormValue("imageURL")
 	previewImg := r.PostFormValue("previewURL")
-	token := r.PostFormValue("token")
+	msgType := r.PostFormValue("msgType")
+	//token := r.PostFormValue("token")
 	ID := r.PostFormValue("user")
 
-	log.Println("||||||||||||||||||||||||||||||||||||| ", token, mainImg, previewImg, ID)
+	data, exist = getUserData(ID)
 
-	if _, err := bot.ReplyMessage(
+	if !exist {
+		return
+	}
+
+	data.Chart = &Chart{
+		MainImage:    mainImg,
+		PreviewImage: previewImg,
+	}
+
+	if msgType == "User" {
+		prepareUpdateData(data, exist, userID, "", "", USER)
+	} else if msgType == "Room" {
+		prepareUpdateData(data, exist, "", roomID, "", ROOM)
+	} else if msgType == "Group" {
+		prepareUpdateData(data, exist, "", "", ID, GROUP)
+	}
+
+	/*if _, err := bot.ReplyMessage(
 		token,
 		linebot.NewImageMessage(mainImg, previewImg),
 	).Do(); err != nil {
 		return
-	}
+	}*/
+
 	return
 
 }
