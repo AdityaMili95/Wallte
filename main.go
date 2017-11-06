@@ -989,11 +989,9 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 	mainImg := r.PostFormValue("imageURL")
 	previewImg := r.PostFormValue("previewURL")
 	token := r.PostFormValue("token")
-	userId := r.PostFormValue("user")
-	groupId := r.PostFormValue("group")
-	roomId := r.PostFormValue("room")
+	ID := r.PostFormValue("user")
 
-	log.Println("||||||||||||||||||||||||||||||||||||| ", token, mainImg, previewImg, userId, groupId, roomId)
+	log.Println("||||||||||||||||||||||||||||||||||||| ", token, mainImg, previewImg, ID)
 
 	if _, err := bot.ReplyMessage(
 		token,
