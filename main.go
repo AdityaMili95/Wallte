@@ -1003,6 +1003,8 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 	//token := r.PostFormValue("token")
 	ID := r.PostFormValue("user")
 
+	log.Println("||||||||||||||||||||||||||||||||", msgType, ID)
+
 	data, exist := getUserData(ID)
 
 	if !exist {
@@ -1013,8 +1015,6 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 		MainImage:    mainImg,
 		PreviewImage: previewImg,
 	}
-
-	log.Println("||||||||||||||||||||||||||||||||", msgType, ID)
 
 	if msgType == "User" {
 		prepareUpdateData(data, exist, ID, "", "", USER)
