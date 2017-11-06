@@ -1001,9 +1001,9 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 	previewImg := r.PostFormValue("previewURL")
 	msgType := r.PostFormValue("msgType")
 	//token := r.PostFormValue("token")
-	ID := r.PostFormValue("user")
+	ID := r.PostFormValue("ID")
 
-	log.Println("||||||||||||||||||||||||||||||||", msgType, ID)
+	//log.Println("||||||||||||||||||||||||||||||||", msgType, ID)
 
 	data, exist := getUserData(ID)
 
