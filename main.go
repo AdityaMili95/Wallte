@@ -1062,7 +1062,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		altText = "What chart do you like? I like pie one \U001000B6"
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
-
+		log.Println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
 		imgTemplate := linebot.NewImagemapMessage(
 			imageURL,
 			"Chart Period: ",
@@ -1231,7 +1231,7 @@ func handlePostback(event *linebot.Event) {
 	if lenSplitted >= 3 {
 		if mainType[1] == ADD_EXPENSE && lenSplitted > 3 {
 			msgCategory = mainType[1]
-		} else if mainType[1] == ADD_INCOME && lenSplitted >= 3 {
+		} else {
 			msgCategory = mainType[1]
 		}
 
