@@ -1047,19 +1047,37 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Pie Chart", "Why do I like Pie Chart? Because I like Pie! \U001000B6",
-				linebot.NewURITemplateAction("Select", linkChart),
+				linebot.NewPostbackTemplateAction("Select", "/chart/pie", ""),
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "Line Chart", "It looks pretty cool huh \U0010002D",
-				linebot.NewURITemplateAction("Select", linkChart),
+				linebot.NewPostbackTemplateAction("Select", "/chart/line", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Bar Chart", "Bar Bar Bar like Chocolate Bar\U00100023",
-				linebot.NewURITemplateAction("Select", linkChart),
+				imageURL, "Bar Chart", "Bar Bar Bar like Chocolate Bar \U00100023",
+				linebot.NewPostbackTemplateAction("Select", "/chart/bar", ""),
 			),
 		)
 
-		altText = "What chart do you like? I like pie one"
+		altText = "What chart do you like? I like pie one \U001000B6"
+
+	} else if lenSplitted == 3 && splitted[2] == "pie" {
+
+		template = linebot.NewImagemapMessage(
+			imageURL,
+			"Chart Period: ",
+			linebot.ImagemapBaseSize{180, 180},
+			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 90, 90}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{90, 0, 90, 90}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 90, 180, 90}),
+		)
+
+		altText = "Choose your chart's period \U00100061"
+
+	} else if lenSplitted == 3 && splitted[2] == "line" {
+
+	} else if lenSplitted == 3 && splitted[2] == "bar" {
+
 	}
 
 	if _, err := bot.ReplyMessage(
