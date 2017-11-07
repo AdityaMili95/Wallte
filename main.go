@@ -1063,6 +1063,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
+		log.Println("MASUKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
+
 		imgTemplate := linebot.NewImagemapMessage(
 			imageURL,
 			"Chart Period: ",
@@ -1082,6 +1084,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}
 
 		return
+
+	} else if lenSplitted == 4 && splitted[2] == "pie" && splitted[3] == "period" {
 
 	} else if lenSplitted == 3 && splitted[2] == "line" {
 
