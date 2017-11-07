@@ -1062,14 +1062,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		altText = "What chart do you like? I like pie one \U001000B6"
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
-		log.Println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
 		imgTemplate := linebot.NewImagemapMessage(
 			imageURL,
 			"Chart Period: ",
-			linebot.ImagemapBaseSize{180, 180},
-			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 90, 90}),
-			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{90, 0, 90, 90}),
-			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 90, 180, 90}),
+			linebot.ImagemapBaseSize{1024, 1024},
+			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 520, 520}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{520, 0, 520, 520}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 1024, 520}),
 		)
 
 		altText = "Choose your chart's period \U00100061"
