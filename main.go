@@ -1231,7 +1231,7 @@ func handlePostback(event *linebot.Event) {
 	if lenSplitted >= 3 {
 		if mainType[1] == ADD_EXPENSE && lenSplitted > 3 {
 			msgCategory = mainType[1]
-		} else {
+		} else if lenSplitted >= 3 {
 			msgCategory = mainType[1]
 		}
 
