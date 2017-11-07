@@ -1063,8 +1063,6 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
-		log.Println("MASUKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
-
 		imgTemplate := linebot.NewImagemapMessage(
 			imageURL,
 			"Chart Period: ",
@@ -1244,7 +1242,8 @@ func handlePostback(event *linebot.Event) {
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == CHART {
-
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action = true
 	}
 
 	if remove_last_action {
