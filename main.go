@@ -1068,7 +1068,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			linebot.ImagemapBaseSize{1040, 1040},
 			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 520, 520}),
 			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{520, 0, 520, 520}),
-			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 1024, 520}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 1040, 520}),
 		)
 
 		altText = "Choose your chart's period \U00100061"
