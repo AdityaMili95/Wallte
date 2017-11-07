@@ -1063,7 +1063,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 		imgTemplate := linebot.NewImagemapMessage(
-			imageURL,
+			"https://github.com/AdityaMili95/Wallte/raw/master/README/chart",
 			"Chart Period: ",
 			linebot.ImagemapBaseSize{1040, 1040},
 			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 520, 520}),
