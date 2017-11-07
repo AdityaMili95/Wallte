@@ -1063,7 +1063,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
-		template = linebot.NewImagemapMessage(
+		imgTemplate := linebot.NewImagemapMessage(
 			imageURL,
 			"Chart Period: ",
 			linebot.ImagemapBaseSize{180, 180},
@@ -1073,6 +1073,15 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		)
 
 		altText = "Choose your chart's period \U00100061"
+
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			imgTemplate,
+		).Do(); err != nil {
+			log.Print(err)
+		}
+
+		return
 
 	} else if lenSplitted == 3 && splitted[2] == "line" {
 
