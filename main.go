@@ -1035,9 +1035,41 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getChartData(event *linebot.Event, userID string, roomID string, groupID string, msgType int) {
+func getChartData(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
 
+	lenSplitted := len(splitted)
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	altText := ""
 	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
+
+	if lenSplitted == 2 {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Pie Chart", "Why do I like Pie Chart? Because I like Pie! \U001000B6",
+				linebot.NewURITemplateAction("Select", linkChart),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Line Chart", "It looks pretty cool huh \U0010002D",
+				linebot.NewURITemplateAction("Select", linkChart),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Bar Chart", "Bar Bar Bar like Chocolate Bar\U00100023",
+				linebot.NewURITemplateAction("Select", linkChart),
+			),
+		)
+
+		altText = "What chart do you like? I like pie one"
+	}
+
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage(altText, template),
+	).Do(); err != nil {
+		log.Print(err)
+	}
+
+	return
 
 	if msgType == USER {
 		linkChart += "&userId=" + userID
@@ -1047,8 +1079,7 @@ func getChartData(event *linebot.Event, userID string, roomID string, groupID st
 		linkChart += "&groupId=" + userID
 	}
 
-	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
-	template := linebot.NewCarouselTemplate(
+	template = linebot.NewCarouselTemplate(
 		linebot.NewCarouselColumn(
 			imageURL, "Payment", "Do you pay for something?",
 			linebot.NewURITemplateAction("Our Shop", linkChart),
@@ -1093,7 +1124,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == CHART {
 
-		getChartData(event, userID, roomID, groupID, msgType)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
 		remove_last_action = true
 
 	} else if msgCategory == GET_CHART {
