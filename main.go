@@ -1065,7 +1065,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		imgTemplate := linebot.NewImagemapMessage(
 			imageURL,
 			"Chart Period: ",
-			linebot.ImagemapBaseSize{1024, 1024},
+			linebot.ImagemapBaseSize{1040, 1040},
 			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 520, 520}),
 			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{520, 0, 520, 520}),
 			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 1024, 520}),
