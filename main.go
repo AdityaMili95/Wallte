@@ -1047,6 +1047,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	altText := ""
 	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
+	if msgType == USER {
+		linkChart += "&userId=" + userID
+	} else if msgType == ROOM {
+		linkChart += "&roomId=" + userID
+	} else if msgType == GROUP {
+		linkChart += "&groupId=" + userID
+	}
 
 	if lenSplitted == 2 {
 
@@ -1112,6 +1119,18 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		altText = title + "! " + "\U0010007A"
 
+	} else if lenSplitted == 5 && splitted[4] == "datepick" && splitted[2] == "pie" && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") {
+
+		date := event.Postback.Params.Datetime
+		date += "T00:00"
+		year, month, day, _, _, _ := ParseTime(date)
+		linkChart += fmt.Sprintf("&day=%d&month=%d&year=%d&period=%s", day, month, year, splitted[3])
+
+		template = linebot.NewButtonsTemplate(
+			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
+			linebot.NewURITemplateAction("Render Now", linkChart),
+		)
+
 	} else if lenSplitted == 3 && splitted[2] == "line" {
 
 	} else if lenSplitted == 3 && splitted[2] == "bar" {
@@ -1128,29 +1147,6 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	}
 
 	return
-
-	if msgType == USER {
-		linkChart += "&userId=" + userID
-	} else if msgType == ROOM {
-		linkChart += "&roomId=" + userID
-	} else if msgType == GROUP {
-		linkChart += "&groupId=" + userID
-	}
-
-	template = linebot.NewCarouselTemplate(
-		linebot.NewCarouselColumn(
-			imageURL, "Payment", "Do you pay for something?",
-			linebot.NewURITemplateAction("Our Shop", linkChart),
-		),
-		linebot.NewCarouselColumn(
-			imageURL, "Other Needs", "You don't know what you need until you need it",
-			linebot.NewURITemplateAction("Our Shop", linkChart),
-		),
-		linebot.NewCarouselColumn(
-			imageURL, "Undescribeable", "Describe for me please!",
-			linebot.NewURITemplateAction("Our Shop", linkChart),
-		),
-	)
 
 	if _, err := bot.ReplyMessage(
 		event.ReplyToken,
