@@ -1063,12 +1063,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 		imgTemplate := linebot.NewImagemapMessage(
-			app.appBaseURL+"/README/chart/1040",
+			"https://github.com/AdityaMili95/Wallte/raw/master/README/chart/1040",
 			"Chart Period: ",
 			linebot.ImagemapBaseSize{1040, 1040},
 			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 520, 520}),
 			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{520, 0, 520, 520}),
-			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 1040, 520}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 520, 520}),
+			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{520, 520, 520, 520}),
 		)
 
 		altText = "Choose your chart's period \U00100061"
