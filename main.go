@@ -30,8 +30,8 @@ var Redis *goredis.Redis
 const (
 	ADD_EXPENSE = "add-expense"
 	ADD_INCOME  = "add-income"
-	CHART       = "chart"
-	GET_CHART   = "get-chart"
+	REPORT      = "report"
+	GET_REPORT  = "get-report"
 	DRAW        = "draw"
 	USER        = 1
 	ROOM        = 2
@@ -981,7 +981,7 @@ func sendChartImage(splitted []string, event *linebot.Event, exist bool, userID 
 	//previewImg := "https://firebasestorage.googleapis.com/v0/b/wallte-2df83.appspot.com/o/1%2Fimg-preview?alt=media&token=e4e468c9-1f30-48ef-b6c8-f71d2c2a378a"
 
 	if !exist || data.Data.Chart == nil {
-		replyTextMessage(event, "You haven't rendered any chat! \U00100085\nPlease select a chart from chart menu")
+		replyTextMessage(event, "You haven't rendered any chat! \U00100085\nPlease select a chart from report menu")
 		return
 	}
 
@@ -1059,8 +1059,6 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			linebot.NewMessageImagemapAction("/draw/bar", linebot.ImagemapArea{0, 520, 1040, 520}),
 		)
 
-		altText = "Choose your chart's period \U00100061"
-
 		if _, err := bot.ReplyMessage(
 			event.ReplyToken,
 			imgTemplate,
@@ -1075,17 +1073,19 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Daily", "You can report a PIE diagram\U001000B6 in daily basis",
-				linebot.NewPostbackTemplateAction("Select", "/chart/pie", ""),
+				linebot.NewPostbackTemplateAction("Select", "/report/pie", ""),
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "Monthly", "Yay! Summarize your expense and income report monthly",
-				linebot.NewPostbackTemplateAction("Select", "/chart/line", ""),
+				linebot.NewPostbackTemplateAction("Select", "/report/line", ""),
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "Yearly", "Maybe its new year? Compare your report yearly!",
-				linebot.NewPostbackTemplateAction("Select", "/chart/bar", ""),
+				linebot.NewPostbackTemplateAction("Select", "/report/bar", ""),
 			),
 		)
+
+		altText = "Choose report's period!"
 
 	} else if lenSplitted == 4 && splitted[2] == "pie" && splitted[3] == "period" {
 
@@ -1157,12 +1157,12 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
-	} else if msgCategory == CHART {
+	} else if msgCategory == REPORT {
 
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
 		remove_last_action = true
 
-	} else if msgCategory == GET_CHART {
+	} else if msgCategory == GET_REPORT {
 		sendChartImage(mainType, event, exist, userID, roomID, groupID, data, msgType)
 		remove_last_action = true
 
@@ -1252,7 +1252,7 @@ func handlePostback(event *linebot.Event) {
 		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
-	} else if msgCategory == CHART {
+	} else if msgCategory == REPORT {
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
 		remove_last_action = true
 	}
