@@ -1113,7 +1113,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction(title, postMsg+"/datepick/", "date", nowString, nowString, ""),
+				linebot.NewDatetimePickerTemplateAction(title, postMsg+"/datepick", "date", nowString, nowString, ""),
 			),
 		)
 
@@ -1131,6 +1131,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			linebot.NewURITemplateAction("Render Now", linkChart),
 		)
 
+		altText = "Render your report now! \U00100091"
 	} else if lenSplitted == 3 && splitted[2] == "line" {
 
 	} else if lenSplitted == 3 && splitted[2] == "bar" {
