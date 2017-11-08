@@ -1123,6 +1123,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			),
 		)
 
+		altText = title + "! " + "\U0010007A"
+
 	} else if lenSplitted == 3 && splitted[2] == "line" {
 
 	} else if lenSplitted == 3 && splitted[2] == "bar" {
