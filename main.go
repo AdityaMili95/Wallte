@@ -1124,13 +1124,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		date := event.Postback.Params.Datetime
 		date += "T00:00"
 		year, month, day, _, _, _ := ParseTime(date)
-		res, err := Marshal(data)
-		if err != nil || res == "" {
+		//res, err := Marshal(data)
+		/*if err != nil || res == "" {
 			replyTextMessage(event, "Upss something happened \U00100088\nRender Cancelled!")
 			return
-		}
+		}*/
 
-		linkChart += fmt.Sprintf("&day=%d&month=%d&year=%d&period=%s&json=%s", day, month, year, splitted[3], res)
+		linkChart += fmt.Sprintf("&day=%d&month=%d&year=%d&period=%s", day, month, year, splitted[3])
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
