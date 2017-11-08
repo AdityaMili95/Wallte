@@ -1044,7 +1044,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
 
 	if lenSplitted == 2 {
-		template = linebot.NewCarouselTemplate(
+		/*template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Pie Chart", "Why do I like Pie Chart? Because I like Pie! \U001000B6",
 				linebot.NewPostbackTemplateAction("Select", "/chart/pie", ""),
@@ -1057,18 +1057,15 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				imageURL, "Bar Chart", "Bar Bar Bar like Chocolate Bar \U00100023",
 				linebot.NewPostbackTemplateAction("Select", "/chart/bar", ""),
 			),
-		)
+		)*/
 
-		altText = "What chart do you like? I like pie one \U001000B6"
-
-	} else if lenSplitted == 3 && splitted[2] == "pie" {
 		imgTemplate := linebot.NewImagemapMessage(
 			"https://github.com/AdityaMili95/Wallte/raw/master/README/chart/",
-			"Chart Period: ",
+			"What chart do you like? I like pie one \U001000B6",
 			linebot.ImagemapBaseSize{1040, 1040},
-			linebot.NewURIImagemapAction("https://store.line.me/family/manga/en", linebot.ImagemapArea{0, 0, 520, 520}),
-			linebot.NewURIImagemapAction("https://store.line.me/family/music/en", linebot.ImagemapArea{520, 0, 520, 520}),
-			linebot.NewURIImagemapAction("https://store.line.me/family/play/en", linebot.ImagemapArea{0, 520, 1040, 520}),
+			linebot.NewMessageImagemapAction("/draw/pie", linebot.ImagemapArea{0, 0, 520, 520}),
+			linebot.NewMessageImagemapAction("/draw/line", linebot.ImagemapArea{520, 0, 520, 520}),
+			linebot.NewMessageImagemapAction("/draw/bar", linebot.ImagemapArea{0, 520, 1040, 520}),
 		)
 
 		altText = "Choose your chart's period \U00100061"
@@ -1081,6 +1078,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}
 
 		return
+
+	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
 	} else if lenSplitted == 4 && splitted[2] == "pie" && splitted[3] == "period" {
 
