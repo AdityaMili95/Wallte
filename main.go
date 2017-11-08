@@ -1100,26 +1100,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}
 
 		now := time.Now()
-		curr := time.Now()
-		curr.Format("2006-01-02T15:04")
-
-		month := fmt.Sprintf("%d", curr.Month())
-		if curr.Month() < 10 {
-			month = "0" + month
-		}
-
-		day := fmt.Sprintf("%d", curr.Day())
-		if curr.Day() < 10 {
-			day = "0" + day
-		}
-
-		max := fmt.Sprintf("%d-%s-%sT23:59", curr.Year(), month, day)
+		nowString := now.Format("2006-01-02")
 
 		template = linebot.NewImageCarouselTemplate(
 
 			linebot.NewImageCarouselColumn(
 				"https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png",
-				linebot.NewDatetimePickerTemplateAction(title, postMsg+"/datepick/", "date", now.Format("2006-01-02T15:04"), max, ""),
+				linebot.NewDatetimePickerTemplateAction(title, postMsg+"/datepick/", "date", nowString, nowString, ""),
 			),
 		)
 
