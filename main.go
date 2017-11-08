@@ -32,6 +32,7 @@ const (
 	ADD_INCOME  = "add-income"
 	CHART       = "chart"
 	GET_CHART   = "get-chart"
+	DRAW        = "draw"
 	USER        = 1
 	ROOM        = 2
 	GROUP       = 3
@@ -743,6 +744,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			replyTextMessage(event, "Cancelled! \U0010007E")
 		}
 
+	} else {
+		//NGAPAIN
 	}
 
 	if valid {
@@ -881,6 +884,8 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			replyTextMessage(event, "Cancelled! \U0010007E")
 		}
 
+	} else {
+		//NGAPAIN
 	}
 
 	return true
@@ -1044,20 +1049,6 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
 
 	if lenSplitted == 2 {
-		/*template = linebot.NewCarouselTemplate(
-			linebot.NewCarouselColumn(
-				imageURL, "Pie Chart", "Why do I like Pie Chart? Because I like Pie! \U001000B6",
-				linebot.NewPostbackTemplateAction("Select", "/chart/pie", ""),
-			),
-			linebot.NewCarouselColumn(
-				imageURL, "Line Chart", "It looks pretty cool huh \U0010002D",
-				linebot.NewPostbackTemplateAction("Select", "/chart/line", ""),
-			),
-			linebot.NewCarouselColumn(
-				imageURL, "Bar Chart", "Bar Bar Bar like Chocolate Bar \U00100023",
-				linebot.NewPostbackTemplateAction("Select", "/chart/bar", ""),
-			),
-		)*/
 
 		imgTemplate := linebot.NewImagemapMessage(
 			"https://github.com/AdityaMili95/Wallte/raw/master/README/chart/",
@@ -1081,12 +1072,29 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Daily", "You can report a PIE diagram\U001000B6 in daily basis",
+				linebot.NewPostbackTemplateAction("Select", "/chart/pie", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Monthly", "Yay! Summarize your expense and income report monthly",
+				linebot.NewPostbackTemplateAction("Select", "/chart/line", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Yearly", "Maybe its new year? Compare your report yearly!",
+				linebot.NewPostbackTemplateAction("Select", "/chart/bar", ""),
+			),
+		)
+
 	} else if lenSplitted == 4 && splitted[2] == "pie" && splitted[3] == "period" {
 
 	} else if lenSplitted == 3 && splitted[2] == "line" {
 
 	} else if lenSplitted == 3 && splitted[2] == "bar" {
 
+	} else {
+		//NGAPAIN
 	}
 
 	if _, err := bot.ReplyMessage(
@@ -1156,6 +1164,11 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	} else if msgCategory == GET_CHART {
 		sendChartImage(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action = true
+
+	} else if lenSplitted == 3 && msgCategory == DRAW {
+
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
 		remove_last_action = true
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
