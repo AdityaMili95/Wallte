@@ -1121,7 +1121,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 5 && exist && splitted[4] == "datepick" && splitted[2] == "pie" && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") {
 
-		date := event.Postback.Params.Datetime
+		/*date := event.Postback.Params.Datetime
 		date += "T00:00"
 		year, month, day, _, _, _ := ParseTime(date)
 		//res, err := Marshal(data)
