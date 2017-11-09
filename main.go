@@ -565,7 +565,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
 
@@ -590,9 +590,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		remove_last_action = false
 		must_update = false
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = true
-			must_update = true
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			must_update = false
+			remove_last_action = false
 		}
 
 	} else if lenSplitted == 3 && splitted[2] == "transport" {
@@ -629,9 +629,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		remove_last_action = false
 		must_update = false
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = true
-			must_update = true
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			must_update = false
+			remove_last_action = false
 		}
 
 	} else if lenSplitted == 3 && splitted[2] == "social" {
@@ -665,11 +665,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Wow you just socialize! What did you do  \U0010006A"
 		valid = true
 
-		remove_last_action = false
-		must_update = false
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = true
-			must_update = true
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			must_update = false
+			remove_last_action = false
 		}
 	} else if lenSplitted == 3 && splitted[2] == "life" {
 		template = linebot.NewCarouselTemplate(
@@ -691,11 +689,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		valid = true
 
-		remove_last_action = false
-		must_update = false
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = true
-			must_update = true
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			must_update = false
+			remove_last_action = false
 		}
 
 	} else if lenSplitted == 3 && splitted[2] == "other" {
@@ -724,11 +720,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Tell me!! What do you cost for? \U0010009A"
 		valid = true
 
-		remove_last_action = false
-		must_update = false
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = true
-			must_update = true
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			must_update = false
+			remove_last_action = false
 		}
 
 	} else if exist && lenSplitted == 4 && okay {
@@ -881,7 +875,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			log.Print(err)
 		}
 
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
 
@@ -890,9 +884,10 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			return false, true
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
 		}
+
 	} else if exist && lenSplitted == 5 && splitted[3] == "datepick" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
@@ -920,7 +915,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		data.Data.Last_Action.Created_date = date
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
 
