@@ -1354,7 +1354,7 @@ func handlePostback(event *linebot.Event) {
 	userID, roomID, groupID, data, exist, msgType := FetchDataSource(event)
 
 	if !exist {
-		return
+		data = initDataWallet(userID, roomID, groupID, msgType)
 	}
 
 	mainType := strings.Split(msg, "/")
