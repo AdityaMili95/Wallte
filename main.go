@@ -885,7 +885,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
-			return false, false
+			return false, true
 		}
 
 	} else if exist && lenSplitted == 5 && splitted[3] == "datepick" {
