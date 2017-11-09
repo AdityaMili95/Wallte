@@ -514,7 +514,7 @@ func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet,
 	return userID, roomID, groupID, data, exist, msgType
 }
 
-func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) bool {
+func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) (bool, bool) {
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
 	var template linebot.Template
@@ -523,6 +523,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	okay := false
 	keyword := strings.Join(splitted, "/")
 	var info TransactionInfo
+	must_update := true
+	remove_last_action := true
 
 	if lenSplitted == 4 {
 		info, okay = keyToInfo[splitted[2]][splitted[3]]
@@ -563,6 +565,10 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			log.Print(err)
 		}
 
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			return false, false
+		}
+
 	} else if lenSplitted == 3 && splitted[2] == "food" {
 
 		template = linebot.NewCarouselTemplate(
@@ -581,6 +587,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 		altText = "What type of food did you buy  \U00100055"
 		valid = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = false
+		}
 
 	} else if lenSplitted == 3 && splitted[2] == "transport" {
 
@@ -613,6 +624,12 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 		altText = "What type of transportation did you ride?  \U00100049"
 		valid = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = false
+		}
+
 	} else if lenSplitted == 3 && splitted[2] == "social" {
 
 		template = linebot.NewCarouselTemplate(
@@ -643,6 +660,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 		altText = "Wow you just socialize! What did you do  \U0010006A"
 		valid = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = false
+		}
 	} else if lenSplitted == 3 && splitted[2] == "life" {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -662,6 +684,12 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Please take care of yourself  \U001000B2"
 
 		valid = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = false
+		}
+
 	} else if lenSplitted == 3 && splitted[2] == "other" {
 
 		template = linebot.NewCarouselTemplate(
@@ -686,18 +714,27 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		)
 
 		altText = "Tell me!! What do you cost for? \U0010009A"
-
 		valid = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = false
+		}
+
 	} else if exist && lenSplitted == 4 && okay {
 		replyTextMessage(event, "How much did you cost ? \U0010008C\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
-		return false
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = true
+		}
 	} else if exist && lenSplitted == 6 && splitted[4] == "datepick" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[5] {
 			replyTextMessage(event, "Oops this data is outdated \U0010009B")
-			return false
+			return false, false
 		}
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo[mainType[2]][mainType[3]]
@@ -719,12 +756,20 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		data.Data.Last_Action.Created_date = date
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
-		return false
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = false
+			must_update = false
+		}
+
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
-			return false
+			if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+				remove_last_action = false
+				must_update = false
+			}
 		} else if splitted[3] == "yes" {
 
 			created_date := data.Data.Last_Action.Created_date
@@ -785,10 +830,10 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		}
 	}
 
-	return true
+	return remove_last_action, must_update
 }
 
-func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) bool {
+func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) (bool, bool) {
 
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
@@ -831,16 +876,23 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			log.Print(err)
 		}
 
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			return false, false
+		}
+
 	} else if lenSplitted == 3 && okay {
 		replyTextMessage(event, "Woww How much?!!\n\nChat me the number please \U0010007A : ")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
-		return false
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			return false, false
+		}
 	} else if exist && lenSplitted == 5 && splitted[3] == "datepick" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops this data is outdated \U0010009B")
-			return false
+			return false, false
 		}
 		mainType := strings.Split(data.Data.Last_Action.Keyword, "/")
 		trans := keyToInfo["income"][mainType[2]]
@@ -862,12 +914,16 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 
 		data.Data.Last_Action.Created_date = date
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
-		return false
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			return false, false
+		}
+
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
-			return false
+			return false, false
 		} else if splitted[3] == "yes" {
 
 			created_date := data.Data.Last_Action.Created_date
@@ -919,7 +975,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		//NGAPAIN
 	}
 
-	return true
+	return true, true
 }
 
 func replyTextMessage(event *linebot.Event, text string) {
@@ -1211,22 +1267,31 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, _ = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
-		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, _ = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == REPORT {
 
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
-		remove_last_action = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = true
+		}
 
 	} else if msgCategory == GET_REPORT {
 		sendChartImage(mainType, event, exist, userID, roomID, groupID, data, msgType)
-		remove_last_action = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = true
+		}
 
 	} else if lenSplitted == 3 && msgCategory == DRAW {
 
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
-		remove_last_action = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = true
+		}
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 		detailType := strings.Split(data.Data.Last_Action.Keyword, "/")
@@ -1294,6 +1359,7 @@ func handlePostback(event *linebot.Event) {
 	mainType := strings.Split(msg, "/")
 	lenSplitted := len(mainType)
 	remove_last_action := false
+	must_update := true
 
 	msgCategory := ""
 	if lenSplitted >= 3 {
@@ -1306,18 +1372,22 @@ func handlePostback(event *linebot.Event) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, must_update = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == ADD_INCOME {
-		remove_last_action = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
 	} else if msgCategory == REPORT {
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
 		remove_last_action = true
 	}
 
 	if remove_last_action {
+		must_update = true
 		data.Data.Last_Action = &LastAction{}
 	}
-	prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
+
+	if must_update {
+		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
+	}
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
