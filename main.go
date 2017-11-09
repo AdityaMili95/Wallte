@@ -588,9 +588,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "What type of food did you buy  \U00100055"
 		valid = true
 
+		remove_last_action = false
+		must_update = false
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = false
+			remove_last_action = true
+			must_update = true
 		}
 
 	} else if lenSplitted == 3 && splitted[2] == "transport" {
@@ -625,9 +627,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "What type of transportation did you ride?  \U00100049"
 		valid = true
 
+		remove_last_action = false
+		must_update = false
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = false
+			remove_last_action = true
+			must_update = true
 		}
 
 	} else if lenSplitted == 3 && splitted[2] == "social" {
@@ -661,9 +665,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Wow you just socialize! What did you do  \U0010006A"
 		valid = true
 
+		remove_last_action = false
+		must_update = false
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = false
+			remove_last_action = true
+			must_update = true
 		}
 	} else if lenSplitted == 3 && splitted[2] == "life" {
 		template = linebot.NewCarouselTemplate(
@@ -685,9 +691,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		valid = true
 
+		remove_last_action = false
+		must_update = false
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = false
+			remove_last_action = true
+			must_update = true
 		}
 
 	} else if lenSplitted == 3 && splitted[2] == "other" {
@@ -716,9 +724,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "Tell me!! What do you cost for? \U0010009A"
 		valid = true
 
+		remove_last_action = false
+		must_update = false
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = false
+			remove_last_action = true
+			must_update = true
 		}
 
 	} else if exist && lenSplitted == 4 && okay {
@@ -726,10 +736,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = true
-		}
+		remove_last_action = false
+		must_update = true
+
 	} else if exist && lenSplitted == 6 && splitted[4] == "datepick" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[5] {
@@ -757,19 +766,15 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		data.Data.Last_Action.Created_date = date
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 
-		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-			remove_last_action = false
-			must_update = false
-		}
+		remove_last_action = false
+		must_update = false
 
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
-			if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
-				remove_last_action = false
-				must_update = false
-			}
+			remove_last_action = false
+			must_update = false
 		} else if splitted[3] == "yes" {
 
 			created_date := data.Data.Last_Action.Created_date
@@ -1262,6 +1267,10 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	remove_last_action := false
 	must_update := false
 
+	if !exist {
+		data = initDataWallet(userID, roomID, groupID, msgType)
+	}
+
 	if lenSplitted > 1 {
 		msgCategory = mainType[1]
 	}
@@ -1316,10 +1325,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		// ga ada last action
 	}
 
-	if !exist {
-		data = initDataWallet(userID, roomID, groupID, msgType)
-		must_update = true
-	} else if remove_last_action {
+	if remove_last_action {
 		data.Data.Last_Action = &LastAction{}
 		must_update = true
 	}
