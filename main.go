@@ -1131,13 +1131,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	var template linebot.Template
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	altText := ""
-	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?token=" + event.ReplyToken
+	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?"
 	if msgType == USER {
-		linkChart += "&userId=" + userID
+		linkChart += "userId=" + userID
 	} else if msgType == ROOM {
-		linkChart += "&roomId=" + userID
+		linkChart += "roomId=" + userID
 	} else if msgType == GROUP {
-		linkChart += "&groupId=" + userID
+		linkChart += "groupId=" + userID
 	}
 
 	if lenSplitted == 2 {
