@@ -26,7 +26,9 @@ import (
 var bot *linebot.Client
 var session *simsimi.SimSimiSession
 var Redis *goredis.Redis
-var cumaTest int
+var db *sqlx.DB
+
+//var cumaTest int
 
 const (
 	ADD_EXPENSE = "add-expense"
@@ -182,7 +184,8 @@ type Option struct {
 
 func main() {
 	var err error
-	cumaTest = 0
+	//cumaTest = 0
+	connectDB()
 	connectRedis()
 	session, _ = simsimi.CreateSimSimiSession("Wallte")
 	bot, err = linebot.New(os.Getenv("CHANNEL_SECRET"), os.Getenv("CHANNEL_TOKEN"))
@@ -213,13 +216,14 @@ func connectRedis() {
 	}
 }
 
-func connectDB() (*sqlx.DB, error) {
-	db, err := sqlx.Open("mysql", os.Getenv("DB_CONNECT"))
+func connectDB() error {
+	var err error
+	db, err = sqlx.Open("mysql", os.Getenv("DB_CONNECT"))
 	if err != nil {
 		log.Println(err.Error())
-		return nil, err
+		return err
 	}
-	return db, nil
+	return nil
 }
 
 func GetFirebase(key string) string {
@@ -290,12 +294,17 @@ func SetFirebase(key string, value string) {
 }
 
 func executeQuery(query string) *sqlx.Rows {
-	db, err := connectDB()
+	/*db, err := connectDB()
 	if err != nil {
 		log.Println(err.Error())
 		return nil
 	}
-	defer db.Close()
+	defer db.Close()*/
+
+	if db == nil {
+		log.Println("Database connection failed")
+		return nil
+	}
 	rows, err := db.Queryx(query)
 	if err != nil {
 		log.Println(err.Error())
@@ -305,13 +314,19 @@ func executeQuery(query string) *sqlx.Rows {
 }
 
 func executeInsert(json string, userID string, roomID string, groupID string) {
-	db, err := connectDB()
+	/*db, err := connectDB()
 
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
-	defer db.Close()
+	defer db.Close()*/
+
+	if db == nil {
+		log.Println("Database connection failed")
+		return
+	}
+
 	tx := db.MustBegin()
 	stmt, err := tx.Prepare("INSERT INTO wallte_data(user_id,room_id,group_id,JSON) VALUES (?,?,?,?)")
 	if err != nil {
@@ -328,12 +343,18 @@ func executeInsert(json string, userID string, roomID string, groupID string) {
 }
 
 func executeUpdate(json string, userID string, roomID string, groupID string) {
-	db, err := connectDB()
+	/*db, err := connectDB()
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
-	defer db.Close()
+	defer db.Close()*/
+
+	if db == nil {
+		log.Println("Database connection failed")
+		return
+	}
+
 	tx := db.MustBegin()
 	stmt, err := tx.Prepare("update wallte_data set JSON=? where user_id=? and room_id=? and group_id=?")
 	if err != nil {
@@ -1301,8 +1322,8 @@ func handlePostback(event *linebot.Event) {
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
-	cumaTest += 1
-	log.Println("|||||||||||||||||||||||||||||||||||||||||||||", cumaTest)
+	//[!!!]cumaTest += 1
+	//log.Println("|||||||||||||||||||||||||||||||||||||||||||||", cumaTest)
 
 	events, err := bot.ParseRequest(r)
 
