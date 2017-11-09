@@ -725,7 +725,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			remove_last_action = false
 		}
 
-	} else if exist && lenSplitted == 4 && okay {
+	} else if lenSplitted == 4 && okay {
 		replyTextMessage(event, "How much did you cost ? \U0010008C\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
