@@ -26,6 +26,7 @@ import (
 var bot *linebot.Client
 var session *simsimi.SimSimiSession
 var Redis *goredis.Redis
+var cumaTest int
 
 const (
 	ADD_EXPENSE = "add-expense"
@@ -181,7 +182,7 @@ type Option struct {
 
 func main() {
 	var err error
-
+	cumaTest = 0
 	connectRedis()
 	session, _ = simsimi.CreateSimSimiSession("Wallte")
 	bot, err = linebot.New(os.Getenv("CHANNEL_SECRET"), os.Getenv("CHANNEL_TOKEN"))
@@ -732,10 +733,6 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				data.Data.Expense[year][month][day] = &DayTransaction{Total: 0, All_Transactions: atr}
 			}
 
-			/*if data.Data.Expense[year][month][day].All_Transactions == nil {
-				data.Data.Expense[year][month][day].All_Transactions = []TransactionInfo{}
-			}*/
-
 			data.Data.Expense[year][month][day].All_Transactions = append(data.Data.Expense[year][month][day].All_Transactions, TransactionInfo{
 				Created_by:   name,
 				Price:        data.Data.Last_Action.Price,
@@ -878,10 +875,6 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 				atr := []TransactionInfo{}
 				data.Data.Income[year][month][day] = &DayTransaction{Total: 0, All_Transactions: atr}
 			}
-
-			/*if data.Data.Income[year][month][day].All_Transactions == nil {
-				data.Data.Income[year][month][day].All_Transactions = []TransactionInfo{}
-			}*/
 
 			data.Data.Income[year][month][day].All_Transactions = append(data.Data.Income[year][month][day].All_Transactions, TransactionInfo{
 				Created_by:   name,
@@ -1307,6 +1300,10 @@ func handlePostback(event *linebot.Event) {
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
+
+	cumaTest += 1
+	log.Println("|||||||||||||||||||||||||||||||||||||||||||||", cumaTest)
+
 	events, err := bot.ParseRequest(r)
 
 	if err != nil {
