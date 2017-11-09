@@ -1206,7 +1206,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 	} else if lenSplitted == 5 && exist && splitted[4] == "datepick" && splitted[2] == "pie" && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") {
 
-		/*date := event.Postback.Params.Datetime
+		date := event.Postback.Params.Datetime
 		date += "T00:00"
 		year, month, day, _, _, _ := ParseTime(date)
 		//res, err := Marshal(data)
@@ -1215,7 +1215,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			return
 		}*/
 
-		//linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s", linkChart, day, month, year, splitted[3])
+		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s", linkChart, day, month, year, splitted[3])
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
