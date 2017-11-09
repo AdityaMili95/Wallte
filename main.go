@@ -126,17 +126,15 @@ type DataWallet struct {
 }
 
 type Wallet struct {
-	UserInfo     Info
-	RoomInfo     Info
-	GroupInfo    Info
-	Currency     string
-	Money        int
-	Income       map[int]map[int]map[int][]TransactionInfo
-	Expense      map[int]map[int]map[int][]TransactionInfo
-	Plan_Income  map[int]map[int]map[int][]TransactionInfo
-	Plan_Expense map[int]map[int]map[int][]TransactionInfo
-	Last_Action  *LastAction
-	Chart        *MyChart
+	UserInfo    Info
+	RoomInfo    Info
+	GroupInfo   Info
+	Currency    string
+	Money       int
+	Income      map[int]map[int]map[int]*DayTransaction
+	Expense     map[int]map[int]map[int]*DayTransaction
+	Last_Action *LastAction
+	Chart       *MyChart
 }
 
 type MyChart struct {
@@ -169,6 +167,11 @@ type TransactionInfo struct {
 	SubCategory  string
 	SpentType    string
 	Description  string
+}
+
+type DayTransaction struct {
+	All_Transactions []TransactionInfo
+	Total            int
 }
 
 type Option struct {
@@ -713,22 +716,27 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			}
 
 			if data.Data.Expense == nil {
-				data.Data.Expense = map[int]map[int]map[int][]TransactionInfo{}
+				data.Data.Expense = map[int]map[int]map[int]*DayTransaction{}
 			}
 
 			if data.Data.Expense[year] == nil {
-				data.Data.Expense[year] = map[int]map[int][]TransactionInfo{}
+				data.Data.Expense[year] = map[int]map[int]*DayTransaction{}
 			}
 
 			if data.Data.Expense[year][month] == nil {
-				data.Data.Expense[year][month] = map[int][]TransactionInfo{}
+				data.Data.Expense[year][month] = map[int]*DayTransaction{}
 			}
 
 			if data.Data.Expense[year][month][day] == nil {
-				data.Data.Expense[year][month][day] = []TransactionInfo{}
+				atr := []TransactionInfo{}
+				data.Data.Expense[year][month][day] = &DayTransaction{Total: 0, All_Transactions: atr}
 			}
 
-			data.Data.Expense[year][month][day] = append(data.Data.Expense[year][month][day], TransactionInfo{
+			/*if data.Data.Expense[year][month][day].All_Transactions == nil {
+				data.Data.Expense[year][month][day].All_Transactions = []TransactionInfo{}
+			}*/
+
+			data.Data.Expense[year][month][day].All_Transactions = append(data.Data.Expense[year][month][day].All_Transactions, TransactionInfo{
 				Created_by:   name,
 				Price:        data.Data.Last_Action.Price,
 				Description:  data.Data.Last_Action.Description,
@@ -738,6 +746,8 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 				SubCategory:  data.Data.Last_Action.SubCategory,
 				SpentType:    data.Data.Last_Action.SpentType,
 			})
+
+			data.Data.Expense[year][month][day].Total += data.Data.Last_Action.Price
 
 			replyTextMessage(event, "Expense Recorded! \U00100097")
 		} else {
@@ -853,22 +863,27 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			}
 
 			if data.Data.Income == nil {
-				data.Data.Income = map[int]map[int]map[int][]TransactionInfo{}
+				data.Data.Income = map[int]map[int]map[int]*DayTransaction{}
 			}
 
 			if data.Data.Income[year] == nil {
-				data.Data.Income[year] = map[int]map[int][]TransactionInfo{}
+				data.Data.Income[year] = map[int]map[int]*DayTransaction{}
 			}
 
 			if data.Data.Income[year][month] == nil {
-				data.Data.Income[year][month] = map[int][]TransactionInfo{}
+				data.Data.Income[year][month] = map[int]*DayTransaction{}
 			}
 
 			if data.Data.Income[year][month][day] == nil {
-				data.Data.Income[year][month][day] = []TransactionInfo{}
+				atr := []TransactionInfo{}
+				data.Data.Income[year][month][day] = &DayTransaction{Total: 0, All_Transactions: atr}
 			}
 
-			data.Data.Income[year][month][day] = append(data.Data.Income[year][month][day], TransactionInfo{
+			/*if data.Data.Income[year][month][day].All_Transactions == nil {
+				data.Data.Income[year][month][day].All_Transactions = []TransactionInfo{}
+			}*/
+
+			data.Data.Income[year][month][day].All_Transactions = append(data.Data.Income[year][month][day].All_Transactions, TransactionInfo{
 				Created_by:   name,
 				Price:        data.Data.Last_Action.Price,
 				Description:  data.Data.Last_Action.Description,
@@ -878,6 +893,8 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 				SubCategory:  data.Data.Last_Action.SubCategory,
 				SpentType:    data.Data.Last_Action.SpentType,
 			})
+
+			data.Data.Income[year][month][day].Total += data.Data.Last_Action.Price
 
 			replyTextMessage(event, "Income Recorded! \U00100097")
 		} else {
