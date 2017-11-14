@@ -1160,7 +1160,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		return
 
-	} else if lenSplitted == 3 && splitted[2] == "pie" && isPostback {
+	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
