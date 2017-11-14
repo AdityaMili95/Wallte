@@ -1223,7 +1223,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		)
 
 		altText = "Render your report now! \U00100091"
-	} else if lenSplitted == 3 && splitted[2] == "line" && isPostback {
+	} else if lenSplitted == 3 && splitted[2] == "line" {
 
 		template = linebot.NewCarouselTemplate(
 
@@ -1237,7 +1237,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			),
 		)
 
-	} else if lenSplitted == 3 && splitted[2] == "bar" && isPostback {
+	} else if lenSplitted == 3 && splitted[2] == "bar" {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
