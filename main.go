@@ -1181,14 +1181,14 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	} else if lenSplitted == 4 && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
 
 		title := "Select Day"
-		postMsg := "/report/pie/daily"
+		postMsg := "/report/" + splitted[2] + "/daily"
 
 		if splitted[3] == "monthly" {
 			title = "Select Month"
-			postMsg = "/report/pie/monthly"
+			postMsg = "/report/" + splitted[2] + "/monthly"
 		} else if splitted[3] == "yearly" {
 			title = "Select Year"
-			postMsg = "/report/pie/yearly"
+			postMsg = "/report/" + splitted[2] + "/yearly"
 		}
 
 		now := time.Now()
