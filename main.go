@@ -514,7 +514,7 @@ func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet,
 	return userID, roomID, groupID, data, exist, msgType
 }
 
-func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) (bool, bool) {
+func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) (bool, bool) {
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
 	var template linebot.Template
@@ -569,7 +569,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			return false, false
 		}
 
-	} else if lenSplitted == 3 && splitted[2] == "food" {
+	} else if lenSplitted == 3 && splitted[2] == "food" && isPostback {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -595,7 +595,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			remove_last_action = false
 		}
 
-	} else if lenSplitted == 3 && splitted[2] == "transport" {
+	} else if lenSplitted == 3 && splitted[2] == "transport" && isPostback {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -634,7 +634,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			remove_last_action = false
 		}
 
-	} else if lenSplitted == 3 && splitted[2] == "social" {
+	} else if lenSplitted == 3 && splitted[2] == "social" && isPostback {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -669,7 +669,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			must_update = false
 			remove_last_action = false
 		}
-	} else if lenSplitted == 3 && splitted[2] == "life" {
+	} else if lenSplitted == 3 && splitted[2] == "life" && isPostback {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Health", "Your health is the most important!",
@@ -694,7 +694,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			remove_last_action = false
 		}
 
-	} else if lenSplitted == 3 && splitted[2] == "other" {
+	} else if lenSplitted == 3 && splitted[2] == "other" && isPostback {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -725,7 +725,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			remove_last_action = false
 		}
 
-	} else if lenSplitted == 4 && okay {
+	} else if lenSplitted == 4 && okay && isPostback {
 		replyTextMessage(event, "How much did you cost ? \U0010008C\n\nChat me the number please:")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
@@ -733,7 +733,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		remove_last_action = false
 		must_update = true
 
-	} else if exist && lenSplitted == 6 && splitted[4] == "datepick" {
+	} else if exist && lenSplitted == 6 && splitted[4] == "datepick" && isPostback {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[5] {
 			replyTextMessage(event, "Oops this data is outdated \U0010009B")
@@ -763,7 +763,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		remove_last_action = false
 		must_update = false
 
-	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
+	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" && isPostback {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
@@ -832,7 +832,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	return remove_last_action, must_update
 }
 
-func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) (bool, bool) {
+func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) (bool, bool) {
 
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
@@ -879,14 +879,14 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			return false, false
 		}
 
-	} else if lenSplitted == 3 && okay {
+	} else if lenSplitted == 3 && okay && isPostback {
 		replyTextMessage(event, "Woww How much?!!\n\nChat me the number please \U0010007A : ")
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
 
 		return false, true
 
-	} else if exist && lenSplitted == 5 && splitted[3] == "datepick" {
+	} else if exist && lenSplitted == 5 && splitted[3] == "datepick" && isPostback {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops this data is outdated \U0010009B")
@@ -917,7 +917,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 			return false, false
 		}
 
-	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" {
+	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" && isPostback {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
@@ -1125,7 +1125,7 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getChartData(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int) {
+func getChartData(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) {
 
 	lenSplitted := len(splitted)
 	var template linebot.Template
@@ -1133,11 +1133,11 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 	altText := ""
 	linkChart := "https://adityamiliapp.herokuapp.com/render_chart?"
 	if msgType == USER {
-		linkChart += "userId=" + userID
+		linkChart += "xyz=" + userID
 	} else if msgType == ROOM {
-		linkChart += "roomId=" + userID
+		linkChart += "yyz=" + userID
 	} else if msgType == GROUP {
-		linkChart += "groupId=" + userID
+		linkChart += "zyz=" + userID
 	}
 
 	if lenSplitted == 2 {
@@ -1160,7 +1160,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		return
 
-	} else if lenSplitted == 3 && splitted[2] == "pie" {
+	} else if lenSplitted == 3 && splitted[2] == "pie" && isPostback {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -1178,7 +1178,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		)
 
 		altText = "Choose report's period! \U00100024"
-	} else if lenSplitted == 4 && splitted[2] == "pie" && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") {
+	} else if lenSplitted == 4 && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
 
 		title := "Select Day"
 		postMsg := "/report/pie/daily"
@@ -1204,7 +1204,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		altText = title + "! " + "\U0010007A"
 
-	} else if lenSplitted == 5 && exist && splitted[4] == "datepick" && splitted[2] == "pie" && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") {
+	} else if lenSplitted == 5 && exist && splitted[4] == "datepick" && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
 
 		date := event.Postback.Params.Datetime
 		date += "T00:00"
@@ -1215,7 +1215,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			return
 		}*/
 
-		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s", linkChart, day, month, year, splitted[3])
+		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s", linkChart, day, month, year, splitted[3], splitted[2])
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
@@ -1223,9 +1223,32 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		)
 
 		altText = "Render your report now! \U00100091"
-	} else if lenSplitted == 3 && splitted[2] == "line" {
+	} else if lenSplitted == 3 && splitted[2] == "line" && isPostback {
 
-	} else if lenSplitted == 3 && splitted[2] == "bar" {
+		template = linebot.NewCarouselTemplate(
+
+			linebot.NewCarouselColumn(
+				imageURL, "Monthly", "Compare your financial to another month!",
+				linebot.NewPostbackTemplateAction("Select", "/report/line/monthly", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Yearly", "Its time to see how your year going",
+				linebot.NewPostbackTemplateAction("Select", "/report/line/yearly", ""),
+			),
+		)
+
+	} else if lenSplitted == 3 && splitted[2] == "bar" && isPostback {
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Monthly", "Bar like chocolate bar every month! nyam nyam",
+				linebot.NewPostbackTemplateAction("Select", "/report/bar/monthly", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Yearly", "I hope next year I get more chocolates bar",
+				linebot.NewPostbackTemplateAction("Select", "/report/bar/yearly", ""),
+			),
+		)
 
 	} else {
 		//NGAPAIN
@@ -1269,12 +1292,12 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action, _ = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, _ = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
 	} else if msgCategory == ADD_INCOME {
-		remove_last_action, _ = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, _ = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
 	} else if msgCategory == REPORT {
 
-		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
 
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 			remove_last_action = true
@@ -1289,7 +1312,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	} else if lenSplitted == 3 && msgCategory == DRAW {
 
-		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
 
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 			remove_last_action = true
@@ -1371,11 +1394,11 @@ func handlePostback(event *linebot.Event) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action, must_update = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, must_update = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 	} else if msgCategory == ADD_INCOME {
-		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 	} else if msgCategory == REPORT {
-		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 		remove_last_action = true
 	}
 
