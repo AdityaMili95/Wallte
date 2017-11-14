@@ -1236,7 +1236,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				linebot.NewPostbackTemplateAction("Select", "/report/line/yearly", ""),
 			),
 		)
-
+		altText = "Choose report's period! \U00100024"
 	} else if lenSplitted == 3 && splitted[2] == "bar" {
 
 		template = linebot.NewCarouselTemplate(
@@ -1249,7 +1249,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				linebot.NewPostbackTemplateAction("Select", "/report/bar/yearly", ""),
 			),
 		)
-
+		altText = "Choose report's period! \U00100024"
 	} else {
 		//NGAPAIN
 	}
