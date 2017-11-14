@@ -913,9 +913,11 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		data.Data.Last_Action.Created_date = date
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 
-		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+		/*if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
-		}
+		}*/
+
+		return false, false
 
 	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" && isPostback {
 
