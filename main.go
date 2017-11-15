@@ -1410,8 +1410,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}
 
 		jsonText := getJSONforChart(splitted[3], day, month, year, data)
-		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&data=", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
-		log.Println(linkChart)
+		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&data=%s", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
