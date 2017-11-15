@@ -1246,7 +1246,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				return
 			}
 
-			reportText := fmt.Sprintf("%d-%s-%d Per Day Report\n\n", day, monthName, year)
+			reportText := fmt.Sprintf("%d-%s-%d\nPer Day Report\n\n", day, monthName, year)
 			reportText += "\U0010007D Expense:\n\n"
 
 			if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][month] != nil && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) != 0 {
@@ -1302,7 +1302,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				return
 			}
 
-			reportText := fmt.Sprintf("%s-%d Per Month Report\n\n", monthName, year)
+			reportText := fmt.Sprintf("%s-%d\nPer Month Report\n\n", monthName, year)
 			trimmedMonthName := monthName[0:3]
 
 			t, err := time.Parse("2006-01-02T15:04", date)
