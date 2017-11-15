@@ -1254,7 +1254,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				reportText += "     You have no Expense \U00100095\n\n"
 			}
 
-			reportText += "Income:\n\n"
+			reportText += "\n\nIncome:\n\n"
 
 			if data.Data.Income != nil && data.Data.Income[year] != nil && data.Data.Income[year][month] != nil && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) != 0 {
 
