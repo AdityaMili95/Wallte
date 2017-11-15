@@ -271,6 +271,12 @@ func ParseTime(date string) (int, int, int, int, int, string) {
 	return GetTimeInfo(t)
 }
 
+func LastDayOfMonth(t time.Time) int {
+	firstDay := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
+	lastDay := firstDay.AddDate(0, 1, 0).Add(-time.Nanosecond)
+	return lastDay.Day()
+}
+
 func SetRedis(key string, value string) {
 
 	err := Redis.Set(key, value, 0, 0, false, false)
@@ -1226,14 +1232,14 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		date := event.Postback.Params.Date
 		date += "T00:00"
-		year, month, day, _, _, _ := ParseTime(date)
+		year, month, day, _, _, monthName := ParseTime(date)
 		//res, err := Marshal(data)
 		/*if err != nil || res == "" {
 			replyTextMessage(event, "Upss something happened \U00100088\nRender Cancelled!")
 			return
 		}*/
 
-		if splitted[2] == "detail" {
+		if splitted[2] == "detail" && splitted[3] == "daily" {
 
 			if (data.Data.Income == nil || data.Data.Income[year] == nil || data.Data.Income[year][month] == nil || data.Data.Income[year][month][day] == nil || len(data.Data.Income[year][month][day].All_Transactions) == 0) && (data.Data.Expense == nil || data.Data.Expense[year] == nil || data.Data.Expense[year][month] == nil || data.Data.Expense[year][month][day] == nil || len(data.Data.Expense[year][month][day].All_Transactions) == 0) {
 				replyTextMessage(event, "There is no data here \U0010009C")
@@ -1269,7 +1275,73 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				reportText += "You have no Income \U00100094"
 			}
 
+			if len(reportText) > 2000 {
+				reportText = reportText[0:1997]
+				reportText += "..."
+			}
+
 			replyTextMessage(event, reportText)
+			return
+
+		} else if splitted[2] == "detail" && splitted[3] == "monthly" {
+
+			expense := true
+			income := true
+
+			if data.Data.Expense == nil || data.Data.Expense[year] == nil || data.Data.Expense[year][month] == nil {
+				expense = false
+			}
+
+			if data.Data.Income == nil && data.Data.Income[year] == nil || data.Data.Income[year][month] == nil {
+				income = false
+			}
+
+			if !expense && !income {
+				replyTextMessage(event, "There is no data in this month \U00100082")
+				return
+			}
+
+			reportText := fmt.Sprintf("%d-%s-%d Monthly Report\n\n", day, monthName, year)
+			trimmedMonthName := monthName[0:3]
+
+			t, err := time.Parse("2006-01-02T15:04", date)
+			lastDay := 31
+
+			if err == nil {
+				lastDay = LastDayOfMonth(t)
+			}
+
+			reportText += "Expense:\n\n"
+
+			for i := 1; i <= lastDay; i++ {
+
+				if expense && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) > 0 {
+					reportText += fmt.Sprintf("%d %s : %s %d\n", i, trimmedMonthName, data.Data.Currency, data.Data.Expense[year][month][day].Total)
+				} else {
+					reportText += fmt.Sprintf("%d %s : %s 0\n", i, trimmedMonthName, data.Data.Currency)
+				}
+
+			}
+
+			reportText += "\n\nIncome:\n\n"
+
+			for i := 1; i <= lastDay; i++ {
+
+				if income && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) > 0 {
+					reportText += fmt.Sprintf("%d %s : %s %d\n", i, trimmedMonthName, data.Data.Currency, data.Data.Income[year][month][day].Total)
+				} else {
+					reportText += fmt.Sprintf("%d %s : %s 0\n", i, trimmedMonthName, data.Data.Currency)
+				}
+
+			}
+
+			if len(reportText) > 2000 {
+				reportText = reportText[0:1997]
+				reportText += "..."
+			}
+
+			replyTextMessage(event, reportText)
+
 			return
 		}
 
