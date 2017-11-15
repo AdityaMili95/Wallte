@@ -1147,11 +1147,11 @@ func getJSONforChart(period string, day int, month int, year int, data *DataWall
 		tempData := dataDailyChart{Expense: 0, Income: 0}
 		if data.Data.Income != nil && data.Data.Income[year] != nil && data.Data.Income[year][month] != nil && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) > 0 {
 			tempData.Income = data.Data.Income[year][month][day].Total
-			jsonText = fmt.Sprintf("[%d#%d,", day, data.Data.Income[year][month][day].Total)
+			jsonText = fmt.Sprintf("[%d#%d|", day, data.Data.Income[year][month][day].Total)
 		}
 		if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][month] != nil && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) > 0 {
 			tempData.Expense = data.Data.Expense[year][month][day].Total
-			jsonText += fmt.Sprintf("%d#%d]", day, data.Data.Expense[year][month][day].Total)
+			jsonText += fmt.Sprintf("%d]", day, data.Data.Expense[year][month][day].Total)
 		}
 		//jsonText, _ = Marshal(tempData)
 	} else if period == "monthly" {
