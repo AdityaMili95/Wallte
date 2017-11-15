@@ -1312,11 +1312,14 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			}
 
 			reportText += "Expense:\n\n"
+			totalExpense := 0
+			totalIncome := 0
 
 			for i := 1; i <= lastDay; i++ {
 
 				if expense && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) > 0 {
 					reportText += fmt.Sprintf("%d %s : %s %d\n", i, trimmedMonthName, data.Data.Currency, data.Data.Expense[year][month][day].Total)
+					totalExpense += data.Data.Expense[year][month][day].Total
 				} else {
 					reportText += fmt.Sprintf("%d %s : %s 0\n", i, trimmedMonthName, data.Data.Currency)
 				}
@@ -1329,11 +1332,16 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 				if income && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) > 0 {
 					reportText += fmt.Sprintf("%d %s : %s %d\n", i, trimmedMonthName, data.Data.Currency, data.Data.Income[year][month][day].Total)
+					totalIncome += data.Data.Income[year][month][day].Total
 				} else {
 					reportText += fmt.Sprintf("%d %s : %s 0\n", i, trimmedMonthName, data.Data.Currency)
 				}
 
 			}
+
+			reportText += "\n===================="
+			reportText += fmt.Sprintf("\nTotal Expense: %s %d", data.Data.Currency, totalExpense)
+			reportText += fmt.Sprintf("\nTotal Income: %s %d", data.Data.Currency, totalIncome)
 
 			if len(reportText) > 2000 {
 				reportText = reportText[0:1997]
