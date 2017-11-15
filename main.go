@@ -1150,7 +1150,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			linebot.ImagemapBaseSize{1040, 1040},
 			linebot.NewMessageImagemapAction("/draw/pie", linebot.ImagemapArea{0, 0, 520, 520}),
 			linebot.NewMessageImagemapAction("/draw/line", linebot.ImagemapArea{520, 0, 520, 520}),
-			linebot.NewMessageImagemapAction("/draw/bar", linebot.ImagemapArea{0, 520, 1040, 520}),
+			linebot.NewMessageImagemapAction("/draw/bar", linebot.ImagemapArea{0, 520, 520, 520}),
+			linebot.NewMessageImagemapAction("/report/detail", linebot.ImagemapArea{520, 520, 520, 520}),
 		)
 
 		if _, err := bot.ReplyMessage(
@@ -1161,6 +1162,21 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}
 
 		return
+
+	} else if lenSplitted == 3 && splitted[2] == "detail" {
+
+		template = linebot.NewCarouselTemplate(
+
+			linebot.NewCarouselColumn(
+				imageURL, "Dayly", "What do you spent for this day?",
+				linebot.NewPostbackTemplateAction("Select", "/report/line/yearly", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Monthly", "Full detail of your financial in a month",
+				linebot.NewPostbackTemplateAction("Select", "/report/line/monthly", ""),
+			),
+		)
+		altText = "Choose report's period! \U00100024"
 
 	} else if lenSplitted == 3 && splitted[2] == "pie" {
 
