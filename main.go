@@ -1174,11 +1174,11 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		template = linebot.NewCarouselTemplate(
 
 			linebot.NewCarouselColumn(
-				imageURL, "Daily", "What do you spent for this day?",
+				imageURL, "Per Day", "What do you spent for this day?",
 				linebot.NewPostbackTemplateAction("Select", "/report/detail/daily", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Monthly", "Full detail of your financial in a month",
+				imageURL, "Per Month", "Full detail of your financial in a month",
 				linebot.NewPostbackTemplateAction("Select", "/report/detail/monthly", ""),
 			),
 		)
@@ -1246,7 +1246,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				return
 			}
 
-			reportText := "\U0010007D Expense:\n\n"
+			reportText := fmt.Sprintf("%d-%s-%d Per Day Report\n\n", day, monthName, year)
+			reportText += "\U0010007D Expense:\n\n"
 
 			if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][month] != nil && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) != 0 {
 
@@ -1301,7 +1302,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				return
 			}
 
-			reportText := fmt.Sprintf("%s-%d Monthly Report\n\n", monthName, year)
+			reportText := fmt.Sprintf("%s-%d Per Month Report\n\n", monthName, year)
 			trimmedMonthName := monthName[0:3]
 
 			t, err := time.Parse("2006-01-02T15:04", date)
