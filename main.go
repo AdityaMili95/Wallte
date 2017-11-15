@@ -1246,7 +1246,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 				for idx, tran := range data.Data.Expense[year][month][day].All_Transactions {
 
-					tempText := fmt.Sprintf("     %d. %s:%s:%s  - %s %d", (idx + 1), tran.Category, tran.SubCategory, tran.SpentType, data.Data.Currency, tran.Price)
+					tempText := fmt.Sprintf("%d. %s:%s:%s  - %s %d\n", (idx + 1), tran.Category, tran.SubCategory, tran.SpentType, data.Data.Currency, tran.Price)
 					reportText += tempText
 				}
 
@@ -1260,7 +1260,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 				for idx, tran := range data.Data.Income[year][month][day].All_Transactions {
 
-					tempText := fmt.Sprintf("     %d. %s:%s  - %s %d", (idx + 1), tran.Category, tran.SpentType, data.Data.Currency, tran.Price)
+					tempText := fmt.Sprintf("%d. %s:%s  - %s %d", (idx + 1), tran.Category, tran.SpentType, data.Data.Currency, tran.Price)
 					reportText += tempText
 
 				}
