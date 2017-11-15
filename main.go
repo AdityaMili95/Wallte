@@ -1240,7 +1240,36 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				return
 			}
 
-			replyTextMessage(event, "ADAAAAAAA \U0010009C")
+			reportText := "Expense:\n\n"
+
+			if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][month] != nil && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) != 0 {
+
+				for idx, tran := range data.Data.Expense[year][month][day].All_Transactions {
+
+					tempText := fmt.Sprintf("     %d. %s:%s:%s  - %s %d", (idx + 1), tran.Category, tran.SubCategory, tran.SpentType, data.Data.Currency, tran.Price)
+					reportText += tempText
+				}
+
+			} else {
+				reportText += "     You have no Expense \U00100095\n\n"
+			}
+
+			reportText += "Income:\n\n"
+
+			if data.Data.Income != nil && data.Data.Income[year] != nil && data.Data.Income[year][month] != nil && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) != 0 {
+
+				for idx, tran := range data.Data.Income[year][month][day].All_Transactions {
+
+					tempText := fmt.Sprintf("     %d. %s:%s  - %s %d", (idx + 1), tran.Category, tran.SpentType, data.Data.Currency, tran.Price)
+					reportText += tempText
+
+				}
+
+			} else {
+				reportText += "     You have no Income \U00100094"
+			}
+
+			replyTextMessage(event, reportText)
 			return
 		}
 
