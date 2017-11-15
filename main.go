@@ -1168,12 +1168,12 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		template = linebot.NewCarouselTemplate(
 
 			linebot.NewCarouselColumn(
-				imageURL, "Dayly", "What do you spent for this day?",
-				linebot.NewPostbackTemplateAction("Select", "/report/line/yearly", ""),
+				imageURL, "Daily", "What do you spent for this day?",
+				linebot.NewPostbackTemplateAction("Select", "/report/detail/daily", ""),
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "Monthly", "Full detail of your financial in a month",
-				linebot.NewPostbackTemplateAction("Select", "/report/line/monthly", ""),
+				linebot.NewPostbackTemplateAction("Select", "/report/detail/monthly", ""),
 			),
 		)
 		altText = "Choose report's period! \U00100024"
@@ -1222,7 +1222,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		altText = title + "! " + "\U0010007A"
 
-	} else if lenSplitted == 5 && exist && splitted[4] == "datepick" && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
+	} else if lenSplitted == 5 && exist && splitted[4] == "datepick" && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line" || splitted[2] == "detail") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
 
 		date := event.Postback.Params.Date
 		date += "T00:00"
@@ -1232,6 +1232,11 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			replyTextMessage(event, "Upss something happened \U00100088\nRender Cancelled!")
 			return
 		}*/
+
+		if splitted[2] == "detail" {
+			replyTextMessage(event, "There is no data here \U0010009C")
+			return
+		}
 
 		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s", linkChart, day, month, year, splitted[3], splitted[2])
 
