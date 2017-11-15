@@ -1321,7 +1321,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 					space = " "
 				}
 				if expense && data.Data.Expense[year][month][i] != nil && len(data.Data.Expense[year][month][i].All_Transactions) > 0 {
-					reportText += fmt.Sprintf("%d %s %s: %s %d\n", i, trimmedMonthName, data.Data.Currency, space, data.Data.Expense[year][month][i].Total)
+					reportText += fmt.Sprintf("%d %s %s: %s %d\n", i, trimmedMonthName, space, data.Data.Currency, data.Data.Expense[year][month][i].Total)
 					totalExpense += data.Data.Expense[year][month][i].Total
 				} else {
 					reportText += fmt.Sprintf("%d %s : %s 0\n", i, trimmedMonthName, data.Data.Currency)
@@ -1337,7 +1337,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 					space = " "
 				}
 				if income && data.Data.Income[year][month][i] != nil && len(data.Data.Income[year][month][i].All_Transactions) > 0 {
-					reportText += fmt.Sprintf("%d %s %s: %s %d\n", i, trimmedMonthName, data.Data.Currency, space, data.Data.Income[year][month][i].Total)
+					reportText += fmt.Sprintf("%d %s %s: %s %d\n", i, trimmedMonthName, space, data.Data.Currency, data.Data.Income[year][month][i].Total)
 					totalIncome += data.Data.Income[year][month][i].Total
 				} else {
 					reportText += fmt.Sprintf("%d %s : %s 0\n", i, trimmedMonthName, data.Data.Currency)
