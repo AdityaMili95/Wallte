@@ -1133,6 +1133,53 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getJSONforChart(period string, day int, month int, year int, data *DataWallet) string {
+
+	type dataDailyChart struct {
+		Expense int
+		Income  int
+	}
+
+	jsonText := ""
+
+	if period == "daily" {
+
+		tempData := dataDailyChart{Expense: 0, Income: 0}
+		if data.Data.Income != nil && data.Data.Income[year] != nil && data.Data.Income[year][month] != nil && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) > 0 {
+			tempData.Income = data.Data.Income[year][month][day].Total
+		}
+		if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][month] != nil && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) > 0 {
+			tempData.Expense = data.Data.Expense[year][month][day].Total
+		}
+		jsonText, _ = Marshal(tempData)
+	} else if period == "monthly" {
+
+		monthlyData := map[int]dataDailyChart{}
+		for i := 1; i <= 12; i++ {
+			totalIncome := 0
+			totalExpense := 0
+
+			for j := 1; j <= 31; j++ {
+				if data.Data.Income != nil && data.Data.Income[year] != nil && data.Data.Income[year][i] != nil && data.Data.Income[year][i][j] != nil && len(data.Data.Income[year][i][j].All_Transactions) > 0 {
+					totalIncome += data.Data.Income[year][i][j].Total
+				}
+
+				if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][i] != nil && data.Data.Expense[year][i][j] != nil && len(data.Data.Expense[year][i][j].All_Transactions) > 0 {
+					totalExpense += data.Data.Expense[year][i][j].Total
+				}
+			}
+			monthlyData[i] = dataDailyChart{Expense: totalExpense, Income: totalIncome}
+		}
+		jsonText, _ = Marshal(monthlyData)
+
+	} else if period == "yearly" {
+		//		yearlyDate := map[int]map[int]map[int]dataDailyChart{}
+	}
+
+	return jsonText
+
+}
+
 func getChartData(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) {
 
 	lenSplitted := len(splitted)
@@ -1360,7 +1407,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 			return
 		}
 
-		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s", linkChart, day, month, year, splitted[3], splitted[2])
+		jsonText := getJSONforChart(splitted[3], day, month, year, data)
+		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&data=", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
