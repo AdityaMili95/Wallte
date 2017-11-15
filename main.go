@@ -1196,7 +1196,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		)
 
 		altText = "Choose report's period! \U00100024"
-	} else if lenSplitted == 4 && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
+	} else if lenSplitted == 4 && (splitted[2] == "pie" || splitted[2] == "bar" || splitted[2] == "line" || splitted[2] == "detail") && (splitted[3] == "daily" || splitted[3] == "monthly" || splitted[3] == "yearly") && isPostback {
 
 		title := "Select Day"
 		postMsg := "/report/" + splitted[2] + "/daily"
