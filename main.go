@@ -1240,7 +1240,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				return
 			}
 
-			reportText := "Expense:\n\n"
+			reportText := "\U0010007D Expense:\n\n"
 
 			if data.Data.Expense != nil && data.Data.Expense[year] != nil && data.Data.Expense[year][month] != nil && data.Data.Expense[year][month][day] != nil && len(data.Data.Expense[year][month][day].All_Transactions) != 0 {
 
@@ -1251,10 +1251,10 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				}
 
 			} else {
-				reportText += "     You have no Expense \U00100095\n\n"
+				reportText += "You have no Expense \U00100095\n\n"
 			}
 
-			reportText += "\n\nIncome:\n\n"
+			reportText += "\U00100080 Income:\n\n"
 
 			if data.Data.Income != nil && data.Data.Income[year] != nil && data.Data.Income[year][month] != nil && data.Data.Income[year][month][day] != nil && len(data.Data.Income[year][month][day].All_Transactions) != 0 {
 
@@ -1266,7 +1266,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				}
 
 			} else {
-				reportText += "     You have no Income \U00100094"
+				reportText += "You have no Income \U00100094"
 			}
 
 			replyTextMessage(event, reportText)
