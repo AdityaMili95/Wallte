@@ -1234,7 +1234,13 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}*/
 
 		if splitted[2] == "detail" {
-			replyTextMessage(event, "There is no data here \U0010009C")
+
+			if (data.Data.Income == nil || data.Data.Income[year] == nil || data.Data.Income[year][month] == nil || data.Data.Income[year][month][day] == nil || len(data.Data.Income[year][month][day].All_Transactions) == 0) && (data.Data.Expense == nil || data.Data.Expense[year] == nil || data.Data.Expense[year][month] == nil || data.Data.Expense[year][month][day] == nil || len(data.Data.Expense[year][month][day].All_Transactions) == 0) {
+				replyTextMessage(event, "There is no data here \U0010009C")
+				return
+			}
+
+			replyTextMessage(event, "ADAAAAAAA \U0010009C")
 			return
 		}
 
