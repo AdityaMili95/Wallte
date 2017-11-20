@@ -1157,6 +1157,7 @@ func getJSONforChart(period string, day int, month int, year int, data *DataWall
 		jsonText = strings.Replace(jsonText, "[", "W", -1)
 		jsonText = strings.Replace(jsonText, "]", "E", -1)
 		jsonText = strings.Replace(jsonText, ",", "U", -1)
+		jsonText = strings.Replace(jsonText, ":", "B", -1)
 		log.Println(jsonText)
 
 	} else if period == "monthly" {
