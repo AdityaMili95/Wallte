@@ -1133,6 +1133,17 @@ func replyImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func aliasJSON(jsonText string) string {
+	jsonText = strings.Replace(jsonText, "{", "Q", -1)
+	jsonText = strings.Replace(jsonText, "}", "Z", -1)
+	jsonText = strings.Replace(jsonText, "[", "W", -1)
+	jsonText = strings.Replace(jsonText, "]", "E", -1)
+	jsonText = strings.Replace(jsonText, ",", "U", -1)
+	jsonText = strings.Replace(jsonText, ":", "B", -1)
+	jsonText = strings.Replace(jsonText, "\"", "K", -1)
+	return jsonText
+}
+
 func getJSONforChart(period string, day int, month int, year int, data *DataWallet) string {
 
 	type dataDailyChart struct {
@@ -1152,14 +1163,7 @@ func getJSONforChart(period string, day int, month int, year int, data *DataWall
 			tempData.Expense = data.Data.Expense[year][month][day].Total
 		}
 		jsonText, _ = Marshal(tempData)
-		jsonText = strings.Replace(jsonText, "{", "Q", -1)
-		jsonText = strings.Replace(jsonText, "}", "Z", -1)
-		jsonText = strings.Replace(jsonText, "[", "W", -1)
-		jsonText = strings.Replace(jsonText, "]", "E", -1)
-		jsonText = strings.Replace(jsonText, ",", "U", -1)
-		jsonText = strings.Replace(jsonText, ":", "B", -1)
-		jsonText = strings.Replace(jsonText, "\"", "K", -1)
-		log.Println(jsonText)
+		jsonText = aliasJSON(jsonText)
 
 	} else if period == "monthly" {
 
@@ -1180,9 +1184,28 @@ func getJSONforChart(period string, day int, month int, year int, data *DataWall
 			monthlyData[i] = dataDailyChart{Expense: totalExpense, Income: totalIncome}
 		}
 		jsonText, _ = Marshal(monthlyData)
+		jsonText = aliasJSON(jsonText)
 
 	} else if period == "yearly" {
-		//		yearlyDate := map[int]map[int]map[int]dataDailyChart{}
+		yearlyData := map[int]dataDailyChart{}
+		for k := year - 6; k <= year; k++ {
+			totalIncome := 0
+			totalExpense := 0
+			for i := 1; i <= 12; i++ {
+				for j := 1; j <= 31; j++ {
+					if data.Data.Income != nil && data.Data.Income[k] != nil && data.Data.Income[k][i] != nil && data.Data.Income[k][i][j] != nil && len(data.Data.Income[k][i][j].All_Transactions) > 0 {
+						totalIncome += data.Data.Income[k][i][j].Total
+					}
+
+					if data.Data.Expense != nil && data.Data.Expense[k] != nil && data.Data.Expense[k][i] != nil && data.Data.Expense[k][i][j] != nil && len(data.Data.Expense[k][i][j].All_Transactions) > 0 {
+						totalExpense += data.Data.Expense[k][i][j].Total
+					}
+				}
+			}
+			yearlyData[k] = dataDailyChart{Expense: totalExpense, Income: totalIncome}
+		}
+		jsonText, _ = Marshal(yearlyData)
+		jsonText = aliasJSON(jsonText)
 	}
 
 	return jsonText
