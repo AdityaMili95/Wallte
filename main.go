@@ -1015,6 +1015,10 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 	if data.Data.Last_Action.Price == 0 {
 		val, err := strconv.Atoi(text)
 		if err == nil && val > 0 {
+
+			if val > 10000000000000 {
+				val = 9999999999999
+			}
 			data.Data.Last_Action.Price = val
 			replyTextMessage(event, d.Desc_text)
 		} else if err != nil {
@@ -1030,6 +1034,11 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 	}
 
 	if data.Data.Last_Action.Description == "" {
+
+		if len(text) > 100 {
+			text = text[0:97]
+			text += "..."
+		}
 
 		data.Data.Last_Action.Description = text
 		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
@@ -1137,7 +1146,7 @@ func aliasJSON(jsonText string) string {
 	jsonText = strings.Replace(jsonText, "{", "Q", -1)
 	jsonText = strings.Replace(jsonText, "}", "Z", -1)
 	jsonText = strings.Replace(jsonText, "[", "W", -1)
-	jsonText = strings.Replace(jsonText, "]", "E", -1)
+	jsonText = strings.Replace(jsonText, "]", "P", -1)
 	jsonText = strings.Replace(jsonText, ",", "U", -1)
 	jsonText = strings.Replace(jsonText, ":", "B", -1)
 	jsonText = strings.Replace(jsonText, "\"", "K", -1)
@@ -1441,6 +1450,8 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		jsonText := getJSONforChart(splitted[3], day, month, year, data)
 		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&data=%s", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
+
+		log.Println(linkChart)
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
