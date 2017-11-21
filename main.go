@@ -1276,15 +1276,15 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
-				imageURL, "Daily", "You can report a PIE diagram in daily basis",
+				imageURL, "Per Day", "You can report a PIE diagram in daily basis",
 				linebot.NewPostbackTemplateAction("Select", "/report/pie/daily", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Monthly", "Yay! Summarize your expense and income report monthly",
+				imageURL, "Per Month", "Yay! Summarize your expense and income report monthly",
 				linebot.NewPostbackTemplateAction("Select", "/report/pie/monthly", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Yearly", "Maybe its new year? Compare your report yearly!",
+				imageURL, "Per Year", "Maybe its new year? Compare your report yearly!",
 				linebot.NewPostbackTemplateAction("Select", "/report/pie/yearly", ""),
 			),
 		)
@@ -1451,7 +1451,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		jsonText := getJSONforChart(splitted[3], day, month, year, data)
 		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&data=%s", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
 
-		log.Println(linkChart)
+		log.Println("INI LOHHHHHHH ", linkChart)
 
 		template = linebot.NewButtonsTemplate(
 			imageURL, "Should I?", "Just to make sure you are ready \U0010000B",
