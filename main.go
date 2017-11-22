@@ -1449,7 +1449,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		}
 
 		jsonText := getJSONforChart(splitted[3], day, month, year, data)
-		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&data=%s", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
+		linkChart = fmt.Sprintf("%s&day=%d&month=%d&year=%d&period=%s&chartType=%s&tok=%s", linkChart, day, month, year, splitted[3], splitted[2], jsonText)
 
 		log.Println("INI LOHHHHHHH ", linkChart)
 
