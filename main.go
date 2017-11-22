@@ -1016,8 +1016,9 @@ func handleAskDetail(event *linebot.Event, message *linebot.TextMessage, userID 
 		val, err := strconv.Atoi(text)
 		if err == nil && val > 0 {
 
-			if val > 10000000000000 {
-				val = 9999999999999
+			if val > 1000000000 {
+				replyTextMessage(event, "Too much money \U00100083\nAdd multiple time if it is more than 1 Billion!")
+				return
 			}
 			data.Data.Last_Action.Price = val
 			replyTextMessage(event, d.Desc_text)
