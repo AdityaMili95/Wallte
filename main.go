@@ -1285,7 +1285,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 				linebot.NewPostbackTemplateAction("Select", "/report/pie/monthly", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Per Year", "Maybe its new year? Compare your report yearly!",
+				imageURL, "Per Year", "Maybe its new year? How is this year?",
 				linebot.NewPostbackTemplateAction("Select", "/report/pie/yearly", ""),
 			),
 		)
