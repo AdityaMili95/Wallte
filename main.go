@@ -487,7 +487,7 @@ func initDataWallet(userID string, roomID string, groupID string, msgType int) *
 			UserInfo:  userInfo,
 			RoomInfo:  roomInfo,
 			GroupInfo: groupInfo,
-			Currency:  "Rp.",
+			Currency:  "IDR",
 			Silent:    false,
 		},
 	}
@@ -1006,6 +1006,10 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 			linebot.NewCarouselColumn(
 				imageURL, "Wipe", "Delete all your saved data",
 				linebot.NewPostbackTemplateAction("WIPE", "/other/wipe", ""),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "About", "Get to Know Us",
+				linebot.NewPostbackTemplateAction("HELLO", "/other/about", ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
