@@ -1137,14 +1137,14 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("North America", "/other/currency/northamerica", ""),
+				linebot.NewPostbackTemplateAction("North Amrca", "/other/currency/northamerica", ""),
 			),
 			linebot.NewImageCarouselColumn(
 				imageURL,
 				linebot.NewPostbackTemplateAction("Oceania", "/other/currency/oceania", ""),
 			), linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("South America", "/other/currency/southamerica", ""),
+				linebot.NewPostbackTemplateAction("South Amrca", "/other/currency/southamerica", ""),
 			), linebot.NewImageCarouselColumn(
 				imageURL,
 				linebot.NewPostbackTemplateAction("My Currency", "/other/currency/my-currency", ""),
@@ -1193,10 +1193,10 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 				imageURL, "Cape Verde", "Set currency to use",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "CFA Franc BCEAO", "Set currency to use",
+				imageURL, "CFA BCEAO", "Set currency to use",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "CFA Franc BEAC", "Set currency to use",
+				imageURL, "CFA BEAC", "Set currency to use",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Comoro", "Set currency to use",
