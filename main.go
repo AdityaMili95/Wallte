@@ -1043,16 +1043,17 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		}
 	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "yes" && isPostback {
 
-		data = initDataWallet(userID, roomID, groupID, msgType)
 		replyTextMessage(event, "Data wiped \U0010007C\nYour data already reset")
-		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+		if !exist {
 			return false, false
 		}
+
+		data = initDataWallet(userID, roomID, groupID, msgType)
 
 	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "no" && isPostback {
 
 		replyTextMessage(event, "Yayy wipe cancelled \U0010007A")
-		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+		if !exist {
 			return false, false
 		}
 	}
