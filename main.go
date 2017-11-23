@@ -63,6 +63,16 @@ var monthToInt = map[string]int{
 	"December":  12,
 }
 
+var continent = map[string]string{
+	"africa":       "Africa",
+	"antartica":    "Antartica",
+	"asia":         "Asia",
+	"europe":       "Europe",
+	"northamerica": "North America",
+	"oceania":      "Oceania",
+	"southamerica": "South America",
+}
+
 var keyToInfo = map[string]map[string]TransactionInfo{
 	"food": map[string]TransactionInfo{
 		"breakfast": TransactionInfo{SpentType: "Breakfast", Category: "Food", SubCategory: "Daily Food"},
@@ -997,6 +1007,12 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 	lenSplitted := len(splitted)
 	var template linebot.Template
 
+	okay := false
+
+	if lenSplitted == 4 {
+		_, okay = continent[splitted[3]]
+	}
+
 	if lenSplitted == 2 {
 
 		silentText := "Silent"
@@ -1101,9 +1117,127 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
+	} else if lenSplitted == 3 && splitted[2] == "currency" && isPostback {
+		template := linebot.NewImageCarouselTemplate(
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Africa", "/other/currency/africa", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Antartica", "/other/currency/antartica", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Asia", "/other/currency/asia", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Europe", "/other/currency/europe", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("North America", "/other/currency/northamerica", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Oceania", "/other/currency/oceania", ""),
+			), linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("South America", "/other/currency/southamerica", ""),
+			), linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("My Currency", "/other/currency/my-currency", ""),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("Select Income Type \U00100095", template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
+
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
+	} else if (lenSplitted == 4 || lenSplitted == 5) && splitted[2] == "currency" && okay && isPostback {
+		//keyword := strings.Join(splitted, "/")
+		replyContinentCurrency(event, splitted)
+
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
 	}
 
 	return true, true
+
+}
+
+func replyAfricaContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/africa/"
+	prefix := base + "select/"
+	var lenSplitted = len(splitted)
+
+	if lenSplitted == 4 {
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Algerian", "Fractional Unit: Santeem\nSymbol: د.ج",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Burundi", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Cape Verde", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "CFA Franc BCEAO", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "CFA Franc BEAC", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Comoro", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Congolese", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Dalasi", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Djibouti", "Set currency to use",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Find other currency in Africa",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
+			),
+		)
+
+	} else if splitted[4] == "next-one" {
+
+	}
+
+	return template
+
+}
+
+func replyContinentCurrency(event *linebot.Event, splitted []string) {
+
+	var template linebot.Template
+
+	if splitted[3] == "africa" {
+		template = replyAfricaContinent(splitted)
+	}
+
+	if _, err := bot.ReplyMessage(
+		event.ReplyToken,
+		linebot.NewTemplateMessage("WHat do you want to do? \U00100009", template),
+	).Do(); err != nil {
+		log.Print(err)
+	}
 
 }
 
