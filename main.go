@@ -1176,7 +1176,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		return false, true
 	} else if lenSplitted == 6 && splitted[2] == "currency" && okay && isPostback {
 		data.Data.Currency = splitted[5]
-		replyTextMessage(event, "Yay currency changed!\n Your current currency changed to: "+splitted[5])
+		replyTextMessage(event, "Yay currency changed! \U00100090\nYour current currency changed to: "+splitted[5])
 	}
 
 	return true, true
