@@ -34,6 +34,7 @@ const (
 	ADD_EXPENSE = "add-expense"
 	ADD_INCOME  = "add-income"
 	REPORT      = "report"
+	OTHER       = "other"
 	GET_REPORT  = "get-report"
 	DRAW        = "draw"
 	USER        = 1
@@ -984,6 +985,43 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 	return true, true
 }
 
+func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) (bool, bool) {
+
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	lenSplitted := len(splitted)
+	var template linebot.Template
+
+	if lenSplitted == 2 {
+		template = linebot.NewImageCarouselTemplate(
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Currency", "/other/currency", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Silent", "/other/silent", ""),
+			),
+			linebot.NewImageCarouselColumn(
+				imageURL,
+				linebot.NewPostbackTemplateAction("Wipe Data", "/other/wipe", ""),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("WHat do you want to do? \U00100009", template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
+
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
+	}
+
+	return true, true
+
+}
+
 func replyTextMessage(event *linebot.Event, text string) {
 	if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do(); err != nil {
 		log.Print(err)
@@ -1554,6 +1592,10 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 			remove_last_action = true
 		}
+
+	} else if msgCategory == OTHER {
+
+		remove_last_action, _ = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 		detailType := strings.Split(data.Data.Last_Action.Keyword, "/")
