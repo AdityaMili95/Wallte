@@ -1684,7 +1684,8 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	} else if lenSplitted == 2 && msgCategory == "about-us" {
 
-		template = linebot.NewCarouselTemplate(
+		imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+		template := linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "My Website", "See all of my works in my lifetime",
 				linebot.NewURITemplateAction("Visit Me", "http://www.adityamili.com"),
