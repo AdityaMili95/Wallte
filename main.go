@@ -597,7 +597,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "What type of food did you buy  \U00100055"
 		valid = true
 
-		remove_last_action = false
+		remove_last_action = true
 		must_update = false
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			must_update = false
@@ -636,7 +636,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		altText = "What type of transportation did you ride?  \U00100049"
 		valid = true
 
-		remove_last_action = false
+		remove_last_action = true
 		must_update = false
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			must_update = false
@@ -840,6 +840,9 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		}
 	}
 
+	if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+		return false, false
+	}
 	return remove_last_action, must_update
 }
 
@@ -988,6 +991,9 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		//NGAPAIN
 	}
 
+	if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+		return false, false
+	}
 	return true, true
 }
 
@@ -1116,6 +1122,9 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		}
 	}
 
+	if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+		return false, false
+	}
 	return true, true
 
 }
