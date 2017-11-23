@@ -1090,6 +1090,10 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 
 		data.Data.Silent = false
 
+	} else if lenSplitted == 3 && splitted[2] == "about" && isPostback {
+
+		replyTextMessage("You want to know me further? \U0010008B\n\n WALLTE is a LINE Massenger application built with purpose to helps users manage their financial with ease withput additional application. With features built into WALLTE, I hope users will happy and get advantages by using it. I know WALLTE is not perfect yet with so much aspects that wait to be improved.\nIf you have any suggestion please tell us at:\n\nContact :\n\nEmail:aditya.mili95@gmail.com\nPhone   : +62-85719818928\nWebsite : https://www.adityamili.com\nShop    : https://www.tokopedia.com/elefashionshop\n\nThank you very much by adding WALLTE!\n\nSincerely, Aditya Mili")
+		return false, false
 	}
 
 	return true, true
