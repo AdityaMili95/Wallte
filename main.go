@@ -1217,7 +1217,39 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 		)
 
 	} else if splitted[4] == "next-one" {
-
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Dobra", "Fractional Unit: Cêntimo\nSymbol:Db",
+				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Egypt", "Fractional Unit: Piastre\n£ :Symbol",
+				linebot.NewPostbackTemplateAction("BIF", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Eithiopia", "Fractional Unit: Santim\nSymbol: Br",
+				linebot.NewPostbackTemplateAction("CVE", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Euro", "Fractional Unit: Cent\n€ :Symbol",
+				linebot.NewPostbackTemplateAction("XOF", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Ghana", "Fractional Unit: Pesewa\n₵ :Symbol",
+				linebot.NewPostbackTemplateAction("XAF", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Guinea", "Fractional Unit: Centime\nSymbol: Fr",
+				linebot.NewPostbackTemplateAction("KMF", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kenya", "Fractional Unit: Cent\nSymbol: Sh",
+				linebot.NewPostbackTemplateAction("CDF", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kwacha", "Fractional Unit: Tambala\nSymbol: MK",
+				linebot.NewPostbackTemplateAction("GMD", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kwanza", "Fractional Unit: Cêntimo\nSymbol: Kz",
+				linebot.NewPostbackTemplateAction("DJF", prefix+"", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-two", ""),
+			),
+		)
 	}
 
 	return template
