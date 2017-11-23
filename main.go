@@ -998,14 +998,27 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 	var template linebot.Template
 
 	if lenSplitted == 2 {
+
+		silentText := "Silent"
+		altText := "You don't want to chat me huh :("
+		dataSilent := "/other/silent"
+		btnSilenText := "SILENT"
+
+		if exist && data.Data.Silent {
+			silentText = "Talk to me"
+			altText = "Lets make a talk!"
+			dataSilent = "/other/talk"
+			btnSilenText = "TALK"
+		}
+
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Currency", "Set currency to use",
 				linebot.NewPostbackTemplateAction("SET", "/other/currency", ""),
 			),
 			linebot.NewCarouselColumn(
-				imageURL, "Silent", "You don't want to chat me huh :(",
-				linebot.NewPostbackTemplateAction("SILENT", "/other/silent", ""),
+				imageURL, silentText, altText,
+				linebot.NewPostbackTemplateAction(btnSilenText, dataSilent, ""),
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "Wipe", "Delete all your saved data",
@@ -1058,6 +1071,25 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		if !exist {
 			return false, false
 		}
+	} else if lenSplitted == 3 && splitted[2] == "silent" && isPostback {
+
+		replyTextMessage(event, "Okay I will not chat you \U00100098\nMaybe I am too noisy for you")
+
+		if data.Data.Silent {
+			return false, false
+		}
+		data.Data.Silent = true
+
+	} else if lenSplitted == 3 && splitted[2] == "talk" && isPostback {
+
+		replyTextMessage(event, "You want to chat me again? How can \U0010007A\nI am so happy to have someone to converse with, sometimes I feel really lonely you know \U00100092")
+
+		if !data.Data.Silent {
+			return false, false
+		}
+
+		data.Data.Silent = false
+
 	}
 
 	return true, true
