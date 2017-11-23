@@ -992,18 +992,18 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 	var template linebot.Template
 
 	if lenSplitted == 2 {
-		template = linebot.NewImageCarouselTemplate(
-			linebot.NewImageCarouselColumn(
-				imageURL,
-				linebot.NewPostbackTemplateAction("Currency", "/other/currency", ""),
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Currency", "Set currency to use",
+				linebot.NewPostbackTemplateAction("SET", "/other/currency", ""),
 			),
-			linebot.NewImageCarouselColumn(
-				imageURL,
-				linebot.NewPostbackTemplateAction("Silent", "/other/silent", ""),
+			linebot.NewCarouselColumn(
+				imageURL, "Silent", "You don't want to chat me huh :(",
+				linebot.NewPostbackTemplateAction("SILENT", "/other/silent", ""),
 			),
-			linebot.NewImageCarouselColumn(
-				imageURL,
-				linebot.NewPostbackTemplateAction("Wipe Data", "/other/wipe", ""),
+			linebot.NewCarouselColumn(
+				imageURL, "Wipe", "Delete all your saved data",
+				linebot.NewPostbackTemplateAction("WIPE", "/other/wipe", ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
