@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -2557,6 +2558,32 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled",
 			}
 			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
+		} else if detailType[1] == OTHER && detailType[2] == "currency" {
+			inputText := message.Text
+
+			if len(inputText) < 3 {
+				replyTextMessage(event, "Maybe you don't know that currency code is always 3 character!! \U00100083\n\nCancelled!")
+				remove_last_action = true
+			} else {
+				if len(inputText) > 3 {
+					inputText = inputText[0:3]
+				}
+
+				if !checkAllAlpha(inputText) {
+					replyTextMessage(event, "How fun is it...\nYou accidentally input number in currency code! \U00100079\n\nCancelled!")
+				} else {
+					data.Data.Currency = inputText
+					replyTextMessage(event, "Yay currency changed! \U00100090\nYour current currency changed to: "+inputText)
+
+				}
+
+				remove_last_action = true
+			}
+
+		} else {
+
+			// ga valid
+
 		}
 
 	} else {
@@ -2572,6 +2599,18 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		prepareUpdateData(data, exist, userID, roomID, groupID, msgType)
 	}
 
+}
+
+func checkAllAlpha(text string) bool {
+	isAlpha := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
+
+	for _, username := range []string{"userone", "user2", "user-three"} {
+		if !isAlpha(username) {
+			return false
+		}
+	}
+
+	return true
 }
 
 func handleSticker(event *linebot.Event, message *linebot.StickerMessage) {
