@@ -1026,7 +1026,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "About", "Get to Know Us",
-				linebot.NewPostbackTemplateAction("HELLO", "/other/about", "/about-us"),
+				linebot.NewPostbackTemplateAction("HELLO", "/about-us", "/about-us"),
 			),
 		)
 		if _, err := bot.ReplyMessage(
