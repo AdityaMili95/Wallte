@@ -736,7 +736,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 	} else if lenSplitted == 4 && okay && isPostback {
 
-		textAsk := fmt.Sprintf("How much did you cost ? \U0010008C\n\nChat me the number please: %s", data.Data.Currency)
+		textAsk := fmt.Sprintf("How much did you cost ? \U0010008C\n\nChat me the number please: %s.", data.Data.Currency)
 		replyTextMessage(event, textAsk)
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
@@ -892,7 +892,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 
 	} else if lenSplitted == 3 && okay && isPostback {
 
-		textAsk := fmt.Sprintf("Woww How much?!!\n\nChat me the number please \U0010007A : %s", data.Data.Currency)
+		textAsk := fmt.Sprintf("Woww How much?!!\n\nChat me the number please \U0010007A : %s.", data.Data.Currency)
 		replyTextMessage(event, textAsk)
 
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true, Key: GenerateKey(100), SpentType: info.SpentType, Category: info.Category, SubCategory: info.SubCategory}
