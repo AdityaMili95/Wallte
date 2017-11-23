@@ -2570,8 +2570,9 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 				}
 
 				if !checkAllAlpha(inputText) {
-					replyTextMessage(event, "How fun is it...\nYou accidentally input number in currency code! \U00100079\n\nCancelled!")
+					replyTextMessage(event, "How fun it is...\nYou accidentally input number in currency code! \U00100079\n\nCancelled!")
 				} else {
+					inputText = strings.ToUpper(inputText)
 					data.Data.Currency = inputText
 					replyTextMessage(event, "Yay currency changed! \U00100090\nYour current currency changed to: "+inputText)
 
@@ -2604,10 +2605,8 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 func checkAllAlpha(text string) bool {
 	isAlpha := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
 
-	for _, username := range []string{"userone", "user2", "user-three"} {
-		if !isAlpha(username) {
-			return false
-		}
+	if !isAlpha(text) {
+		return false
 	}
 
 	return true
