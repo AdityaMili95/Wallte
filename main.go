@@ -1009,7 +1009,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 
 	okay := false
 
-	if lenSplitted == 4 || lenSplitted == 5 {
+	if lenSplitted == 4 || lenSplitted == 5 || lenSplitted == 6 {
 		_, okay = continent[splitted[3]]
 	}
 
@@ -1174,6 +1174,8 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true}
 
 		return false, true
+	} else if lenSplitted == 6 && splitted[2] == "currency" && okay && isPostback {
+		data.Data.Currency = splitted[5]
 	}
 
 	return true, true
