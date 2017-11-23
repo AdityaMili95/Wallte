@@ -1049,6 +1049,8 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		}
 
 		data = initDataWallet(userID, roomID, groupID, msgType)
+		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
+		return false, false
 
 	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "no" && isPostback {
 
