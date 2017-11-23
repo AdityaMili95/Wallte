@@ -1098,23 +1098,6 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		data.Data.Silent = false
 	} else if lenSplitted == 3 && splitted[2] == "about" && isPostback {
 
-		template = linebot.NewCarouselTemplate(
-			linebot.NewCarouselColumn(
-				imageURL, "My Website", "See all of my works in my lifetime",
-				linebot.NewURITemplateAction("Visit Me", "http://www.adityamili.com"),
-			),
-			linebot.NewCarouselColumn(
-				imageURL, "Shop", "I opened a shop that sells apparel for men",
-				linebot.NewURITemplateAction("Visit Shop", "https://www.tokopedia.com/elefashionshop"),
-			),
-		)
-		if _, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewTemplateMessage("WHat do you want to do? \U00100009", template),
-		).Do(); err != nil {
-			log.Print(err)
-		}
-
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
@@ -1698,6 +1681,29 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	} else if msgCategory == OTHER {
 
 		remove_last_action, _ = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
+
+	} else if lenSplitted == 2 && msgCategory == "about-us" {
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "My Website", "See all of my works in my lifetime",
+				linebot.NewURITemplateAction("Visit Me", "http://www.adityamili.com"),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Shop", "I opened a shop that sells apparel for men",
+				linebot.NewURITemplateAction("Visit Shop", "https://www.tokopedia.com/elefashionshop"),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("WHat do you want to do? \U00100009", template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = true
+		}
 
 	} else if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 		detailType := strings.Split(data.Data.Last_Action.Keyword, "/")
