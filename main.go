@@ -1026,6 +1026,35 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
+	} else if lenSplitted == 3 && splitted[2] == "wipe" {
+
+		one := Option{
+			Label:  "WIPE",
+			Action: "/other/wipe/yes",
+		}
+
+		two := Option{
+			Label:  "CANCEL",
+			Action: "/other/wipe/no",
+		}
+		confirmationMessage(event, "All Saved Data Will Be Removed \U00100085\nAre you sure?", one, two, "Wipe your data? \U00100085")
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
+	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "yes" {
+
+		data = initDataWallet(userID, roomID, groupID, msgType)
+		replyTextMessage(event, "Data wiped \U0010007C\n Your data already reset")
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
+
+	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "no" {
+
+		replyTextMessage(event, "Yayy wipe cancelled \U0010007A")
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
 	}
 
 	return true, true
@@ -1689,6 +1718,8 @@ func handlePostback(event *linebot.Event) {
 	} else if msgCategory == REPORT {
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 		remove_last_action = true
+	} else if msgCategory == OTHER {
+		remove_last_action, must_update = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 	}
 
 	if remove_last_action {
