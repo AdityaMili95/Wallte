@@ -1184,34 +1184,34 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
-				imageURL, "Algerian", "Fractional Unit: Santeem\nSymbol: د.ج",
+				imageURL, "Algerian", "Fractional Unit: Santeem\nد.ج Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Burundi", "Set currency to use",
+				imageURL, "Burundi", "Fractional Unit: Centime\nFr Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Cape Verde", "Set currency to use",
+				imageURL, "Cape Verde", "Fractional Unit: Centavo\nEsc Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "CFA BCEAO", "Set currency to use",
+				imageURL, "CFA BCEAO", "Fractional Unit: Centime\nFr Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "CFA BEAC", "Set currency to use",
+				imageURL, "CFA BEAC", "Fractional Unit: Centime\nFr Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Comoro", "Set currency to use",
+				imageURL, "Comoro", "Fractional Unit: Centime\nFr Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Congolese", "Set currency to use",
+				imageURL, "Congolese", "Fractional Unit: Centime\nFr Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Dalasi", "Set currency to use",
+				imageURL, "Dalasi", "Fractional Unit: Butut\nD Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Djibouti", "Set currency to use",
+				imageURL, "Djibouti", "Fractional Unit: Centime\nFr Symbol:",
 				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
 			), linebot.NewCarouselColumn(
-				imageURL, "Other", "Find other currency in Africa",
+				imageURL, "Other", "Maybe you can find your preferred currency here",
 				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
 			),
 		)
