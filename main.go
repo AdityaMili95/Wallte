@@ -1026,7 +1026,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
-	} else if lenSplitted == 3 && splitted[2] == "wipe" {
+	} else if lenSplitted == 3 && splitted[2] == "wipe" && isPostback {
 
 		one := Option{
 			Label:  "WIPE",
@@ -1041,15 +1041,15 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
-	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "yes" {
+	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "yes" && isPostback {
 
 		data = initDataWallet(userID, roomID, groupID, msgType)
-		replyTextMessage(event, "Data wiped \U0010007C\n Your data already reset")
+		replyTextMessage(event, "Data wiped \U0010007C\nYour data already reset")
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
 
-	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "no" {
+	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "no" && isPostback {
 
 		replyTextMessage(event, "Yayy wipe cancelled \U0010007A")
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
