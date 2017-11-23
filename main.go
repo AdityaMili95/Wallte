@@ -1148,7 +1148,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 				linebot.NewPostbackTemplateAction("South Amrca", "/other/currency/southamerica", ""),
 			), linebot.NewImageCarouselColumn(
 				imageURL,
-				linebot.NewPostbackTemplateAction("My Currency", "/other/currency/my-currency", ""),
+				linebot.NewPostbackTemplateAction("Tell Me", "/other/currency/my-currency", ""),
 			),
 		)
 		if _, err := bot.ReplyMessage(
