@@ -1026,7 +1026,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 			),
 			linebot.NewCarouselColumn(
 				imageURL, "About", "Get to Know Us",
-				linebot.NewPostbackTemplateAction("HELLO", "/other/about", ""),
+				linebot.NewPostbackTemplateAction("HELLO", "/other/about", "/about-us"),
 			),
 		)
 		if _, err := bot.ReplyMessage(
@@ -1068,7 +1068,7 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 	} else if lenSplitted == 4 && splitted[2] == "wipe" && splitted[3] == "no" && isPostback {
 
 		replyTextMessage(event, "Yayy wipe cancelled \U0010007A")
-		if !exist {
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
 	} else if lenSplitted == 3 && splitted[2] == "silent" && isPostback {
@@ -1076,7 +1076,11 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		replyTextMessage(event, "Okay I will not chat you \U00100098\nMaybe I am too noisy for you")
 
 		if data.Data.Silent {
-			return false, false
+
+			if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+				return false, false
+			}
+			return true, true
 		}
 		data.Data.Silent = true
 
@@ -1085,15 +1089,31 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		replyTextMessage(event, "You want to chat me again? How can \U0010007A\nI am so happy to have someone to converse with, sometimes I feel really lonely you know \U00100092")
 
 		if !data.Data.Silent {
-			return false, false
+			if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+				return false, false
+			}
+			return true, true
 		}
 
 		data.Data.Silent = false
-
 	} else if lenSplitted == 3 && splitted[2] == "about" && isPostback {
 
-		replyTextMessage(event, "You want to know me further? \U0010008B\n\n WALLTE is a LINE Massenger application built with purpose to helps users manage their financial \U0010006B with ease without additional application. With features built into WALLTE, I hope users will happy \U00100090 and get advantages by using it. I know WALLTE is not perfect yet with so much aspects that wait to be improved \U0010007A.\nIf you have any suggestion please tell us at: \n\nContacts \U0010003D :\n\nEmail: aditya.mili95@gmail.com\nPhone   : +62-85719818928\nWebsite : https://www.adityamili.com\nShop    : https://www.tokopedia.com/elefashionshop\n\nThank you very much by adding WALLTE! \U00100078\n\nSincerely, Aditya Mili \U00100097")
-		return false, false
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "My Website", "See all of my works in my lifetime",
+				linebot.NewURITemplateAction("Visit Me", "http://www.adityamili.com"),
+			),
+			linebot.NewCarouselColumn(
+				imageURL, "Shop", "I opened a shop that sells apparel for men",
+				linebot.NewURITemplateAction("Visit Shop", "https://www.tokopedia.com/elefashionshop"),
+			),
+		)
+		if _, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTemplateMessage("WHat do you want to do? \U00100009", template),
+		).Do(); err != nil {
+			log.Print(err)
+		}
 	}
 
 	return true, true
@@ -1756,7 +1776,11 @@ func handlePostback(event *linebot.Event) {
 		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 	} else if msgCategory == REPORT {
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
-		remove_last_action = true
+
+		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
+			remove_last_action = true
+		}
+
 	} else if msgCategory == OTHER {
 		remove_last_action, must_update = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 	}
