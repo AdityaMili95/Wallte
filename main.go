@@ -139,6 +139,7 @@ type Wallet struct {
 	Expense     map[int]map[int]map[int]*DayTransaction
 	Last_Action *LastAction
 	Chart       *MyChart
+	Silent      bool
 }
 
 type MyChart struct {
@@ -487,6 +488,7 @@ func initDataWallet(userID string, roomID string, groupID string, msgType int) *
 			RoomInfo:  roomInfo,
 			GroupInfo: groupInfo,
 			Currency:  "Rp.",
+			Silent:    false,
 		},
 	}
 }
