@@ -1167,6 +1167,13 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
 			return false, false
 		}
+	} else if (lenSplitted == 4) && splitted[2] == "currency" && splitted[3] == "my-currency" && isPostback {
+		keyword := strings.Join(splitted, "/")
+
+		replyTextMessage(event, "Tell me your currency \U0010007F in 3 characters!")
+		data.Data.Last_Action = &LastAction{Keyword: keyword, Status: true}
+
+		return false, true
 	}
 
 	return true, true
@@ -1185,31 +1192,31 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Algerian", "Fractional Unit: Santeem\nد.ج :Symbol",
-				linebot.NewPostbackTemplateAction("DZD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("DZD", prefix+"DZD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Burundi", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("BIF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("BIF", prefix+"BIF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Cape Verde", "Fractional Unit: Centavo\nSymbol: Esc",
-				linebot.NewPostbackTemplateAction("CVE", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("CVE", prefix+"CVE", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "CFA BCEAO", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("XOF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("XOF", prefix+"XOF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "CFA BEAC", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("XAF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("XAF", prefix+"XAF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Comoro", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("KMF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("KMF", prefix+"KMF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Congolese", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("CDF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("CDF", prefix+"CDF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Dalasi", "Fractional Unit: Butut\nSymbol: D",
-				linebot.NewPostbackTemplateAction("GMD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("GMD", prefix+"GMD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Djibouti", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("DJF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("DJF", prefix+"DJF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Other", "Maybe you can find your preferred currency here",
 				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
@@ -1220,31 +1227,31 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Dobra", "Fractional Unit: Cêntimo\nSymbol: Db",
-				linebot.NewPostbackTemplateAction("STD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("STD", prefix+"STD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Egypt", "Fractional Unit: Piastre\nSymbol: £",
-				linebot.NewPostbackTemplateAction("EGP", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("EGP", prefix+"EGP", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Eithiopia", "Fractional Unit: Santim\nSymbol: Br",
-				linebot.NewPostbackTemplateAction("ETB", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("ETB", prefix+"ETB", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Euro", "Fractional Unit: Cent\nSymbol: €",
-				linebot.NewPostbackTemplateAction("EUR", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("EUR", prefix+"EUR", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Ghana", "Fractional Unit: Pesewa\nSymbol: ₵",
-				linebot.NewPostbackTemplateAction("GHS", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("GHS", prefix+"GHS", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Guinea", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("GNF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("GNF", prefix+"GNF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Kenya", "Fractional Unit: Cent\nSymbol: Sh",
-				linebot.NewPostbackTemplateAction("KES", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("KES", prefix+"KES", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Kwacha", "Fractional Unit: Tambala\nSymbol: MK",
-				linebot.NewPostbackTemplateAction("WMK", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("WMK", prefix+"WMK", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Kwanza", "Fractional Unit: Cêntimo\nSymbol: Kz",
-				linebot.NewPostbackTemplateAction("AOA", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("AOA", prefix+"AOA", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Other", "Maybe you can find your preferred currency here",
 				linebot.NewPostbackTemplateAction("NEXT", base+"next-two", ""),
@@ -1254,31 +1261,31 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Leone", "Fractional Unit: Cent\nSymbol: Le",
-				linebot.NewPostbackTemplateAction("SLL", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SLL", prefix+"SLL", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Liberia", "Fractional Unit: Cent\nSymbol: $",
-				linebot.NewPostbackTemplateAction("LRD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("LRD", prefix+"LRD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Libya", "Fractional Unit: Dirham\nل.د :Symbol",
-				linebot.NewPostbackTemplateAction("LYD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("LYD", prefix+"LYD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Lilangeni", "Fractional Unit: Cent\nSymbol: L",
-				linebot.NewPostbackTemplateAction("SZL", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SZL", prefix+"SZL", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Loti", "Fractional Unit: Sente\nSymbol: L",
-				linebot.NewPostbackTemplateAction("LSL", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("LSL", prefix+"LSL", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Malagasy", "Fractional Unit: Iraimbilanja\nSymbol: Ar",
-				linebot.NewPostbackTemplateAction("MGA", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("MGA", prefix+"MGA", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Mauritius", "Fractional Unit: Cent\nSymbol: ₨",
-				linebot.NewPostbackTemplateAction("MUR", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("MUR", prefix+"MUR", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Moroccan", "Fractional Unit: Centime\nد. م. :Symbol",
-				linebot.NewPostbackTemplateAction("MAD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("MAD", prefix+"MAD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Mozambique", "Fractional Unit: Centavo\nSymbol: MT",
-				linebot.NewPostbackTemplateAction("MZN", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("MZN", prefix+"MZN", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Other", "Maybe you can find your preferred currency here",
 				linebot.NewPostbackTemplateAction("NEXT", base+"next-three", ""),
@@ -1288,31 +1295,31 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Naira", "Fractional Unit: Kobo\nSymbol: ₦",
-				linebot.NewPostbackTemplateAction("NGN", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("NGN", prefix+"NGN", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Nakfa", "Fractional Unit: Cent\nSymbol: Nfk",
-				linebot.NewPostbackTemplateAction("ERN", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("ERN", prefix+"ERN", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Namibia", "Fractional Unit: Cent\nSymbol: $",
-				linebot.NewPostbackTemplateAction("NAD", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("NAD", prefix+"NAD", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Ouguiya", "Fractional Unit: Khoums\nSymbol: UM",
-				linebot.NewPostbackTemplateAction("MRO", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("MRO", prefix+"MRO", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Pula", "Fractional Unit: Thebe\nSymbol: P",
-				linebot.NewPostbackTemplateAction("BWP", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("BWP", prefix+"BWP", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Rand", "Fractional Unit: Cent\nSymbol: R",
-				linebot.NewPostbackTemplateAction("ZAR", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("ZAR", prefix+"ZAR", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Rwanda", "Fractional Unit: Centime\nSymbol: Fr",
-				linebot.NewPostbackTemplateAction("RWF", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("RWF", prefix+"RWF", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Saint Helena", "Fractional Unit: Penny\nSymbol: £",
-				linebot.NewPostbackTemplateAction("SHP", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SHP", prefix+"SHP", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Seychelles", "Fractional Unit: Cent\nSymbol: ₨",
-				linebot.NewPostbackTemplateAction("SCR", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SCR", prefix+"SCR", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Other", "Maybe you can find your preferred currency here",
 				linebot.NewPostbackTemplateAction("NEXT", base+"next-four", ""),
@@ -1322,28 +1329,28 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
 				imageURL, "Somali", "Fractional Unit: Cent\nSymbol: Sh",
-				linebot.NewPostbackTemplateAction("SOS", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SOS", prefix+"SOS", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "South Sudan", "Fractional Unit: Piastre\nSymbol: £",
-				linebot.NewPostbackTemplateAction("SSP", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SSP", prefix+"SSP", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Sudan", "Fractional Unit: Piastre\nSymbol: £",
-				linebot.NewPostbackTemplateAction("SDG", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("SDG", prefix+"SDG", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Tanzania", "Fractional Unit: Cent\nSymbol: Sh",
-				linebot.NewPostbackTemplateAction("TZS", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("TZS", prefix+"TZS", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Tunisia", "Fractional Unit: Millime\nد.ت :Symbol",
-				linebot.NewPostbackTemplateAction("TND", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("TND", prefix+"TND", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Uganda", "Fractional Unit: Cent\nSymbol: Sh",
-				linebot.NewPostbackTemplateAction("UGX", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("UGX", prefix+"UGX", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Zambia", "Fractional Unit: Ngwee\nSymbol: ZK",
-				linebot.NewPostbackTemplateAction("ZMW", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("ZMW", prefix+"ZMW", ""),
 			), linebot.NewCarouselColumn(
 				imageURL, "Zimbabwe", "Fractional Unit: -\nSymbol: -",
-				linebot.NewPostbackTemplateAction("ZWL", prefix+"", ""),
+				linebot.NewPostbackTemplateAction("ZWL", prefix+"ZWL", ""),
 			),
 		)
 	}
@@ -1352,12 +1359,574 @@ func replyAfricaContinent(splitted []string) linebot.Template {
 
 }
 
+func replyAntarticaContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/antartica/"
+	prefix := base + "select/"
+
+	template = linebot.NewCarouselTemplate(
+		linebot.NewCarouselColumn(
+			imageURL, "Australia", "Fractional Unit: Cent\nSymbol: $",
+			linebot.NewPostbackTemplateAction("AUD", prefix+"AUD", ""),
+		), linebot.NewCarouselColumn(
+			imageURL, "Euro", "Fractional Unit: Cent\nSymbol: €",
+			linebot.NewPostbackTemplateAction("EUR", prefix+"EUR", ""),
+		), linebot.NewCarouselColumn(
+			imageURL, "Norwegia", "Fractional Unit: Øre\nSymbol: kr",
+			linebot.NewPostbackTemplateAction("NOK", prefix+"NOK", ""),
+		),
+	)
+
+	return template
+}
+
+func replyAsiaContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/asia/"
+	prefix := base + "select/"
+	var lenSplitted = len(splitted)
+
+	if lenSplitted == 4 {
+
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Afghani", "Fractional Unit: Pul\nSymbol: ؋",
+				linebot.NewPostbackTemplateAction("AFN", prefix+"AFN", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Armenian", "Fractional Unit: Luma\nSymbol: դր",
+				linebot.NewPostbackTemplateAction("AMD", prefix+"AMD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Azerbaijan", "Fractional Unit: Qəpik\nSymbol: -",
+				linebot.NewPostbackTemplateAction("AZN", prefix+"AZN", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Bahrain", "Fractional Unit: Fils\n.د.ب :Symbol",
+				linebot.NewPostbackTemplateAction("BHD", prefix+"BHD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Baht", "Fractional Unit: Satang\nSymbol: ฿",
+				linebot.NewPostbackTemplateAction("THB", prefix+"THB", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Brunei", "Fractional Unit: Sen\nSymbol: $",
+				linebot.NewPostbackTemplateAction("BND", prefix+"BND", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Dong", "Fractional Unit: Hào\nSymbol: ₫",
+				linebot.NewPostbackTemplateAction("VND", prefix+"VND", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Hong Kong", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("HKD", prefix+"HKD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "India", "Fractional Unit: Paisa\nSymbol: -",
+				linebot.NewPostbackTemplateAction("INR", prefix+"INR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
+			),
+		)
+
+	} else if splitted[4] == "next-one" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Iran", "Fractional Unit: Dinar\n﷼ :Symbol",
+				linebot.NewPostbackTemplateAction("IRR", prefix+"IRR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Iraq", "Fractional Unit: Fils\nع.د :Symbol",
+				linebot.NewPostbackTemplateAction("IQD", prefix+"IQD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Jordania", "Fractional Unit: Piastre\nد.ا :Symbol",
+				linebot.NewPostbackTemplateAction("JOD", prefix+"JOD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kip", "Fractional Unit: Att\nSymbol: ₭",
+				linebot.NewPostbackTemplateAction("LAK", prefix+"LAK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kuwait", "Fractional Unit: Fils\nد.ك :Symbol",
+				linebot.NewPostbackTemplateAction("KWD", prefix+"KWD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kyat", "Fractional Unit: Pya\nSymbol: Ks",
+				linebot.NewPostbackTemplateAction("MMK", prefix+"MMK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Lari", "Fractional Unit: Tetri\nSymbol: ლ",
+				linebot.NewPostbackTemplateAction("GEL", prefix+"GEL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Lebanon", "Fractional Unit: Piastre\nل.ل :Symbol",
+				linebot.NewPostbackTemplateAction("LBP", prefix+"LBP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Ringgit", "Fractional Unit: Sen\nSymbol: RM",
+				linebot.NewPostbackTemplateAction("MYR", prefix+"MYR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-two", ""),
+			),
+		)
+	} else if splitted[4] == "next-two" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Nepal", "Fractional Unit: Paisa\nSymbol: ₨",
+				linebot.NewPostbackTemplateAction("NPR", prefix+"NPR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Israel", "Fractional Unit: Agora\nSymbol: ₪",
+				linebot.NewPostbackTemplateAction("ILS", prefix+"ILS", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Taiwan", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("TWD", prefix+"TWD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Ngultrum", "Fractional Unit: Chetrum\nSymbol: Nu.",
+				linebot.NewPostbackTemplateAction("BTN", prefix+"BTN", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "North Korea", "Fractional Unit: Chon\nSymbol: ₩",
+				linebot.NewPostbackTemplateAction("KPW", prefix+"KPW", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Pakistan", "Fractional Unit: Paisa\nSymbol: ₨",
+				linebot.NewPostbackTemplateAction("PKR", prefix+"PKR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Pataca", "Fractional Unit: Avo\nSymbol: P",
+				linebot.NewPostbackTemplateAction("MOP", prefix+"MOP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Peso", "Fractional Unit: Centavo\nSymbol: ₱",
+				linebot.NewPostbackTemplateAction("PHP", prefix+"PHP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Qatar", "Fractional Unit: Dirham\nر.ق :Symbol",
+				linebot.NewPostbackTemplateAction("QAR", prefix+"QAR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-three", ""),
+			),
+		)
+	} else if splitted[4] == "next-three" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Oman", "Fractional Unit: Baisa\nر.ع. :Symbol",
+				linebot.NewPostbackTemplateAction("OMR", prefix+"OMR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Riel", "Fractional Unit: Sen\nSymbol: ៛",
+				linebot.NewPostbackTemplateAction("KHR", prefix+"KHR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Rufiyaa", "Fractional Unit: Laari\n.ރ :Symbol",
+				linebot.NewPostbackTemplateAction("MVR", prefix+"MVR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Rupiah", "Fractional Unit: Sen\nSymbol: Rp",
+				linebot.NewPostbackTemplateAction("IDR", prefix+"IDR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Arab Saudi", "Fractional Unit: Halala\nر.س :Symbol",
+				linebot.NewPostbackTemplateAction("SAR", prefix+"SAR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Singapore", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("SGD", prefix+"SGD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Som", "Fractional Unit: Tyiyn\nSymbol: -",
+				linebot.NewPostbackTemplateAction("KGS", prefix+"KGS", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Somoni", "Fractional Unit: Diram\nSymbol: ЅМ",
+				linebot.NewPostbackTemplateAction("TJS", prefix+"TJS", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Sri Lanka", "Fractional Unit: Cent\nSymbol: Rs",
+				linebot.NewPostbackTemplateAction("LKR", prefix+"LKR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-four", ""),
+			),
+		)
+	} else if splitted[4] == "next-four" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Syria", "Fractional Unit: Piastre\nSymbol: £",
+				linebot.NewPostbackTemplateAction("SYP", prefix+"SYP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Taka", "Fractional Unit: Paisa\nSymbol: ৳",
+				linebot.NewPostbackTemplateAction("BDT", prefix+"BDT", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Tenge", "Fractional Unit: Tïın\nSymbol: ₸",
+				linebot.NewPostbackTemplateAction("KZT", prefix+"KZT", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Tugrik", "Fractional Unit: Möngö\nSymbol: ₮",
+				linebot.NewPostbackTemplateAction("MNT", prefix+"MNT", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Turky", "Fractional Unit: Kuruş\nSymbol: -",
+				linebot.NewPostbackTemplateAction("TRY", prefix+"TRY", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Turkmenistan", "Fractional Unit: Tennesi\nSymbol: m",
+				linebot.NewPostbackTemplateAction("TMT", prefix+"TMT", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "UAE", "Fractional Unit: Fils\nد.إ :Symbol",
+				linebot.NewPostbackTemplateAction("AED", prefix+"AED", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "US Dollar", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("USD", prefix+"USD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Uzbekistan", "Fractional Unit: Tiyin\nSymbol: -",
+				linebot.NewPostbackTemplateAction("UZS", prefix+"UZS", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-five", ""),
+			),
+		)
+	} else if splitted[4] == "next-five" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Won", "Fractional Unit: Jeon\nSymbol: ₩",
+				linebot.NewPostbackTemplateAction("KRW", prefix+"KRW", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Yemen", "Fractional Unit: Fils\n﷼ :Symbol",
+				linebot.NewPostbackTemplateAction("YER", prefix+"YER", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Yen", "Fractional Unit: Sen\nSymbol: ¥",
+				linebot.NewPostbackTemplateAction("JPY", prefix+"JPY", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Yuan", "Fractional Unit: Fen\nSymbol: ¥",
+				linebot.NewPostbackTemplateAction("CNY", prefix+"CNY", ""),
+			),
+		)
+	}
+
+	return template
+
+}
+
+func replyEuropeContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/europe/"
+	prefix := base + "select/"
+	var lenSplitted = len(splitted)
+
+	if lenSplitted == 4 {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Belarussia", "Fractional Unit: Kapyeyka\nSymbol: Br",
+				linebot.NewPostbackTemplateAction("BYR", prefix+"BYR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Bulgaria", "Fractional Unit: Stotinka\nSymbol: лв",
+				linebot.NewPostbackTemplateAction("BGN", prefix+"BGN", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Convertible", "Fractional Unit: Fening\nSymbol: KM",
+				linebot.NewPostbackTemplateAction("BAM", prefix+"BAM", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Croatia", "Fractional Unit: Lipa\nSymbol: kn",
+				linebot.NewPostbackTemplateAction("HRK", prefix+"HRK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Czech", "Fractional Unit: Haléř\nSymbol: Kč",
+				linebot.NewPostbackTemplateAction("CZK", prefix+"CZK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Danish", "Fractional Unit: Øre\nSymbol: kr",
+				linebot.NewPostbackTemplateAction("DKK", prefix+"DKK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Denar", "Fractional Unit: Deni\nSymbol: ден",
+				linebot.NewPostbackTemplateAction("MKD", prefix+"MKD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Euro", "Fractional Unit: Cent\nSymbol: €",
+				linebot.NewPostbackTemplateAction("EUR", prefix+"EUR", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Forint", "Fractional Unit: Fillér\nSymbol: Ft",
+				linebot.NewPostbackTemplateAction("HUF", prefix+"HUF", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
+			),
+		)
+	} else if splitted[4] == "next-one" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Gibraltar", "Fractional Unit: Penny\nSymbol: £",
+				linebot.NewPostbackTemplateAction("GIP", prefix+"GIP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Hryvnia", "Fractional Unit: Kopiyka\nSymbol: ₴",
+				linebot.NewPostbackTemplateAction("UAH", prefix+"UAH", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Iceland", "Fractional Unit: Eyrir\nSymbol: kr",
+				linebot.NewPostbackTemplateAction("ISK", prefix+"ISK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Latvia", "Fractional Unit: Santīms\nSymbol: Ls",
+				linebot.NewPostbackTemplateAction("LVL", prefix+"LVL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Lek", "Fractional Unit: Qindarkë\nSymbol: L",
+				linebot.NewPostbackTemplateAction("ALL", prefix+"ALL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Lithuania", "Fractional Unit: Centas\nSymbol: Lt",
+				linebot.NewPostbackTemplateAction("LTL", prefix+"LTL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Moldova", "Fractional Unit: Ban\nSymbol: L",
+				linebot.NewPostbackTemplateAction("MDL", prefix+"MDL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Romania", "Fractional Unit: Ban\nSymbol: L",
+				linebot.NewPostbackTemplateAction("RON", prefix+"RON", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Norwegia", "Fractional Unit: Øre\nSymbol: kr",
+				linebot.NewPostbackTemplateAction("NOK", prefix+"NOK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-two", ""),
+			),
+		)
+	} else if splitted[4] == "next-two" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Pound Sterling", "Fractional Unit: Penny\nSymbol: £",
+				linebot.NewPostbackTemplateAction("GBP", prefix+"GBP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Russia", "Fractional Unit: Kopek\nSymbol: р",
+				linebot.NewPostbackTemplateAction("RUB", prefix+"RUB", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Serbia", "Fractional Unit: Para\nSymbol: дин",
+				linebot.NewPostbackTemplateAction("RSD", prefix+"RSD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Swedish", "Fractional Unit: Öre\nSymbol: kr",
+				linebot.NewPostbackTemplateAction("SEK", prefix+"SEK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Swish", "Fractional Unit: Rappen\nSymbol: Fr",
+				linebot.NewPostbackTemplateAction("CHF", prefix+"CHF", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "WIR Euro", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("CHE", prefix+"CHE", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "WIR Franc", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("CHW", prefix+"CHW", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Zloty", "Fractional Unit: Grosz\nSymbol: zł",
+				linebot.NewPostbackTemplateAction("PLN", prefix+"PLN", ""),
+			),
+		)
+	}
+
+	return template
+}
+
+func replyNorthAmericaContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/northamerica/"
+	prefix := base + "select/"
+	var lenSplitted = len(splitted)
+
+	if lenSplitted == 4 {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Aruban", "Fractional Unit: Cent\nSymbol: ƒ",
+				linebot.NewPostbackTemplateAction("AWG", prefix+"AWG", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Bahamia", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("BSD", prefix+"BSD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Balboa", "Fractional Unit: Centésimo\nSymbol: B/",
+				linebot.NewPostbackTemplateAction("PAB", prefix+"PAB", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Barbados", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("BBD", prefix+"BBD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Belize", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("BZD", prefix+"BZD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Bermuda", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("BMD", prefix+"BMD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Canada", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("CAD", prefix+"CAD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Cayman", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("KYD", prefix+"KYD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Cordoba", "Fractional Unit: Centavo\nSymbol: C$",
+				linebot.NewPostbackTemplateAction("NIO", prefix+"NIO", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
+			),
+		)
+	} else if splitted[4] == "next-one" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Costa Rica", "Fractional Unit: Céntimo\nSymbol: ₡",
+				linebot.NewPostbackTemplateAction("CRC", prefix+"CRC", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Cuban", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("CUP", prefix+"CUP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Danish", "Fractional Unit: Øre\nSymbol: kr",
+				linebot.NewPostbackTemplateAction("DKK", prefix+"DKK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Dominica", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("DOP", prefix+"DOP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "East Carib", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("XCD", prefix+"XCD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "El Salvador", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("SVC", prefix+"SVC", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Gourde", "Fractional Unit: Centime\nSymbol: G",
+				linebot.NewPostbackTemplateAction("HTG", prefix+"HTG", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Jamaica", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("JMD", prefix+"JMD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Lempira", "Fractional Unit: Centavo\nSymbol: L",
+				linebot.NewPostbackTemplateAction("HNL", prefix+"HNL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-two", ""),
+			),
+		)
+	} else if splitted[4] == "next-two" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Mexico", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("MXN", prefix+"MXN", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Mexico", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("MXV", prefix+"MXV", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Peso", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("CUC", prefix+"CUC", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Quetzal", "Fractional Unit: Centavo\nSymbol: Q",
+				linebot.NewPostbackTemplateAction("GTQ", prefix+"GTQ", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Trinidad", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("TTD", prefix+"TTD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "US Dollar", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("USD", prefix+"USD", ""),
+			),
+		)
+	}
+
+	return template
+
+}
+
+func replyOceaniaContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/oceania/"
+	prefix := base + "select/"
+	var lenSplitted = len(splitted)
+
+	if lenSplitted == 4 {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Australia", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("AUD", prefix+"AUD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "CFP Franc", "Fractional Unit: Centime\nSymbol: Fr",
+				linebot.NewPostbackTemplateAction("XPF", prefix+"XPF", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Fiji", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("FJD", prefix+"FJD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Kina", "Fractional Unit: Toea\nSymbol: K",
+				linebot.NewPostbackTemplateAction("PGK", prefix+"PGK", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "New Zealand", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("NZD", prefix+"NZD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Pa'ranga", "Fractional Unit: Seniti\nSymbol: T$",
+				linebot.NewPostbackTemplateAction("TOP", prefix+"TOP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Salomon Isl.", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("SBD", prefix+"SBD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Tala", "Fractional Unit: Sene\nSymbol: T",
+				linebot.NewPostbackTemplateAction("WST", prefix+"WST", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Vatu", "Fractional Unit: None\nSymbol: Vt",
+				linebot.NewPostbackTemplateAction("VUV", prefix+"VUV", ""),
+			),
+		)
+	}
+
+	return template
+
+}
+
+func replySouthAmericaContinent(splitted []string) linebot.Template {
+	var template linebot.Template
+	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
+	base := "/other/currency/southamerica/"
+	prefix := base + "select/"
+	var lenSplitted = len(splitted)
+
+	if lenSplitted == 4 {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Argentina", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("ARS", prefix+"ARS", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Bolivar", "Fractional Unit: Céntimo\nSymbol: Bs F",
+				linebot.NewPostbackTemplateAction("VEF", prefix+"VEF", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Bolivia", "Fractional Unit: Centavo\nSymbol: Bs",
+				linebot.NewPostbackTemplateAction("BOB", prefix+"BOB", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Brazil", "Fractional Unit: Centavo\nSymbol: R$",
+				linebot.NewPostbackTemplateAction("BRL", prefix+"BRL", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Chile", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("CLP", prefix+"CLP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Colombia", "Fractional Unit: Centavo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("COP", prefix+"COP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Falkland", "Fractional Unit: Penny\nSymbol: £",
+				linebot.NewPostbackTemplateAction("FKP", prefix+"FKP", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Guarani", "Fractional Unit: Céntimo\nSymbol: ₲",
+				linebot.NewPostbackTemplateAction("PYG", prefix+"PYG", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Guyan", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("GYD", prefix+"GYD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Other", "Maybe you can find your preferred currency here",
+				linebot.NewPostbackTemplateAction("NEXT", base+"next-one", ""),
+			),
+		)
+	} else if splitted[4] == "next-one" {
+		template = linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				imageURL, "Mvdol", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("BOV", prefix+"BOV", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Nuevo SOl", "Fractional Unit: Céntimo\nSymbol: S/",
+				linebot.NewPostbackTemplateAction("PEN", prefix+"PEN", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Uruguay", "Fractional Unit: Centésimo\nSymbol: $",
+				linebot.NewPostbackTemplateAction("UYU", prefix+"UYU", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Surinam", "Fractional Unit: Cent\nSymbol: $",
+				linebot.NewPostbackTemplateAction("SRD", prefix+"SRD", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Unidad", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("COU", prefix+"COU", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Unidades", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("CLF", prefix+"CLF", ""),
+			), linebot.NewCarouselColumn(
+				imageURL, "Uruguay", "Fractional Unit: -\nSymbol: -",
+				linebot.NewPostbackTemplateAction("UYI", prefix+"UYI", ""),
+			),
+		)
+
+	}
+
+	return template
+}
+
 func replyContinentCurrency(event *linebot.Event, splitted []string) {
 
 	var template linebot.Template
 
 	if splitted[3] == "africa" {
 		template = replyAfricaContinent(splitted)
+	} else if splitted[3] == "antartica" {
+		template = replyAntarticaContinent(splitted)
+	} else if splitted[3] == "asia" {
+		template = replyAsiaContinent(splitted)
+	} else if splitted[3] == "europe" {
+		template = replyEuropeContinent(splitted)
+	} else if splitted[3] == "northamerica" {
+		template = replyNorthAmericaContinent(splitted)
+	} else if splitted[3] == "oceania" {
+		template = replyOceaniaContinent(splitted)
+	} else if splitted[3] == "southamerica" {
+		template = replySouthAmericaContinent(splitted)
 	}
 
 	if _, err := bot.ReplyMessage(
