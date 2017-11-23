@@ -757,24 +757,24 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		convertedDate := strings.Replace(date, "T", " ", -1)
 		one := Option{
 			Label:  "YES",
-			Action: "/add-expense/confirm/yes/" + key,
+			Action: "/add-expense/confirm/yes/" + key + "/" + date,
 		}
 
 		two := Option{
 			Label:  "NO",
-			Action: "/add-expense/confirm/no/" + key,
+			Action: "/add-expense/confirm/no/" + key + "/" + date,
 		}
 
 		title := fmt.Sprintf("Add This Expense?\U00100087\nCategory : %s\nType : %s\nCost : %s %d\nDescription : %s\nDate : %s", trans.Category, trans.SpentType, data.Data.Currency, data.Data.Last_Action.Price, data.Data.Last_Action.Description, convertedDate)
 		confirmationMessage(event, title, one, two, "Confirm Your Expense!! \U00100080")
 
-		data.Data.Last_Action.Created_date = date
-		prepareUpdateData(data, true, userID, roomID, groupID, msgType)
+		//data.Data.Last_Action.Created_date = date
+		//prepareUpdateData(data, true, userID, roomID, groupID, msgType)
 
 		remove_last_action = false
 		must_update = false
 
-	} else if exist && lenSplitted == 5 && splitted[2] == "confirm" && isPostback {
+	} else if exist && lenSplitted == 6 && splitted[2] == "confirm" && isPostback {
 
 		if data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" || data.Data.Last_Action.Key != splitted[4] {
 			replyTextMessage(event, "Oops your confirmation is outdated \U00100088")
@@ -782,7 +782,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 			must_update = false
 		} else if splitted[3] == "yes" {
 
-			created_date := data.Data.Last_Action.Created_date
+			created_date := splitted[5]
 			year, month, day, _, _, _ := ParseTime(created_date)
 			name := "-"
 			profile, err := bot.GetProfile(event.Source.UserID).Do()
