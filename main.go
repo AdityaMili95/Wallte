@@ -1931,7 +1931,7 @@ func replyContinentCurrency(event *linebot.Event, splitted []string) {
 
 	if _, err := bot.ReplyMessage(
 		event.ReplyToken,
-		linebot.NewTemplateMessage("WHat do you want to do? \U00100009", template),
+		linebot.NewTemplateMessage("What is your currency huh? \U00100009", template),
 	).Do(); err != nil {
 		log.Print(err)
 	}
