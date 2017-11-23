@@ -840,9 +840,6 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		}
 	}
 
-	if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
-		return false, false
-	}
 	return remove_last_action, must_update
 }
 
@@ -991,9 +988,6 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 		//NGAPAIN
 	}
 
-	if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
-		return false, false
-	}
 	return true, true
 }
 
@@ -1120,11 +1114,12 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 		).Do(); err != nil {
 			log.Print(err)
 		}
+
+		if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
+			return false, false
+		}
 	}
 
-	if !exist || data.Data.Last_Action == nil || data.Data.Last_Action.Keyword == "" {
-		return false, false
-	}
 	return true, true
 
 }
