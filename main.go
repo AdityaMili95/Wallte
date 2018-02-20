@@ -2076,7 +2076,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	}
 	defer resp.Body.Close()
 
-	var result ChatBot
+	var result *ChatBot
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
@@ -2096,7 +2096,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	text = result.SpeechResponse
 	replyTextMessage(event, text)
 
-	data.Data.LastTalk = lastTalk
+	data.Data.LastTalk = result
 	return data, true
 }
 
