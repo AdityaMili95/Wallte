@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	//"html/template"
+	"bytes"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -47,6 +49,27 @@ type DetailMessage struct {
 	Desc_text       string
 	Cost_Not_Number string
 	Cost_Zero       string
+}
+
+type ChatBot struct {
+	Complete          bool            `json:"complete"`
+	CurrentNode       string          `json:"currentNode"`
+	Input             string          `json:"input"`
+	SpeechResponse    string          `json:"speechResponse"`
+	Intent            IntentData      `json:"intent"`
+	Parameters        []ParameterInfo `json:"parameters"`
+	MissingParameters []string        `json:"missingParameters"`
+}
+
+type IntentData struct {
+	Name    string `json:"name"`
+	StoryId string `json:"storyId"`
+}
+
+type ParameterInfo struct {
+	Required bool   `json:"required"`
+	Type     string `json:"type"`
+	Name     string `json:"name"`
 }
 
 var monthToInt = map[string]int{
@@ -151,6 +174,7 @@ type Wallet struct {
 	Last_Action *LastAction
 	Chart       *MyChart
 	Silent      bool
+	LastTalk    *ChatBot `json:"last_talk"`
 }
 
 type MyChart struct {
@@ -534,7 +558,7 @@ func FetchDataSource(event *linebot.Event) (string, string, string, *DataWallet,
 	return userID, roomID, groupID, data, exist, msgType
 }
 
-func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) (bool, bool) {
+func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool, message string) (bool, bool) {
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
 	var template linebot.Template
@@ -593,7 +617,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 		template = linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
-				imageURL, "Daily Food", "Food you must be spent everyday to make sure you are alive!",
+				imageURL, "Daily Food", "Food you spend everyday to keep you alive!",
 				linebot.NewPostbackTemplateAction("Breakfast", "/add-expense/food/breakfast", ""),
 				linebot.NewPostbackTemplateAction("Lunch", "/add-expense/food/lunch", ""),
 				linebot.NewPostbackTemplateAction("Dinner", "/add-expense/food/dinner", ""),
@@ -839,7 +863,18 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 		}
 
 	} else {
-		//NGAPAIN
+
+		data, success := talk(event, message, data)
+
+		if exist && data.Data.Last_Action != nil {
+			remove_last_action = true
+		}
+
+		if success {
+			remove_last_action = true
+			must_update = true
+		}
+
 	}
 
 	if valid {
@@ -854,7 +889,7 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 	return remove_last_action, must_update
 }
 
-func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) (bool, bool) {
+func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool, message string) (bool, bool) {
 
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
@@ -997,6 +1032,21 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 
 	} else {
 		//NGAPAIN
+		data, success := talk(event, message, data)
+
+		remove_last_action := false
+		must_update := false
+
+		if exist && data.Data.Last_Action != nil {
+			remove_last_action = true
+		}
+
+		if success {
+			remove_last_action = true
+			must_update = true
+		}
+
+		return remove_last_action, must_update
 	}
 
 	return true, true
@@ -1948,6 +1998,74 @@ func replyTextMessage(event *linebot.Event, text string) {
 	}
 }
 
+func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, bool) {
+
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	text := "Huh budum..."
+
+	var lastTalk *ChatBot
+
+	if data.Data.LastTalk == nil {
+
+		lastTalk = &ChatBot{
+			Complete:       true,
+			CurrentNode:    "",
+			Input:          message,
+			SpeechResponse: "",
+		}
+
+	} else {
+		lastTalk = data.Data.LastTalk
+	}
+
+	lastTalk.Input = message
+
+	reqData, err := json.Marshal(lastTalk)
+
+	if err != nil {
+		replyTextMessage(event, text)
+		return data, false
+	}
+
+	var request *http.Request
+
+	request, _ = http.NewRequest(http.MethodPost, "https://wallte-mongodb-chatbot.herokuapp.com/api/v1", bytes.NewBuffer([]byte(reqData)))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("datatype", "json")
+
+	resp, err := client.Do(request)
+
+	if err != nil {
+		replyTextMessage(event, text)
+		return data, false
+	}
+	defer resp.Body.Close()
+
+	var result ChatBot
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		replyTextMessage(event, text)
+		return data, false
+	}
+
+	err = json.Unmarshal(body, &result)
+
+	if err != nil {
+		replyTextMessage(event, text)
+		return data, false
+	}
+
+	text = result.SpeechResponse
+	replyTextMessage(event, text)
+
+	data.Data.LastTalk = lastTalk
+	return data, true
+}
+
 func CancelAction(data *DataWallet) *DataWallet {
 	data.Data.Last_Action = &LastAction{}
 	return data
@@ -2487,9 +2605,9 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action, _ = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
+		remove_last_action, _ = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType, false, message.Text)
 	} else if msgCategory == ADD_INCOME {
-		remove_last_action, _ = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
+		remove_last_action, _ = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, false, message.Text)
 	} else if msgCategory == REPORT {
 
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
@@ -2570,7 +2688,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 				}
 
 				if !checkAllAlpha(inputText) {
-					replyTextMessage(event, "How fun it is...\nYou accidentally input number in currency code! \U00100079\n\nCancelled!")
+					replyTextMessage(event, "How funny is it...\nYou accidentally input number in currency code! \U00100079\n\nCancelled!")
 				} else {
 					inputText = strings.ToUpper(inputText)
 					data.Data.Currency = inputText
@@ -2582,13 +2700,23 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 			}
 
 		} else {
-
 			// ga valid
+			success := false
+			data, success = talk(event, message.Text, data)
 
+			if success {
+				remove_last_action = true
+			}
 		}
 
 	} else {
 		// ga ada last action
+		success := false
+		data, success = talk(event, message.Text, data)
+
+		if success {
+			must_update = true
+		}
 	}
 
 	if remove_last_action {
@@ -2654,9 +2782,9 @@ func handlePostback(event *linebot.Event) {
 	}
 
 	if msgCategory == ADD_EXPENSE {
-		remove_last_action, must_update = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
+		remove_last_action, must_update = handleAddExpense(mainType, event, exist, userID, roomID, groupID, data, msgType, true, msg)
 	} else if msgCategory == ADD_INCOME {
-		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
+		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, true, msg)
 	} else if msgCategory == REPORT {
 		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
 
