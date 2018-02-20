@@ -2081,6 +2081,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	err = json.Unmarshal(body, &result)
 
 	if err != nil {
+		log.Println(string(body))
 		log.Println("ERROR UNMARSHAL", err)
 		replyTextMessage(event, text)
 		return data, false
