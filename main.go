@@ -59,6 +59,7 @@ type ChatBot struct {
 	Intent            IntentData      `json:"intent"`
 	Parameters        []ParameterInfo `json:"parameters"`
 	MissingParameters []string        `json:"missingParameters"`
+	Context           interface{}     `json:"context"`
 }
 
 type IntentData struct {
@@ -2034,10 +2035,16 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	if data.Data.LastTalk == nil {
 
 		lastTalk = &ChatBot{
-			Complete:       true,
-			CurrentNode:    "",
-			Input:          message,
-			SpeechResponse: "",
+			Complete:          true,
+			CurrentNode:       "",
+			Input:             message,
+			SpeechResponse:    "",
+			MissingParameters: make([]string, 0),
+			Parameters:        make([]ParameterInfo, 0),
+			Intent: IntentData{
+				Name:    "Welcome message",
+				StoryId: "59aae7bd26f6f60007b06fb7",
+			},
 		}
 
 	} else {
@@ -2073,7 +2080,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println("ERROR REAL", err)
+		log.Println("ERROR READ", err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2081,7 +2088,6 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	err = json.Unmarshal(body, &result)
 
 	if err != nil {
-		log.Println(string(body))
 		log.Println("ERROR UNMARSHAL", err)
 		replyTextMessage(event, text)
 		return data, false
