@@ -2049,6 +2049,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	reqData, err := json.Marshal(lastTalk)
 
 	if err != nil {
+		log.Println(err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2062,6 +2063,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	resp, err := client.Do(request)
 
 	if err != nil {
+		log.Println(err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2071,6 +2073,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
+		log.Println(err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2078,6 +2081,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	err = json.Unmarshal(body, &result)
 
 	if err != nil {
+		log.Println(err)
 		replyTextMessage(event, text)
 		return data, false
 	}
