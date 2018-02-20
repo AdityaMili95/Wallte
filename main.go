@@ -2049,7 +2049,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	reqData, err := json.Marshal(lastTalk)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("ERROR MARSHAL", err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2063,7 +2063,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	resp, err := client.Do(request)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("ERROR REQUEST", err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2073,7 +2073,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("ERROR REAL", err)
 		replyTextMessage(event, text)
 		return data, false
 	}
@@ -2081,7 +2081,7 @@ func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, 
 	err = json.Unmarshal(body, &result)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("ERROR UNMARSHAL", err)
 		replyTextMessage(event, text)
 		return data, false
 	}
