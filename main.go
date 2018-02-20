@@ -864,7 +864,11 @@ func handleAddExpense(splitted []string, event *linebot.Event, exist bool, userI
 
 	} else {
 
-		data, success := talk(event, message, data)
+		success := false
+		data, success = talk(event, message, data)
+
+		remove_last_action = false
+		must_update = false
 
 		if exist && data.Data.Last_Action != nil {
 			remove_last_action = true
@@ -1032,7 +1036,8 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 
 	} else {
 		//NGAPAIN
-		data, success := talk(event, message, data)
+		success := false
+		data, success = talk(event, message, data)
 
 		remove_last_action := false
 		must_update := false
@@ -1052,7 +1057,7 @@ func handleAddIncome(splitted []string, event *linebot.Event, exist bool, userID
 	return true, true
 }
 
-func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) (bool, bool) {
+func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool, message string) (bool, bool) {
 
 	imageURL := "https://github.com/AdityaMili95/Wallte/raw/master/README/qI5Ujdy9n1.png"
 	lenSplitted := len(splitted)
@@ -1228,6 +1233,24 @@ func HandleAdditionalOptions(splitted []string, event *linebot.Event, exist bool
 	} else if lenSplitted == 6 && splitted[2] == "currency" && okay && isPostback {
 		data.Data.Currency = splitted[5]
 		replyTextMessage(event, "Yay currency changed! \U00100090\nYour current currency changed to: "+splitted[5])
+	} else {
+
+		success := false
+		data, success = talk(event, message, data)
+
+		remove_last_action := false
+		must_update := false
+
+		if exist && data.Data.Last_Action != nil {
+			remove_last_action = true
+		}
+
+		if success {
+			remove_last_action = true
+			must_update = true
+		}
+
+		return remove_last_action, must_update
 	}
 
 	return true, true
@@ -2298,7 +2321,7 @@ func getJSONforChart(period string, day int, month int, year int, data *DataWall
 
 }
 
-func getChartData(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool) {
+func getChartData(splitted []string, event *linebot.Event, exist bool, userID string, roomID string, groupID string, data *DataWallet, msgType int, isPostback bool, message string) {
 
 	lenSplitted := len(splitted)
 	var template linebot.Template
@@ -2564,7 +2587,7 @@ func getChartData(splitted []string, event *linebot.Event, exist bool, userID st
 		)
 		altText = "Choose report's period! \U00100024"
 	} else {
-		//NGAPAIN
+		data, _ = talk(event, message, data)
 	}
 
 	if _, err := bot.ReplyMessage(
@@ -2610,7 +2633,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 		remove_last_action, _ = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, false, message.Text)
 	} else if msgCategory == REPORT {
 
-		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false, message.Text)
 
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 			remove_last_action = true
@@ -2625,7 +2648,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	} else if lenSplitted == 3 && msgCategory == DRAW {
 
-		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, false, message.Text)
 
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 			remove_last_action = true
@@ -2633,7 +2656,7 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 
 	} else if msgCategory == OTHER {
 
-		remove_last_action, _ = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, false)
+		remove_last_action, _ = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, false, message.Text)
 
 	} else if lenSplitted == 2 && msgCategory == "about-us" {
 
@@ -2786,14 +2809,14 @@ func handlePostback(event *linebot.Event) {
 	} else if msgCategory == ADD_INCOME {
 		remove_last_action, must_update = handleAddIncome(mainType, event, exist, userID, roomID, groupID, data, msgType, true, msg)
 	} else if msgCategory == REPORT {
-		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
+		getChartData(mainType, event, exist, userID, roomID, groupID, data, msgType, true, msg)
 
 		if exist && data.Data.Last_Action != nil && data.Data.Last_Action.Keyword != "" {
 			remove_last_action = true
 		}
 
 	} else if msgCategory == OTHER {
-		remove_last_action, must_update = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, true)
+		remove_last_action, must_update = HandleAdditionalOptions(mainType, event, exist, userID, roomID, groupID, data, msgType, true, msg)
 	}
 
 	if remove_last_action {
