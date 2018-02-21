@@ -2025,7 +2025,7 @@ func replyTextMessage(event *linebot.Event, text string) {
 func talk(event *linebot.Event, message string, data *DataWallet) (*DataWallet, bool) {
 
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 360 * time.Second,
 	}
 
 	text := "Huh budum..."
