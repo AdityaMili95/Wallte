@@ -2700,14 +2700,14 @@ func handleTextMessage(event *linebot.Event, message *linebot.TextMessage) {
 			d = DetailMessage{
 				Desc_text:       "Give the description below! \U0010009D",
 				Cost_Not_Number: "Ouchh! \U00100085 Cost is about how much which means it must be a number!!\n\nCancelled",
-				Cost_Zero:       "Awww! \U00100083 if the number is less than 1 that mean there is no income!!\n\nCancelled",
+				Cost_Zero:       "Awww! \U00100083 if the number is less than 1 that mean there is no cost!!\n\nCancelled",
 			}
 			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
 		} else if detailType[1] == ADD_INCOME {
 			d = DetailMessage{
 				Desc_text:       "Tell me the description please \U00100078",
 				Cost_Not_Number: "Ouchh! \U0010007C You have no income, do you?\n\nCancelled",
-				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no cost!!\n\nCancelled",
+				Cost_Zero:       "Awww! \U0010009E if the cost is less than 1 that mean there is no income!!\n\nCancelled",
 			}
 			handleAskDetail(event, message, userID, roomID, groupID, data, msgType, d)
 		} else if detailType[1] == OTHER && detailType[2] == "currency" {
